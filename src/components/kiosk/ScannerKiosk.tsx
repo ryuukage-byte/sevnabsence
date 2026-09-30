@@ -1,60 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import confetti from 'canvas-confetti';
-import { LogIn, LogOut, Camera, AlertCircle, CheckCircle2, RefreshCw, Sparkles, Clock, Volume2 } from 'lucide-react';
+import { LogIn, LogOut, Camera, AlertCircle, CheckCircle2, RefreshCw, Sparkles, Clock, Info } from 'lucide-react';
 import { DigitalClock } from '../common/DigitalClock';
-import { Mascot, MascotState } from '../common/Mascot';
+import { Mascot, type MascotState } from '../common/Mascot';
 import { attendanceService } from '../../services/attendanceService';
 import { playSuccessChime, playWarningChime, playErrorChime } from '../../services/audioService';
 import type { AttendanceAction, ScanResult, Member } from '../../types/attendance';
 
 export const ScannerKiosk: React.FC = () => {
   const [action, setAction] = useState<AttendanceAction>('MASUK');
-  const [isScanning, setIsScanning] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-  const [mascotState, setMascotState] = useState<MascotState>('idle');
+  const [mascotState, setMascotState] = useState<MascotState>('scanning');
   const [resetTimer, setResetTimer] = useState<number | null>(null);
   const [demoMembers, setDemoMembers] = useState<Member[]>([]);
-  const [selectedDemoToken, setSelectedDemoToken] = useState<string>('');
 
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingRef = useRef(false);
+  const actionRef = useRef<AttendanceAction>(action);
+
+  // Keep actionRef in sync with state
+  useEffect(() => {
+    actionRef.current = action;
+  }, [action]);
 
   useEffect(() => {
     setDemoMembers(attendanceService.getMembers());
   }, []);
 
-  // Initialize Camera on Mount & on Action change
+  // Initialize Camera ONCE on Mount (does not tear down on action change!)
   useEffect(() => {
     let isMounted = true;
+    const scannerId = 'kiosk-reader-view';
 
-    async function startScanner() {
+    async function initCamera() {
       try {
         setCameraError(null);
-        if (html5QrCodeRef.current) {
-          try {
-            await html5QrCodeRef.current.stop();
-          } catch {
-            // ignore
-          }
-        }
+        // Small delay to ensure container element is mounted in DOM
+        await new Promise((res) => setTimeout(res, 200));
+        if (!isMounted) return;
 
-        const scannerId = 'kiosk-reader-view';
         const scannerElement = document.getElementById(scannerId);
         if (!scannerElement) return;
 
-        const html5QrCode = new Html5Qrcode(scannerId);
+        const html5QrCode = new Html5Qrcode(scannerId, { verbose: false });
         html5QrCodeRef.current = html5QrCode;
 
         const config = {
           fps: 10,
-          qrbox: { width: 260, height: 260 },
+          qrbox: { width: 250, height: 250 },
           aspectRatio: 1.0
         };
 
         await html5QrCode.start(
-          { facingMode: 'user' }, // Front Camera Default
+          { facingMode: 'user' },
           config,
           (decodedText) => {
             if (!isProcessingRef.current) {
@@ -62,33 +63,43 @@ export const ScannerKiosk: React.FC = () => {
             }
           },
           () => {
-            // frame pass
+            // Frame processing pass
           }
         );
 
         if (isMounted) {
-          setIsScanning(true);
+          setCameraActive(true);
           setMascotState('scanning');
         }
       } catch (err: unknown) {
         if (isMounted) {
-          setIsScanning(false);
-          const msg = err instanceof Error ? err.message : 'Kamera tidak dapat diakses';
+          setCameraActive(false);
+          const msg =
+            err instanceof Error
+              ? err.message
+              : 'Kamera depan tidak dapat diakses atau izin ditolak';
           setCameraError(msg);
-          setMascotState('error');
+          setMascotState('idle');
         }
       }
     }
 
-    startScanner();
+    initCamera();
 
     return () => {
       isMounted = false;
-      if (html5QrCodeRef.current) {
-        html5QrCodeRef.current.stop().catch(() => {});
+      const scanner = html5QrCodeRef.current;
+      if (scanner) {
+        try {
+          if (scanner.isScanning) {
+            scanner.stop().catch(() => {});
+          }
+        } catch {
+          // ignore
+        }
       }
     };
-  }, [action]);
+  }, []); // Run only ONCE on mount
 
   // Handle QR scan resolution
   const handleQRDetected = async (token: string) => {
@@ -97,7 +108,8 @@ export const ScannerKiosk: React.FC = () => {
     setMascotState('validating');
 
     try {
-      const result = await attendanceService.recordScan(token, action);
+      const currentAction = actionRef.current;
+      const result = await attendanceService.recordScan(token, currentAction);
       setScanResult(result);
 
       if (result.success) {
@@ -207,9 +219,9 @@ export const ScannerKiosk: React.FC = () => {
                 {mascotState === 'scanning' && `Sedang siap memindai untuk presensi ${action}...`}
                 {mascotState === 'validating' && 'Memeriksa keabsahan kartu di server...'}
                 {mascotState === 'success' && 'Presensi berhasil dicatat! Kerja bagus!'}
-                {mascotState === 'duplicate' && 'Ups! Anda sudah melakukan presensi sebelumnya.'}
+                {mascotState === 'duplicate' && 'Ups! Presensi sudah tercatat sebelumnya.'}
                 {mascotState === 'error' && 'Kartu tidak terbaca atau terjadi kesalahan.'}
-                {mascotState === 'idle' && 'Silakan pilih Masuk atau Pulang.'}
+                {mascotState === 'idle' && 'Silakan arahkan kartu QR ke kamera.'}
               </p>
             </div>
           </div>
@@ -217,7 +229,7 @@ export const ScannerKiosk: React.FC = () => {
           {/* Quick Demo Simulator */}
           <div className="kiosk-demo-simulator">
             <div className="simulator-title">
-              <RefreshCw size={14} /> Simulasi Scan Cepat (Demo):
+              <RefreshCw size={14} /> Simulasi Scan Cepat (Klik Kartu Demo):
             </div>
             <div className="simulator-buttons">
               {demoMembers.map((m) => (
@@ -241,7 +253,7 @@ export const ScannerKiosk: React.FC = () => {
             <div id="kiosk-reader-view" className="kiosk-camera-viewport" />
 
             {/* Target Alignment Reticle Guide */}
-            {!scanResult && (
+            {!scanResult && !cameraError && (
               <div className="scanner-reticle">
                 <div className="reticle-corner top-left" />
                 <div className="reticle-corner top-right" />
@@ -254,12 +266,16 @@ export const ScannerKiosk: React.FC = () => {
             {/* Camera Permission / Error Fallback */}
             {cameraError && (
               <div className="camera-error-overlay">
-                <AlertCircle size={44} color="#EF4444" />
-                <h3>Akses Kamera Terkendala</h3>
+                <AlertCircle size={44} color="#F59E0B" />
+                <h3>Akses Kamera Belum Aktif</h3>
                 <p>{cameraError}</p>
-                <p className="error-hint">
-                  Pastikan izin kamera depan diizinkan, atau gunakan tombol simulasi kartu di samping kiri.
-                </p>
+                <div className="camera-fallback-card">
+                  <Info size={16} />
+                  <span>
+                    Anda tetap dapat menguji seluruh alur presensi menggunakan tombol{' '}
+                    <strong>Simulasi Scan Cepat</strong> di sebelah kiri.
+                  </span>
+                </div>
               </div>
             )}
 
