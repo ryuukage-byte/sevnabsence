@@ -140,6 +140,11 @@ a {
   box-shadow: 0 4px 0 #E7DDCD, 0 6px 16px rgba(91, 78, 64, 0.05);
 }
 
+.header-brand-container {
+  display: flex;
+  align-items: center;
+}
+
 .header-brand {
   display: flex;
   align-items: center;
@@ -147,24 +152,44 @@ a {
 }
 
 .brand-logo-icon {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
-  background: var(--color-primary);
-  border: 1.5px solid #5EA9A9;
-  box-shadow: 0 2px 0 #59A9A9, inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: #FFFDF7;
+  border: 2px solid #D5C7B0;
+  box-shadow: 0 3px 0 #D5C7B0;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-paw-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .brand-title {
   font-family: var(--font-display);
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-ink-strong);
   display: block;
   letter-spacing: -0.3px;
+}
+
+.brand-dossier-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background-color: #FFD88A;
+  color: #6D4E1F;
+  border: 1px solid #FFE099;
+  font-family: var(--font-display);
+  letter-spacing: 0.5px;
 }
 
 .brand-subtitle {
@@ -175,55 +200,78 @@ a {
   align-items: center;
 }
 
-.mode-nav {
+/* Illustrated Folder Tabs Navigation */
+.mode-nav-tabs {
   display: flex;
-  background: var(--color-surface-inset);
-  padding: 5px;
-  border-radius: var(--radius-md);
-  gap: 6px;
-  align-items: center;
-  border: 1.5px solid var(--color-border);
+  gap: 12px;
+  align-items: flex-end;
 }
 
-.mode-nav-btn {
+.scrapbook-tab-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 8px 20px;
-  border-radius: 10px;
-  border: 1.5px solid transparent;
+  justify-content: flex-end;
   background: transparent;
-  color: var(--color-text);
-  font-family: var(--font-family);
-  font-weight: 700;
-  font-size: 0.92rem;
+  border: none;
   cursor: pointer;
-  transition: all 0.16s ease-out;
+  padding: 0 4px;
+  position: relative;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.18s ease;
+  filter: drop-shadow(0 2px 3px rgba(78, 59, 42, 0.12));
 }
 
-.mode-nav-btn:hover {
-  background: rgba(255, 253, 248, 0.6);
-  color: var(--color-ink-strong);
-  transform: translateY(-1px);
+.scrapbook-tab-btn:hover {
+  transform: translateY(-4px) scale(1.04);
+  filter: drop-shadow(0 5px 6px rgba(78, 59, 42, 0.18));
 }
 
-.mode-nav-btn.active {
-  background: var(--color-primary-soft);
-  color: var(--color-on-primary);
-  border-color: #A3DEDB;
-  box-shadow: 0 2px 0 #A3DEDB, inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  transform: translateY(0);
+.scrapbook-tab-btn.active {
+  transform: translateY(-2px) scale(1.06);
+  filter: drop-shadow(0 6px 10px rgba(78, 59, 42, 0.22));
 }
 
-.nav-lock-badge {
-  font-size: 0.65rem;
-  background: #E5DECE;
-  color: var(--color-text);
-  padding: 2px 7px;
-  border-radius: 6px;
+.tab-illustrated-img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  transition: filter 0.18s ease;
+}
+
+.scrapbook-tab-btn:not(.active) .tab-illustrated-img {
+  opacity: 0.78;
+  filter: saturate(0.85);
+}
+
+.scrapbook-tab-btn.active .tab-illustrated-img {
+  opacity: 1;
+  filter: saturate(1.15) brightness(1.02);
+}
+
+.tab-label {
+  font-family: var(--font-display);
   font-weight: 800;
-  text-transform: uppercase;
-  border: 1px solid var(--color-border);
+  font-size: 0.76rem;
+  color: #4E3C2B;
+  margin-top: 1px;
+  letter-spacing: 0.2px;
+}
+
+.tab-label-with-lock {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-lock-mini-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #E5DECE;
+  color: #6C5943;
+  padding: 1px 3px;
+  border-radius: 4px;
+  border: 1px solid #D1C5B0;
 }
 
 .btn-lock-session {
@@ -665,80 +713,101 @@ a {
   pointer-events: none;
 }
 
-/* Hanging Luggage Tag Bookmark at top right */
-.luggage-tag-bookmark {
+/* Binder Corner Accents & Illustrated Stickers */
+.binder-corner-clip-left {
+  position: absolute;
+  top: -16px;
+  left: 20px;
+  width: 52px;
+  z-index: 20;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+.binder-top-washi {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(1deg);
+  width: 148px;
+  z-index: 20;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+}
+
+.binder-corner-bunny {
+  position: absolute;
+  bottom: -20px;
+  left: 18px;
+  width: 66px;
+  z-index: 20;
+  transform: rotate(8deg);
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+}
+
+.binder-corner-cloud {
+  position: absolute;
+  bottom: -18px;
+  right: 28px;
+  width: 86px;
+  z-index: 20;
+  transform: rotate(-5deg);
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+}
+
+/* Hanging Illustrated Luggage Tag Bookmark at top right */
+.luggage-tag-bookmark-wrap {
   position: absolute;
   top: -24px;
-  right: 48px;
+  right: 44px;
   z-index: 25;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 98px;
   transform: rotate(3deg);
-  transition: transform 0.2s ease-out;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.luggage-tag-bookmark:hover {
-  transform: rotate(0deg) translateY(-2px);
+.luggage-tag-bookmark-wrap:hover {
+  transform: rotate(0deg) translateY(-3px);
 }
 
-.luggage-tag-string {
-  width: 2px;
-  height: 28px;
-  background: #D4A373;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+.luggage-tag-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 16px rgba(58, 38, 22, 0.28));
 }
 
-.luggage-tag-body {
-  background: #E8883B;
-  color: #FFFFFF;
-  border-radius: 10px;
-  border: 2px solid #C46D29;
-  box-shadow: 0 6px 14px rgba(58, 38, 22, 0.25);
-  padding: 8px 14px 16px;
+.luggage-tag-overlay-text {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
   text-align: center;
-  position: relative;
-  min-width: 105px;
-}
-
-.luggage-tag-grommet {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #FFFFFF;
-  border: 2px solid #783C12;
-  margin: 0 auto 6px auto;
+  color: #4E3C2B;
+  padding: 0 10px;
+  font-weight: 800;
+  pointer-events: none;
 }
 
 .luggage-tag-title {
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
+  font-size: 0.62rem;
   letter-spacing: 0.5px;
+  color: #8C5828;
   display: block;
 }
 
 .luggage-tag-brand {
-  font-size: 0.88rem;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
   font-weight: 800;
+  line-height: 1.15;
+  margin-top: 4px;
+  color: #4A331E;
   display: block;
-  margin-top: 2px;
-}
-
-.luggage-tag-checkers {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 9px;
-  border-radius: 0 0 8px 8px;
-  background-image: 
-    linear-gradient(45deg, #7A3F16 25%, transparent 25%),
-    linear-gradient(-45deg, #7A3F16 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #7A3F16 75%),
-    linear-gradient(-45deg, transparent 75%, #7A3F16 75%);
-  background-size: 8px 8px;
 }
 
 /* Dossier Header Card */
@@ -985,6 +1054,13 @@ a {
   transition: all 0.16s ease-out;
 }
 
+.btn-illustrated-stamp {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
 .btn-label {
   display: block;
   font-family: var(--font-display);
@@ -1028,14 +1104,29 @@ a {
   box-shadow: 0 1px 3px rgba(91, 78, 64, 0.12);
 }
 
-.mascot-speech {
+.mascot-speech-bubble-container {
   flex: 1;
-  background: #FAF7F0;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 14px 18px;
-  box-shadow: 0 3px 0 #E7DDCD;
   position: relative;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+}
+
+.speech-bubble-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  filter: drop-shadow(0 3px 6px rgba(91, 78, 64, 0.12));
+  pointer-events: none;
+}
+
+.mascot-speech-content {
+  position: relative;
+  z-index: 2;
+  padding: 16px 24px 20px 22px;
+  width: 100%;
 }
 
 .mascot-name {
@@ -1090,6 +1181,8 @@ a {
   box-shadow: 0 2px 0 #E7DDCD;
   transition: all 0.16s ease-out;
   color: var(--color-ink-strong);
+  display: inline-flex;
+  align-items: center;
 }
 
 .demo-scan-btn:hover {
@@ -1120,33 +1213,27 @@ a {
   transform: rotate(0deg);
 }
 
-/* Washi tape pinned to the polaroid */
-.polaroid-washi-tape-pin {
+/* Illustrated Clip & Washi tape pinned to the polaroid */
+.polaroid-clip-img {
   position: absolute;
-  top: -12px;
-  left: 36px;
-  width: 74px;
-  height: 22px;
-  background: rgba(169, 215, 245, 0.85);
-  transform: rotate(-4deg);
-  border-radius: 2px;
-  box-shadow: 0 1px 4px rgba(91, 78, 64, 0.15);
-  z-index: 10;
+  top: -18px;
+  left: 20px;
+  width: 44px;
+  z-index: 20;
+  transform: rotate(-10deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.28));
   pointer-events: none;
 }
 
-.polaroid-paperclip-pin {
+.polaroid-tape-img {
   position: absolute;
-  top: -10px;
-  right: 28px;
-  width: 18px;
-  height: 38px;
-  border: 3px solid #8B6F5A;
-  border-radius: 10px;
-  z-index: 10;
-  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.18);
+  top: -14px;
+  right: 32px;
+  width: 90px;
+  z-index: 20;
+  transform: rotate(5deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
   pointer-events: none;
-  background: transparent;
 }
 
 .polaroid-viewport-screen {
@@ -1157,6 +1244,16 @@ a {
   border-radius: 12px;
   overflow: hidden;
   border: 2px solid #E5DECE;
+}
+
+.polaroid-diecut-frame-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .polaroid-chin-caption {
@@ -1175,7 +1272,7 @@ a {
   color: var(--color-outline);
 }
 
-/* Clothesline of Hanging Recent Presensi Polaroids (matching Image 2) */
+/* Clothesline of Hanging Recent Presensi Polaroids */
 .clothesline-wrapper {
   margin-top: 36px;
   padding-top: 28px;
@@ -1240,18 +1337,16 @@ a {
   box-shadow: 0 10px 20px rgba(91, 78, 64, 0.18);
 }
 
-.wooden-clothespin {
+.wooden-clothespin-img {
   position: absolute;
-  top: -14px;
+  top: -16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 9px;
-  height: 24px;
-  background: #D4A373;
-  border: 1px solid #B07D48;
-  border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 22px;
+  height: auto;
   z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
 }
 
 .mini-polaroid-img-box {
@@ -1597,6 +1692,33 @@ a {
   font-weight: 600;
 }
 
+.member-dossier-card-wrap {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.dossier-corner-clip {
+  position: absolute;
+  top: -16px;
+  left: -8px;
+  width: 38px;
+  z-index: 10;
+  transform: rotate(-15deg);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+}
+
+.dossier-corner-washi {
+  position: absolute;
+  top: -12px;
+  right: 28px;
+  width: 120px;
+  z-index: 10;
+  transform: rotate(3deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  pointer-events: none;
+}
+
 .member-name {
   font-family: var(--font-display);
   font-size: 1.6rem;
@@ -1609,7 +1731,19 @@ a {
   font-size: 0.88rem;
   color: var(--color-text);
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  background: rgba(245, 241, 232, 0.8);
+  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .member-actions-top {
@@ -1693,6 +1827,12 @@ a {
   transition: all 0.16s ease-out;
 }
 
+.member-tab-mini-img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+}
+
 .member-tab-btn:hover {
   background: rgba(245, 241, 232, 0.6);
   color: var(--color-ink-strong);
@@ -1737,6 +1877,86 @@ a {
 
 .today-status-badge-row {
   margin: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.attendance-streak-hearts-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFDF8;
+  border: 1.5px solid #E5DECE;
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: 0 2px 0 #E7DDCD;
+}
+
+.attendance-hearts-img {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+}
+
+.hearts-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #8C5828;
+}
+
+/* Shift Ticket Header */
+.shift-ticket-header {
+  position: relative;
+  margin: -24px -24px 16px -24px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+}
+
+.shift-ticket-banner-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.shift-ticket-header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.ticket-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #783C12;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(120, 60, 18, 0.25);
+  margin-bottom: 4px;
+}
+
+.modal-corner-clip-img {
+  position: absolute;
+  top: -16px;
+  left: 24px;
+  width: 44px;
+  z-index: 20;
+  transform: rotate(-10deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.28));
+  pointer-events: none;
 }
 
 .today-timestamps-row {

@@ -85,16 +85,25 @@ export const ScheduleMatrix: React.FC = () => {
           <button className="btn-cal-nav" onClick={prevMonth}>
             <ChevronLeft size={18} />
           </button>
-          <span className="current-month-display">{monthLabel}</span>
+          <div className="current-month-banner">
+            <span className="current-month-display">{monthLabel}</span>
+          </div>
           <button className="btn-cal-nav" onClick={nextMonth}>
             <ChevronRight size={18} />
           </button>
         </div>
       </div>
 
-      {/* Legend */}
+      {/* Legend styled with illustrated pin */}
       <div className="matrix-legend">
-        <span className="legend-title">Keterangan:</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src="/assets/scrapbook/clip_pushpin_yellow.png"
+            alt="Pin"
+            style={{ width: 20, height: 20, marginRight: 6 }}
+          />
+          <span className="legend-title">Keterangan Shift:</span>
+        </div>
         {shifts.map((s) => (
           <div key={s.id} className="legend-item">
             <span

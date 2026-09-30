@@ -49,11 +49,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
       </div>
 
-      {/* Metric Stat Cards Grid */}
+      {/* Metric Stat Cards Grid styled with Illustrated Rosette Badges */}
       <div className="stats-grid">
         <div className="stat-card" onClick={() => onNavigateTab('members')}>
-          <div className="stat-icon-box bg-indigo-50 text-indigo-600">
-            <Users size={24} />
+          <div className="stat-icon-box bg-indigo-50">
+            <img
+              src="/assets/scrapbook/badge_rosette_10.png"
+              alt="Total"
+              className="stat-illustrated-badge"
+            />
           </div>
           <div className="stat-info">
             <span className="stat-label">Total Terjadwal</span>
@@ -63,8 +67,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box bg-emerald-50 text-emerald-600">
-            <CheckCircle2 size={24} />
+          <div className="stat-icon-box bg-emerald-50">
+            <img
+              src="/assets/scrapbook/badge_paw.png"
+              alt="Hadir"
+              className="stat-illustrated-badge"
+            />
           </div>
           <div className="stat-info">
             <span className="stat-label">Sudah Hadir (Masuk)</span>
@@ -76,8 +84,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box bg-rose-50 text-rose-600">
-            <LogOut size={24} />
+          <div className="stat-icon-box bg-rose-50">
+            <img
+              src="/assets/scrapbook/badge_rosette_3.png"
+              alt="Pulang"
+              className="stat-illustrated-badge"
+            />
           </div>
           <div className="stat-info">
             <span className="stat-label">Sudah Pulang</span>
@@ -87,8 +99,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box bg-amber-50 text-amber-600">
-            <AlertTriangle size={24} />
+          <div className="stat-icon-box bg-amber-50">
+            <img
+              src="/assets/scrapbook/badge_star.png"
+              alt="Terlambat"
+              className="stat-illustrated-badge"
+            />
           </div>
           <div className="stat-info">
             <span className="stat-label">Terlambat</span>
@@ -98,8 +114,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-box bg-slate-100 text-slate-600">
-            <Clock size={24} />
+          <div className="stat-icon-box bg-slate-100">
+            <img
+              src="/assets/scrapbook/badge_bell.png"
+              alt="Belum Hadir"
+              className="stat-illustrated-badge"
+            />
           </div>
           <div className="stat-info">
             <span className="stat-label">Belum Hadir</span>
@@ -109,8 +129,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box bg-purple-50 text-purple-600">
-            <FileQuestion size={24} />
+          <div className="stat-icon-box bg-purple-50">
+            <img
+              src="/assets/scrapbook/badge_bubble.png"
+              alt="Perlu Review"
+              className="stat-illustrated-badge"
+            />
           </div>
           <div className="stat-info">
             <span className="stat-label">Perlu Review</span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { QrCode, User, Building2, Lock, Unlock } from 'lucide-react';
+import { Lock, Unlock } from 'lucide-react';
 
 export type AppMode = 'kiosk' | 'member' | 'admin';
 
@@ -20,61 +20,79 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <header className="app-header">
-      {/* Brand & Branch Stamp */}
-      <div className="header-brand">
-        <div className="brand-logo-icon">
-          <QrCode size={22} color="#244E52" />
-        </div>
-        <div className="brand-text">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span className="brand-title">Absence</span>
-            <span
-              style={{
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                padding: '2px 6px',
-                borderRadius: 4,
-                backgroundColor: '#FFD88A',
-                color: '#6D4E1F',
-                border: '1px solid #FFE099',
-                fontFamily: 'var(--font-display)'
-              }}
-            >
-              DOSSIER
+      {/* Brand & Branch Stamp with Illustrated Cream Leaf Banner */}
+      <div className="header-brand-container">
+        <div className="header-brand">
+          <div className="brand-logo-icon">
+            <img
+              src="/assets/scrapbook/badge_paw.png"
+              alt="Logo"
+              className="brand-paw-img"
+            />
+          </div>
+          <div className="brand-text">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="brand-title">Absence</span>
+              <span className="brand-dossier-pill">DOSSIER</span>
+            </div>
+            <span className="brand-subtitle">
+              <img
+                src="/assets/scrapbook/washi_leaves_sage.png"
+                alt="leaf"
+                style={{ height: 12, marginRight: 4, opacity: 0.8 }}
+              />
+              {orgName}
             </span>
           </div>
-          <span className="brand-subtitle">
-            <Building2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-            {orgName}
-          </span>
         </div>
       </div>
 
-      {/* Notebook Index Tabs */}
-      <nav className="mode-nav">
+      {/* Illustrated Scrapbook Folder Index Tabs */}
+      <nav className="mode-nav-tabs">
         <button
-          className={`mode-nav-btn ${currentMode === 'kiosk' ? 'active' : ''}`}
+          className={`scrapbook-tab-btn ${currentMode === 'kiosk' ? 'active' : ''}`}
           onClick={() => onSelectMode('kiosk')}
+          title="Buka Kiosk Presensi QR"
         >
-          <QrCode size={18} />
-          <span>Kiosk Presensi</span>
+          <img
+            src="/assets/scrapbook/tab_home.png"
+            alt="Kiosk Presensi"
+            className="tab-illustrated-img"
+          />
+          <span className="tab-label">Kiosk</span>
         </button>
 
         <button
-          className={`mode-nav-btn ${currentMode === 'member' ? 'active' : ''}`}
+          className={`scrapbook-tab-btn ${currentMode === 'member' ? 'active' : ''}`}
           onClick={() => onSelectMode('member')}
+          title="Buka Portal Karyawan"
         >
-          <User size={18} />
-          <span>Portal Karyawan</span>
+          <img
+            src="/assets/scrapbook/tab_member.png"
+            alt="Portal Karyawan"
+            className="tab-illustrated-img"
+          />
+          <span className="tab-label">Karyawan</span>
         </button>
 
         <button
-          className={`mode-nav-btn ${currentMode === 'admin' ? 'active' : ''}`}
+          className={`scrapbook-tab-btn ${currentMode === 'admin' ? 'active' : ''}`}
           onClick={() => onSelectMode('admin')}
+          title="Buka Admin Console (Perlu Password)"
         >
-          {isAdminUnlocked ? <Unlock size={18} color="#244E52" /> : <Lock size={18} />}
-          <span>Admin</span>
-          {!isAdminUnlocked && <span className="nav-lock-badge">Terkunci</span>}
+          <img
+            src="/assets/scrapbook/tab_admin.png"
+            alt="Admin"
+            className="tab-illustrated-img"
+          />
+          <div className="tab-label-with-lock">
+            <span className="tab-label">Admin</span>
+            {!isAdminUnlocked && (
+              <span className="nav-lock-mini-tag">
+                <Lock size={10} />
+              </span>
+            )}
+          </div>
         </button>
 
         {isAdminUnlocked && (

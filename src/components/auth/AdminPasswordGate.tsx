@@ -35,10 +35,43 @@ export const AdminPasswordGate: React.FC<AdminPasswordGateProps> = ({
 
   return (
     <div className="modal-backdrop" onClick={onCancel}>
-      <div className="modal-card admin-gate-card" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-card admin-gate-card" style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+        <img
+          src="/assets/scrapbook/clip_binder_blue.png"
+          alt="Blue Clip"
+          style={{
+            position: 'absolute',
+            top: -18,
+            left: 24,
+            width: 42,
+            zIndex: 10,
+            transform: 'rotate(-10deg)',
+            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.25))',
+            pointerEvents: 'none'
+          }}
+        />
+        <img
+          src="/assets/scrapbook/washi_hearts_peach.png"
+          alt="Peach Washi"
+          style={{
+            position: 'absolute',
+            top: -12,
+            right: 24,
+            width: 85,
+            zIndex: 10,
+            transform: 'rotate(4deg)',
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
+            pointerEvents: 'none'
+          }}
+        />
+
         <div className="gate-header">
           <div className="gate-icon-box">
-            <Lock size={28} color="#244E52" />
+            <img
+              src="/assets/scrapbook/icon_gear.png"
+              alt="Lock"
+              style={{ width: 30, height: 30, objectFit: 'contain' }}
+            />
           </div>
           <button className="btn-close" onClick={onCancel} title="Batal & Kembali">
             <X size={20} />

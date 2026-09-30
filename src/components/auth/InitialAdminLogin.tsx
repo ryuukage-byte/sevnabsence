@@ -32,11 +32,44 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
 
   return (
     <div className="auth-fullscreen-container">
-      <div className="auth-card">
+      <div className="auth-card" style={{ position: 'relative' }}>
+        <img
+          src="/assets/scrapbook/clip_binder_bronze.png"
+          alt="Bronze Clip"
+          style={{
+            position: 'absolute',
+            top: -20,
+            left: 28,
+            width: 46,
+            zIndex: 10,
+            transform: 'rotate(-10deg)',
+            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.28))',
+            pointerEvents: 'none'
+          }}
+        />
+        <img
+          src="/assets/scrapbook/washi_stars_blue.png"
+          alt="Stars Washi Tape"
+          style={{
+            position: 'absolute',
+            top: -14,
+            right: 28,
+            width: 95,
+            zIndex: 10,
+            transform: 'rotate(4deg)',
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
+            pointerEvents: 'none'
+          }}
+        />
+
         {/* Brand & Setup Header */}
         <div className="auth-header">
           <div className="auth-badge-icon">
-            <Tablet size={32} color="#244E52" />
+            <img
+              src="/assets/scrapbook/badge_paw.png"
+              alt="Paw"
+              style={{ width: 34, height: 34, objectFit: 'contain' }}
+            />
           </div>
           <span className="auth-tag">
             <ShieldCheck size={14} /> Aktivasi Perangkat Baru

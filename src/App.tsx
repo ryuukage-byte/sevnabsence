@@ -122,13 +122,27 @@ export function App() {
           <div className="admin-container">
             {/* Admin Sidebar Navigation */}
             <aside className="admin-sidebar">
+              {/* Illustrated Header Banner */}
+              <div className="admin-sidebar-banner-wrap">
+                <img
+                  src="/assets/scrapbook/banner_orange_paw.png"
+                  alt="Admin Banner"
+                  className="admin-sidebar-banner-img"
+                />
+                <span className="admin-sidebar-banner-text">KONSOL ADMIN</span>
+              </div>
+
               <span className="sidebar-heading">Menu Utama</span>
 
               <button
                 className={`admin-nav-item ${adminTab === 'today' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('today')}
               >
-                <Activity size={18} />
+                <img
+                  src="/assets/scrapbook/icon_home.png"
+                  alt="Monitoring"
+                  className="admin-nav-icon-img"
+                />
                 <span>Monitoring Hari Ini</span>
               </button>
 
@@ -136,7 +150,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'members' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('members')}
               >
-                <Users size={18} />
+                <img
+                  src="/assets/scrapbook/icon_user.png"
+                  alt="Karyawan"
+                  className="admin-nav-icon-img"
+                />
                 <span>Data Karyawan & QR</span>
               </button>
 
@@ -144,7 +162,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'schedule' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('schedule')}
               >
-                <Calendar size={18} />
+                <img
+                  src="/assets/scrapbook/icon_folder.png"
+                  alt="Jadwal"
+                  className="admin-nav-icon-img"
+                />
                 <span>Matriks Jadwal</span>
               </button>
 
@@ -152,7 +174,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'shifts' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('shifts')}
               >
-                <Layers size={18} />
+                <img
+                  src="/assets/scrapbook/icon_star.png"
+                  alt="Shift"
+                  className="admin-nav-icon-img"
+                />
                 <span>Shift Kerja & Toleransi</span>
               </button>
 
@@ -160,7 +186,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'attendance' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('attendance')}
               >
-                <Clock size={18} />
+                <img
+                  src="/assets/scrapbook/badge_bell.png"
+                  alt="Audit"
+                  className="admin-nav-icon-img"
+                />
                 <span>Log & Audit Presensi</span>
               </button>
 
@@ -172,7 +202,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'reports' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('reports')}
               >
-                <BarChart3 size={18} />
+                <img
+                  src="/assets/scrapbook/icon_sparkle.png"
+                  alt="Laporan"
+                  className="admin-nav-icon-img"
+                />
                 <span>Laporan & Ekspor CSV</span>
               </button>
 
@@ -180,7 +214,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'settings' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('settings')}
               >
-                <Settings size={18} />
+                <img
+                  src="/assets/scrapbook/icon_gear.png"
+                  alt="Pengaturan"
+                  className="admin-nav-icon-img"
+                />
                 <span>Pengaturan Organisasi</span>
               </button>
 

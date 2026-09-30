@@ -178,6 +178,28 @@ export const ScannerKiosk: React.FC = () => {
     <div className="kiosk-container">
       {/* Outer Adventure Scrapbook Leather Binder */}
       <div className="scrapbook-leather-binder">
+        {/* Binder Corner Accents & Stickers */}
+        <img
+          src="/assets/scrapbook/clip_binder_bronze.png"
+          alt="Bronze Binder Clip"
+          className="binder-corner-clip-left"
+        />
+        <img
+          src="/assets/scrapbook/washi_floral_green.png"
+          alt="Floral Washi Tape"
+          className="binder-top-washi"
+        />
+        <img
+          src="/assets/scrapbook/sticker_bunny_kawaii.png"
+          alt="Bunny Sticker"
+          className="binder-corner-bunny"
+        />
+        <img
+          src="/assets/scrapbook/sticker_cloud_stars.png"
+          alt="Cloud Stars"
+          className="binder-corner-cloud"
+        />
+
         {/* Leather Stitching Trim */}
         <div className="binder-stitch-outer">
           {/* Ring Binder / Grommet Spine on Left */}
@@ -190,21 +212,38 @@ export const ScannerKiosk: React.FC = () => {
 
           {/* Main Cream Graph Paper Sheet */}
           <div className="scrapbook-inner-sheet">
-            {/* Hanging Luggage Tag Bookmark at Top Right */}
-            <div className="luggage-tag-bookmark">
-              <div className="luggage-tag-string" />
-              <div className="luggage-tag-body">
-                <div className="luggage-tag-grommet" />
+            {/* Hanging Illustrated Luggage Tag Bookmark */}
+            <div className="luggage-tag-bookmark-wrap">
+              <img
+                src="/assets/scrapbook/panel_luggage_tag.png"
+                alt="Luggage Tag"
+                className="luggage-tag-img"
+              />
+              <div className="luggage-tag-overlay-text">
                 <span className="luggage-tag-title">CABANG RESMI</span>
                 <span className="luggage-tag-brand">{org.branch_name}</span>
-                <div className="luggage-tag-checkers" />
               </div>
             </div>
 
             {/* Faint Paw Print Stamps Across the Sheet */}
-            <span className="paw-print-stamp" style={{ top: 70, left: 240, transform: 'rotate(25deg)' }}>🐾</span>
-            <span className="paw-print-stamp" style={{ top: 120, left: 320, transform: 'rotate(40deg)' }}>🐾</span>
-            <span className="paw-print-stamp" style={{ top: 170, left: 410, transform: 'rotate(30deg)' }}>🐾</span>
+            <img
+              src="/assets/scrapbook/sticker_paw_orange.png"
+              alt="paw"
+              className="paw-print-stamp"
+              style={{ top: 70, left: 240, width: 32, opacity: 0.28, transform: 'rotate(25deg)' }}
+            />
+            <img
+              src="/assets/scrapbook/sticker_paw_orange.png"
+              alt="paw"
+              className="paw-print-stamp"
+              style={{ top: 120, left: 320, width: 28, opacity: 0.22, transform: 'rotate(40deg)' }}
+            />
+            <img
+              src="/assets/scrapbook/sticker_paw_orange.png"
+              alt="paw"
+              className="paw-print-stamp"
+              style={{ top: 170, left: 410, width: 34, opacity: 0.25, transform: 'rotate(30deg)' }}
+            />
 
             {/* Dossier Header Bar */}
             <div className="dossier-header-bar">
@@ -212,14 +251,28 @@ export const ScannerKiosk: React.FC = () => {
                 <div className="dossier-title-group">
                   <h1 className="dossier-main-title">柯哒基 • Koji Dossier</h1>
                   <span className="dossier-sub-badge">KIOSK PRESENSI v1.0</span>
+                  <img
+                    src="/assets/scrapbook/bow_coral.png"
+                    alt="Coral Bow"
+                    style={{ height: 26, marginLeft: 8 }}
+                  />
                 </div>
                 <p className="dossier-tagline">
                   “Siap memotret dan memvalidasi presensi seluruh staf dengan cepat, aman, dan tanpa manipulasi jam!”
                 </p>
                 <div className="dossier-tags-row">
-                  <span className="dossier-pill-tag">✦ Presensi Instan 0.3 Detik ✦</span>
-                  <span className="dossier-pill-tag">✦ Kamera Depan Mirror ✦</span>
-                  <span className="dossier-pill-tag">✦ Anti-Titip Absen ✦</span>
+                  <span className="dossier-pill-tag">
+                    <img src="/assets/scrapbook/icon_sparkle.png" alt="*" style={{ width: 14, height: 14 }} />
+                    Presensi Instan 0.3 Detik
+                  </span>
+                  <span className="dossier-pill-tag">
+                    <img src="/assets/scrapbook/icon_sparkle.png" alt="*" style={{ width: 14, height: 14 }} />
+                    Kamera Depan Mirror
+                  </span>
+                  <span className="dossier-pill-tag">
+                    <img src="/assets/scrapbook/icon_sparkle.png" alt="*" style={{ width: 14, height: 14 }} />
+                    Anti-Titip Absen
+                  </span>
                 </div>
               </div>
 
@@ -241,7 +294,11 @@ export const ScannerKiosk: React.FC = () => {
                     }}
                   >
                     <div className="btn-icon-wrapper">
-                      <LogIn size={32} />
+                      <img
+                        src="/assets/scrapbook/btn_green_play.png"
+                        alt="Play"
+                        className="btn-illustrated-stamp"
+                      />
                     </div>
                     <div className="btn-text-wrapper">
                       <span className="btn-label">PRESENSI MASUK</span>
@@ -258,7 +315,11 @@ export const ScannerKiosk: React.FC = () => {
                     }}
                   >
                     <div className="btn-icon-wrapper">
-                      <LogOut size={32} />
+                      <img
+                        src="/assets/scrapbook/btn_orange_plus.png"
+                        alt="Plus"
+                        className="btn-illustrated-stamp"
+                      />
                     </div>
                     <div className="btn-text-wrapper">
                       <span className="btn-label">PRESENSI PULANG</span>
@@ -267,26 +328,38 @@ export const ScannerKiosk: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Illustrated Mascot Card */}
+                {/* Illustrated Mascot Card with Dialogue Balloon Frame */}
                 <div className="kiosk-mascot-card">
                   <Mascot state={mascotState} size={135} />
-                  <div className="mascot-speech">
-                    <span className="mascot-name">Koji the Timekeeper</span>
-                    <p className="mascot-text">
-                      {mascotState === 'scanning' && `Arahkan kartu QR Anda ke kamera untuk presensi ${action}...`}
-                      {mascotState === 'validating' && 'Memeriksa keabsahan kode QR di database...'}
-                      {mascotState === 'success' && 'Presensi tercatat sukses! Selamat beraktivitas!'}
-                      {mascotState === 'duplicate' && 'Ups! Presensi Anda sudah dicatat sebelumnya.'}
-                      {mascotState === 'error' && 'Kode tidak terbaca atau terjadi kendala jaringan.'}
-                      {mascotState === 'idle' && 'Silakan tunjukkan kartu QR Anda ke kamera.'}
-                    </p>
+                  <div className="mascot-speech-bubble-container">
+                    <img
+                      src="/assets/scrapbook/panel_speech_bubble.png"
+                      alt="Speech Frame"
+                      className="speech-bubble-bg-img"
+                    />
+                    <div className="mascot-speech-content">
+                      <span className="mascot-name">Koji the Timekeeper</span>
+                      <p className="mascot-text">
+                        {mascotState === 'scanning' && `Arahkan kartu QR Anda ke kamera untuk presensi ${action}...`}
+                        {mascotState === 'validating' && 'Memeriksa keabsahan kode QR di database...'}
+                        {mascotState === 'success' && 'Presensi tercatat sukses! Selamat beraktivitas!'}
+                        {mascotState === 'duplicate' && 'Ups! Presensi Anda sudah dicatat sebelumnya.'}
+                        {mascotState === 'error' && 'Kode tidak terbaca atau terjadi kendala jaringan.'}
+                        {mascotState === 'idle' && 'Silakan tunjukkan kartu QR Anda ke kamera.'}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 {/* Quick Demo Simulator Stamps */}
                 <div className="kiosk-demo-simulator">
                   <div className="simulator-title">
-                    <RefreshCw size={14} /> Simulasi Scan Cepat (Klik Kartu Karyawan Demo):
+                    <img
+                      src="/assets/scrapbook/clip_pushpin_yellow.png"
+                      alt="Pin"
+                      style={{ width: 18, height: 18 }}
+                    />
+                    Simulasi Scan Cepat (Klik Kartu Karyawan Demo):
                   </div>
                   <div className="simulator-buttons">
                     {demoMembers.map((m) => (
@@ -296,6 +369,11 @@ export const ScannerKiosk: React.FC = () => {
                         onClick={() => handleManualDemoScan(m.active_token || '')}
                         title={`Scan kartu ${m.full_name}`}
                       >
+                        <img
+                          src="/assets/scrapbook/icon_user.png"
+                          alt="user"
+                          style={{ width: 14, height: 14, marginRight: 4 }}
+                        />
                         Scan {m.full_name.split(' ')[0]}
                       </button>
                     ))}
@@ -307,12 +385,27 @@ export const ScannerKiosk: React.FC = () => {
               <div className="kiosk-camera-panel">
                 <div className="polaroid-camera-card">
                   {/* Decorative Washi Tape & Brass Paperclip Pins */}
-                  <div className="polaroid-washi-tape-pin" />
-                  <div className="polaroid-paperclip-pin" />
+                  <img
+                    src="/assets/scrapbook/clip_binder_blue.png"
+                    alt="Blue Clip"
+                    className="polaroid-clip-img"
+                  />
+                  <img
+                    src="/assets/scrapbook/washi_hearts_peach.png"
+                    alt="Peach Washi"
+                    className="polaroid-tape-img"
+                  />
 
                   {/* Camera Viewport Screen */}
                   <div className="polaroid-viewport-screen">
                     <div id="kiosk-reader-view" className="kiosk-camera-viewport" />
+
+                    {/* Illustrated Polaroid Cutout Frame Overlay */}
+                    <img
+                      src="/assets/scrapbook/polaroid_frame.png"
+                      alt="Polaroid Frame"
+                      className="polaroid-diecut-frame-overlay"
+                    />
 
                     {!scanResult && !cameraError && (
                       <div className="scanner-reticle">
@@ -399,10 +492,20 @@ export const ScannerKiosk: React.FC = () => {
               </div>
             </div>
 
-            {/* Clothesline of Hanging Recent Presensi Polaroids (Matching Image 2) */}
+            {/* Clothesline of Hanging Recent Presensi Polaroids with Real Paperclips */}
             <div className="clothesline-wrapper">
               <div className="clothesline-header">
-                <span>✦ Presensi Terkini Hari Ini (Live Stream) ✦</span>
+                <img
+                  src="/assets/scrapbook/icon_sparkle.png"
+                  alt="*"
+                  style={{ width: 14, height: 14 }}
+                />
+                <span>Presensi Terkini Hari Ini (Live Stream)</span>
+                <img
+                  src="/assets/scrapbook/icon_sparkle.png"
+                  alt="*"
+                  style={{ width: 14, height: 14 }}
+                />
               </div>
               <div className="clothesline-string" />
               <div className="clothesline-photos-row">
@@ -424,7 +527,11 @@ export const ScannerKiosk: React.FC = () => {
                         className="hanging-polaroid-item"
                         style={{ transform: `rotate(${rot})` }}
                       >
-                        <div className="wooden-clothespin" />
+                        <img
+                          src="/assets/scrapbook/clip_paperclip_bronze.png"
+                          alt="Clip"
+                          className="wooden-clothespin-img"
+                        />
                         <div className="mini-polaroid-img-box">
                           {member?.avatar_url ? (
                             <img
@@ -451,7 +558,11 @@ export const ScannerKiosk: React.FC = () => {
                         className="hanging-polaroid-item"
                         style={{ transform: `rotate(${rot})` }}
                       >
-                        <div className="wooden-clothespin" />
+                        <img
+                          src="/assets/scrapbook/clip_paperclip_bronze.png"
+                          alt="Clip"
+                          className="wooden-clothespin-img"
+                        />
                         <div className="mini-polaroid-img-box">
                           {member.avatar_url ? (
                             <img
