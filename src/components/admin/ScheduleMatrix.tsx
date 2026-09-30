@@ -94,14 +94,10 @@ export const ScheduleMatrix: React.FC = () => {
         </div>
       </div>
 
-      {/* Legend styled with illustrated pin */}
+      {/* Legend */}
       <div className="matrix-legend">
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img
-            src="/assets/scrapbook/clip_pushpin_yellow.png"
-            alt="Pin"
-            style={{ width: 20, height: 20, marginRight: 6 }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Calendar size={16} strokeWidth={2} style={{ color: 'var(--text-muted)' }} />
           <span className="legend-title">Keterangan Shift:</span>
         </div>
         {shifts.map((s) => (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Unlock } from 'lucide-react';
+import { Scan, User, Shield, Lock, Unlock, Building2 } from 'lucide-react';
 
 export type AppMode = 'kiosk' | 'member' | 'admin';
 
@@ -20,89 +20,67 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <header className="app-header">
-      {/* Brand & Branch Stamp with Illustrated Cream Leaf Banner */}
+      {/* Brand & Branch Info with Tactile Tile */}
       <div className="header-brand-container">
         <div className="header-brand">
-          <div className="brand-logo-icon">
-            <img
-              src="/assets/scrapbook/badge_paw.png"
-              alt="Logo"
-              className="brand-paw-img"
-            />
+          <div className="tactile-tile-btn" title="Absence System">
+            <Scan size={20} strokeWidth={2.2} />
           </div>
           <div className="brand-text">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span className="brand-title">Absence</span>
-              <span className="brand-dossier-pill">DOSSIER</span>
+              <span className="brand-badge">SKEUO</span>
             </div>
             <span className="brand-subtitle">
-              <img
-                src="/assets/scrapbook/washi_leaves_sage.png"
-                alt="leaf"
-                style={{ height: 12, marginRight: 4, opacity: 0.8 }}
-              />
+              <Building2 size={12} strokeWidth={2} />
               {orgName}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Illustrated Scrapbook Folder Index Tabs */}
-      <nav className="mode-nav-tabs">
+      {/* Modern Skeuomorphic Segmented Control */}
+      <nav className="mode-nav-segmented">
         <button
-          className={`scrapbook-tab-btn ${currentMode === 'kiosk' ? 'active' : ''}`}
+          className={`mode-nav-btn ${currentMode === 'kiosk' ? 'active' : ''}`}
           onClick={() => onSelectMode('kiosk')}
-          title="Buka Kiosk Presensi QR"
+          title="Mode Kiosk Presensi Kamera"
         >
-          <img
-            src="/assets/scrapbook/tab_home.png"
-            alt="Kiosk Presensi"
-            className="tab-illustrated-img"
-          />
-          <span className="tab-label">Kiosk</span>
+          <Scan size={17} strokeWidth={2} />
+          <span>Kiosk</span>
         </button>
 
         <button
-          className={`scrapbook-tab-btn ${currentMode === 'member' ? 'active' : ''}`}
+          className={`mode-nav-btn ${currentMode === 'member' ? 'active' : ''}`}
           onClick={() => onSelectMode('member')}
-          title="Buka Portal Karyawan"
+          title="Portal Mandiri Karyawan"
         >
-          <img
-            src="/assets/scrapbook/tab_member.png"
-            alt="Portal Karyawan"
-            className="tab-illustrated-img"
-          />
-          <span className="tab-label">Karyawan</span>
+          <User size={17} strokeWidth={2} />
+          <span>Karyawan</span>
         </button>
 
         <button
-          className={`scrapbook-tab-btn ${currentMode === 'admin' ? 'active' : ''}`}
+          className={`mode-nav-btn ${currentMode === 'admin' ? 'active' : ''}`}
           onClick={() => onSelectMode('admin')}
-          title="Buka Admin Console (Perlu Password)"
+          title="Panel Administrator (Perlu Sandi)"
         >
-          <img
-            src="/assets/scrapbook/tab_admin.png"
-            alt="Admin"
-            className="tab-illustrated-img"
-          />
-          <div className="tab-label-with-lock">
-            <span className="tab-label">Admin</span>
-            {!isAdminUnlocked && (
-              <span className="nav-lock-mini-tag">
-                <Lock size={10} />
-              </span>
-            )}
-          </div>
+          {isAdminUnlocked ? (
+            <Unlock size={17} strokeWidth={2} color="#10B981" />
+          ) : (
+            <Shield size={17} strokeWidth={2} />
+          )}
+          <span>Admin</span>
+          {!isAdminUnlocked && <span className="nav-lock-mini-badge">Kunci</span>}
         </button>
 
         {isAdminUnlocked && (
           <button
             className="btn-lock-session"
             onClick={onLockAdmin}
-            title="Kunci sesi admin dan amankan tablet kembali ke Kiosk"
+            title="Kunci sesi admin dan kembali ke Kiosk"
           >
-            <Lock size={14} />
-            <span>Kunci Admin</span>
+            <Lock size={13} strokeWidth={2.2} />
+            <span>Kunci</span>
           </button>
         )}
       </nav>

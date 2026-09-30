@@ -122,27 +122,13 @@ export function App() {
           <div className="admin-container">
             {/* Admin Sidebar Navigation */}
             <aside className="admin-sidebar">
-              {/* Illustrated Header Banner */}
-              <div className="admin-sidebar-banner-wrap">
-                <img
-                  src="/assets/scrapbook/banner_orange_paw.png"
-                  alt="Admin Banner"
-                  className="admin-sidebar-banner-img"
-                />
-                <span className="admin-sidebar-banner-text">KONSOL ADMIN</span>
-              </div>
-
               <span className="sidebar-heading">Menu Utama</span>
 
               <button
                 className={`admin-nav-item ${adminTab === 'today' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('today')}
               >
-                <img
-                  src="/assets/scrapbook/icon_home.png"
-                  alt="Monitoring"
-                  className="admin-nav-icon-img"
-                />
+                <Activity size={18} strokeWidth={2} />
                 <span>Monitoring Hari Ini</span>
               </button>
 
@@ -150,11 +136,7 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'members' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('members')}
               >
-                <img
-                  src="/assets/scrapbook/icon_user.png"
-                  alt="Karyawan"
-                  className="admin-nav-icon-img"
-                />
+                <Users size={18} strokeWidth={2} />
                 <span>Data Karyawan & QR</span>
               </button>
 
@@ -162,11 +144,7 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'schedule' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('schedule')}
               >
-                <img
-                  src="/assets/scrapbook/icon_folder.png"
-                  alt="Jadwal"
-                  className="admin-nav-icon-img"
-                />
+                <Calendar size={18} strokeWidth={2} />
                 <span>Matriks Jadwal</span>
               </button>
 
@@ -174,11 +152,7 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'shifts' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('shifts')}
               >
-                <img
-                  src="/assets/scrapbook/icon_star.png"
-                  alt="Shift"
-                  className="admin-nav-icon-img"
-                />
+                <Layers size={18} strokeWidth={2} />
                 <span>Shift Kerja & Toleransi</span>
               </button>
 
@@ -186,15 +160,11 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'attendance' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('attendance')}
               >
-                <img
-                  src="/assets/scrapbook/badge_bell.png"
-                  alt="Audit"
-                  className="admin-nav-icon-img"
-                />
+                <Clock size={18} strokeWidth={2} />
                 <span>Log & Audit Presensi</span>
               </button>
 
-              <span className="sidebar-heading" style={{ marginTop: 12 }}>
+              <span className="sidebar-heading" style={{ marginTop: 14 }}>
                 Laporan & Sistem
               </span>
 
@@ -202,11 +172,7 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'reports' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('reports')}
               >
-                <img
-                  src="/assets/scrapbook/icon_sparkle.png"
-                  alt="Laporan"
-                  className="admin-nav-icon-img"
-                />
+                <BarChart3 size={18} strokeWidth={2} />
                 <span>Laporan & Ekspor CSV</span>
               </button>
 
@@ -214,18 +180,14 @@ export function App() {
                 className={`admin-nav-item ${adminTab === 'settings' ? 'active' : ''}`}
                 onClick={() => handleSelectAdminTab('settings')}
               >
-                <img
-                  src="/assets/scrapbook/icon_gear.png"
-                  alt="Pengaturan"
-                  className="admin-nav-icon-img"
-                />
+                <Settings size={18} strokeWidth={2} />
                 <span>Pengaturan Organisasi</span>
               </button>
 
               {/* Quick Lock & Return to Kiosk */}
               <div className="sidebar-lock-box">
                 <button className="btn-sidebar-lock" onClick={handleLockAdmin}>
-                  <Lock size={16} />
+                  <Lock size={15} strokeWidth={2.2} />
                   <span>Kunci Admin & Ke Kiosk</span>
                 </button>
               </div>

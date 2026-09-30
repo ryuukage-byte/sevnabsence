@@ -7,16 +7,14 @@ import {
   Camera,
   AlertCircle,
   CheckCircle2,
-  RefreshCw,
-  Tablet,
   Clock,
-  Info,
   Sparkles,
-  Paperclip,
-  Check
+  Info,
+  Check,
+  User,
+  Zap
 } from 'lucide-react';
 import { DigitalClock } from '../common/DigitalClock';
-import { Mascot, type MascotState } from '../common/Mascot';
 import { attendanceService } from '../../services/attendanceService';
 import { playSuccessChime, playWarningChime, playErrorChime } from '../../services/audioService';
 import type { AttendanceAction, ScanResult, Member, AttendanceRecord } from '../../types/attendance';
@@ -26,7 +24,6 @@ export const ScannerKiosk: React.FC = () => {
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-  const [mascotState, setMascotState] = useState<MascotState>('scanning');
   const [resetTimer, setResetTimer] = useState<number | null>(null);
   const [demoMembers, setDemoMembers] = useState<Member[]>([]);
   const [todayRecords, setTodayRecords] = useState<AttendanceRecord[]>([]);
@@ -35,7 +32,6 @@ export const ScannerKiosk: React.FC = () => {
   const isProcessingRef = useRef(false);
   const actionRef = useRef<AttendanceAction>(action);
 
-  // Keep actionRef in sync with state
   useEffect(() => {
     actionRef.current = action;
   }, [action]);
@@ -49,7 +45,7 @@ export const ScannerKiosk: React.FC = () => {
     loadData();
   }, []);
 
-  // Initialize Camera ONCE on Mount
+  // Initialize camera
   useEffect(() => {
     let isMounted = true;
     const scannerId = 'kiosk-reader-view';
@@ -68,7 +64,7 @@ export const ScannerKiosk: React.FC = () => {
 
         const config = {
           fps: 10,
-          qrbox: { width: 240, height: 240 },
+          qrbox: { width: 250, height: 250 },
           aspectRatio: 1.0
         };
 
@@ -85,7 +81,6 @@ export const ScannerKiosk: React.FC = () => {
 
         if (isMounted) {
           setCameraActive(true);
-          setMascotState('scanning');
         }
       } catch (err: unknown) {
         if (isMounted) {
@@ -95,7 +90,6 @@ export const ScannerKiosk: React.FC = () => {
               ? err.message
               : 'Kamera depan tidak dapat diakses atau izin ditolak';
           setCameraError(msg);
-          setMascotState('idle');
         }
       }
     }
@@ -115,11 +109,10 @@ export const ScannerKiosk: React.FC = () => {
     };
   }, []);
 
-  // Handle QR scan resolution
+  // Handle QR detection
   const handleQRDetected = async (token: string) => {
     if (isProcessingRef.current) return;
     isProcessingRef.current = true;
-    setMascotState('validating');
 
     try {
       const currentAction = actionRef.current;
@@ -128,22 +121,19 @@ export const ScannerKiosk: React.FC = () => {
       loadData();
 
       if (result.success) {
-        setMascotState('success');
         playSuccessChime();
         confetti({
-          particleCount: 50,
-          spread: 60,
+          particleCount: 40,
+          spread: 55,
           origin: { y: 0.6 }
         });
       } else if (result.code.includes('DUPLICATE')) {
-        setMascotState('duplicate');
         playWarningChime();
       } else {
-        setMascotState('error');
         playErrorChime();
       }
 
-      // Auto-reset countdown (3 seconds)
+      // Auto-reset timer (3s)
       let countdown = 3;
       setResetTimer(countdown);
       const interval = setInterval(() => {
@@ -152,13 +142,11 @@ export const ScannerKiosk: React.FC = () => {
         if (countdown <= 0) {
           clearInterval(interval);
           setScanResult(null);
-          setMascotState('scanning');
           setResetTimer(null);
           isProcessingRef.current = false;
         }
       }, 1000);
     } catch {
-      setMascotState('error');
       playErrorChime();
       isProcessingRef.current = false;
     }
@@ -170,418 +158,218 @@ export const ScannerKiosk: React.FC = () => {
   };
 
   const org = attendanceService.getOrganization();
-
-  // Mini helper to find member details
   const getMemberById = (id: string) => demoMembers.find((m) => m.id === id);
 
   return (
     <div className="kiosk-container">
-      {/* Outer Adventure Scrapbook Leather Binder */}
-      <div className="scrapbook-leather-binder">
-        {/* Binder Corner Accents & Stickers */}
-        <img
-          src="/assets/scrapbook/clip_binder_bronze.png"
-          alt="Bronze Binder Clip"
-          className="binder-corner-clip-left"
-        />
-        <img
-          src="/assets/scrapbook/washi_floral_green.png"
-          alt="Floral Washi Tape"
-          className="binder-top-washi"
-        />
-        <img
-          src="/assets/scrapbook/sticker_bunny_kawaii.png"
-          alt="Bunny Sticker"
-          className="binder-corner-bunny"
-        />
-        <img
-          src="/assets/scrapbook/sticker_cloud_stars.png"
-          alt="Cloud Stars"
-          className="binder-corner-cloud"
-        />
-
-        {/* Leather Stitching Trim */}
-        <div className="binder-stitch-outer">
-          {/* Ring Binder / Grommet Spine on Left */}
-          <div className="binder-spine-strip">
-            <div className="grommet-eyelet"><div className="grommet-ring" /></div>
-            <div className="grommet-eyelet"><div className="grommet-ring" /></div>
-            <div className="grommet-eyelet"><div className="grommet-ring" /></div>
-            <div className="grommet-eyelet"><div className="grommet-ring" /></div>
+      <div className="kiosk-card-frame">
+        {/* Kiosk Header Bar */}
+        <div className="kiosk-header-bar">
+          <div>
+            <div className="kiosk-brand-title">
+              <span>Kiosk Presensi Mandiri</span>
+              <span className="kiosk-badge-pill">MODERN SKEUO v1.0</span>
+            </div>
+            <p className="kiosk-subtitle">
+              Sistem absensi cepat & aman cabang <strong>{org.display_name}</strong>. Cukup tunjukkan kartu QR ke kamera.
+            </p>
           </div>
 
-          {/* Main Cream Graph Paper Sheet */}
-          <div className="scrapbook-inner-sheet">
-            {/* Hanging Illustrated Luggage Tag Bookmark */}
-            <div className="luggage-tag-bookmark-wrap">
-              <img
-                src="/assets/scrapbook/panel_luggage_tag.png"
-                alt="Luggage Tag"
-                className="luggage-tag-img"
-              />
-              <div className="luggage-tag-overlay-text">
-                <span className="luggage-tag-title">CABANG RESMI</span>
-                <span className="luggage-tag-brand">{org.branch_name}</span>
-              </div>
+          {/* Minimalist Tactile Digital Clock */}
+          <DigitalClock />
+        </div>
+
+        {/* Main Grid: Actions & Viewfinder */}
+        <div className="kiosk-grid">
+          {/* Left Column: Action Selectors & Status */}
+          <div className="kiosk-left-panel">
+            {/* Tactile Action Buttons */}
+            <div className="action-buttons-group">
+              <button
+                className={`tactile-action-btn masuk ${action === 'MASUK' ? 'active' : ''}`}
+                onClick={() => {
+                  setAction('MASUK');
+                  setScanResult(null);
+                  isProcessingRef.current = false;
+                }}
+              >
+                <div className="action-icon-tile">
+                  <LogIn size={26} strokeWidth={2.4} />
+                </div>
+                <div>
+                  <span className="btn-title">PRESENSI MASUK</span>
+                  <span className="btn-subtext">Mulai jam kerja • Catat waktu hadir</span>
+                </div>
+              </button>
+
+              <button
+                className={`tactile-action-btn pulang ${action === 'PULANG' ? 'active' : ''}`}
+                onClick={() => {
+                  setAction('PULANG');
+                  setScanResult(null);
+                  isProcessingRef.current = false;
+                }}
+              >
+                <div className="action-icon-tile">
+                  <LogOut size={26} strokeWidth={2.4} />
+                </div>
+                <div>
+                  <span className="btn-title">PRESENSI PULANG</span>
+                  <span className="btn-subtext">Selesai dinas • Catat waktu pulang</span>
+                </div>
+              </button>
             </div>
 
-            {/* Faint Paw Print Stamps Across the Sheet */}
-            <img
-              src="/assets/scrapbook/sticker_paw_orange.png"
-              alt="paw"
-              className="paw-print-stamp"
-              style={{ top: 70, left: 240, width: 32, opacity: 0.28, transform: 'rotate(25deg)' }}
-            />
-            <img
-              src="/assets/scrapbook/sticker_paw_orange.png"
-              alt="paw"
-              className="paw-print-stamp"
-              style={{ top: 120, left: 320, width: 28, opacity: 0.22, transform: 'rotate(40deg)' }}
-            />
-            <img
-              src="/assets/scrapbook/sticker_paw_orange.png"
-              alt="paw"
-              className="paw-print-stamp"
-              style={{ top: 170, left: 410, width: 34, opacity: 0.25, transform: 'rotate(30deg)' }}
-            />
-
-            {/* Dossier Header Bar */}
-            <div className="dossier-header-bar">
+            {/* Status / Instructions Card */}
+            <div className="kiosk-status-card">
+              <div className="kiosk-status-icon">
+                <Camera size={22} strokeWidth={2} />
+              </div>
               <div>
-                <div className="dossier-title-group">
-                  <h1 className="dossier-main-title">柯哒基 • Koji Dossier</h1>
-                  <span className="dossier-sub-badge">KIOSK PRESENSI v1.0</span>
-                  <img
-                    src="/assets/scrapbook/bow_coral.png"
-                    alt="Coral Bow"
-                    style={{ height: 26, marginLeft: 8 }}
-                  />
-                </div>
-                <p className="dossier-tagline">
-                  “Siap memotret dan memvalidasi presensi seluruh staf dengan cepat, aman, dan tanpa manipulasi jam!”
-                </p>
-                <div className="dossier-tags-row">
-                  <span className="dossier-pill-tag">
-                    <img src="/assets/scrapbook/icon_sparkle.png" alt="*" style={{ width: 14, height: 14 }} />
-                    Presensi Instan 0.3 Detik
-                  </span>
-                  <span className="dossier-pill-tag">
-                    <img src="/assets/scrapbook/icon_sparkle.png" alt="*" style={{ width: 14, height: 14 }} />
-                    Kamera Depan Mirror
-                  </span>
-                  <span className="dossier-pill-tag">
-                    <img src="/assets/scrapbook/icon_sparkle.png" alt="*" style={{ width: 14, height: 14 }} />
-                    Anti-Titip Absen
-                  </span>
-                </div>
-              </div>
-
-              {/* Retro Scrapbook Desk Clock */}
-              <DigitalClock />
-            </div>
-
-            {/* Main Scrapbook Two-Column Grid */}
-            <div className="kiosk-main-grid">
-              {/* Left Column: Actions & Koji Character Sticker */}
-              <div className="kiosk-left-panel">
-                <div className="action-buttons-group">
-                  <button
-                    className={`action-btn action-masuk ${action === 'MASUK' ? 'active' : ''}`}
-                    onClick={() => {
-                      setAction('MASUK');
-                      setScanResult(null);
-                      isProcessingRef.current = false;
-                    }}
-                  >
-                    <div className="btn-icon-wrapper">
-                      <img
-                        src="/assets/scrapbook/btn_green_play.png"
-                        alt="Play"
-                        className="btn-illustrated-stamp"
-                      />
-                    </div>
-                    <div className="btn-text-wrapper">
-                      <span className="btn-label">PRESENSI MASUK</span>
-                      <span className="btn-subtext">Mulai jam kerja • Stempel Hadir</span>
-                    </div>
-                  </button>
-
-                  <button
-                    className={`action-btn action-pulang ${action === 'PULANG' ? 'active' : ''}`}
-                    onClick={() => {
-                      setAction('PULANG');
-                      setScanResult(null);
-                      isProcessingRef.current = false;
-                    }}
-                  >
-                    <div className="btn-icon-wrapper">
-                      <img
-                        src="/assets/scrapbook/btn_orange_plus.png"
-                        alt="Plus"
-                        className="btn-illustrated-stamp"
-                      />
-                    </div>
-                    <div className="btn-text-wrapper">
-                      <span className="btn-label">PRESENSI PULANG</span>
-                      <span className="btn-subtext">Selesai dinas • Istirahat & Pulang</span>
-                    </div>
-                  </button>
-                </div>
-
-                {/* Illustrated Mascot Card with Dialogue Balloon Frame */}
-                <div className="kiosk-mascot-card">
-                  <Mascot state={mascotState} size={135} />
-                  <div className="mascot-speech-bubble-container">
-                    <img
-                      src="/assets/scrapbook/panel_speech_bubble.png"
-                      alt="Speech Frame"
-                      className="speech-bubble-bg-img"
-                    />
-                    <div className="mascot-speech-content">
-                      <span className="mascot-name">Koji the Timekeeper</span>
-                      <p className="mascot-text">
-                        {mascotState === 'scanning' && `Arahkan kartu QR Anda ke kamera untuk presensi ${action}...`}
-                        {mascotState === 'validating' && 'Memeriksa keabsahan kode QR di database...'}
-                        {mascotState === 'success' && 'Presensi tercatat sukses! Selamat beraktivitas!'}
-                        {mascotState === 'duplicate' && 'Ups! Presensi Anda sudah dicatat sebelumnya.'}
-                        {mascotState === 'error' && 'Kode tidak terbaca atau terjadi kendala jaringan.'}
-                        {mascotState === 'idle' && 'Silakan tunjukkan kartu QR Anda ke kamera.'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Demo Simulator Stamps */}
-                <div className="kiosk-demo-simulator">
-                  <div className="simulator-title">
-                    <img
-                      src="/assets/scrapbook/clip_pushpin_yellow.png"
-                      alt="Pin"
-                      style={{ width: 18, height: 18 }}
-                    />
-                    Simulasi Scan Cepat (Klik Kartu Karyawan Demo):
-                  </div>
-                  <div className="simulator-buttons">
-                    {demoMembers.map((m) => (
-                      <button
-                        key={m.id}
-                        className="demo-scan-btn"
-                        onClick={() => handleManualDemoScan(m.active_token || '')}
-                        title={`Scan kartu ${m.full_name}`}
-                      >
-                        <img
-                          src="/assets/scrapbook/icon_user.png"
-                          alt="user"
-                          style={{ width: 14, height: 14, marginRight: 4 }}
-                        />
-                        Scan {m.full_name.split(' ')[0]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Front-Camera Framed as a Polaroid Photo */}
-              <div className="kiosk-camera-panel">
-                <div className="polaroid-camera-card">
-                  {/* Decorative Washi Tape & Brass Paperclip Pins */}
-                  <img
-                    src="/assets/scrapbook/clip_binder_blue.png"
-                    alt="Blue Clip"
-                    className="polaroid-clip-img"
-                  />
-                  <img
-                    src="/assets/scrapbook/washi_hearts_peach.png"
-                    alt="Peach Washi"
-                    className="polaroid-tape-img"
-                  />
-
-                  {/* Camera Viewport Screen */}
-                  <div className="polaroid-viewport-screen">
-                    <div id="kiosk-reader-view" className="kiosk-camera-viewport" />
-
-                    {/* Illustrated Polaroid Cutout Frame Overlay */}
-                    <img
-                      src="/assets/scrapbook/polaroid_frame.png"
-                      alt="Polaroid Frame"
-                      className="polaroid-diecut-frame-overlay"
-                    />
-
-                    {!scanResult && !cameraError && (
-                      <div className="scanner-reticle">
-                        <div className="reticle-corner top-left" />
-                        <div className="reticle-corner top-right" />
-                        <div className="reticle-corner bottom-left" />
-                        <div className="reticle-corner bottom-right" />
-                      </div>
-                    )}
-
-                    {cameraError && (
-                      <div className="camera-error-overlay">
-                        <AlertCircle size={44} color="#F59E0B" />
-                        <h3>Akses Kamera Belum Aktif</h3>
-                        <p>{cameraError}</p>
-                        <div className="camera-fallback-card">
-                          <Info size={16} />
-                          <span>
-                            Gunakan tombol <strong>Simulasi Scan Cepat</strong> di sebelah kiri untuk mencoba presensi.
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Scan Feedback Overlay */}
-                    {scanResult && (
-                      <div
-                        className={`scan-feedback-overlay ${
-                          scanResult.success ? 'feedback-success' : 'feedback-warning'
-                        }`}
-                      >
-                        <div className="feedback-content">
-                          {scanResult.success ? (
-                            <div className="feedback-icon success-icon">
-                              <CheckCircle2 size={54} color="#244E52" />
-                            </div>
-                          ) : (
-                            <div className="feedback-icon warning-icon">
-                              <AlertCircle size={54} color="#6D4E1F" />
-                            </div>
-                          )}
-
-                          <h2 className="feedback-title">
-                            {scanResult.success ? 'Berhasil Dicatat!' : 'Perhatian'}
-                          </h2>
-
-                          {scanResult.member_name && (
-                            <div className="feedback-member-name">{scanResult.member_name}</div>
-                          )}
-
-                          <p className="feedback-message">{scanResult.message}</p>
-
-                          {scanResult.timestamp && (
-                            <div className="feedback-meta">
-                              <Clock size={16} />
-                              <span>
-                                Waktu Server:{' '}
-                                {new Date(scanResult.timestamp).toLocaleTimeString('id-ID', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                  second: '2-digit'
-                                })}{' '}
-                                WIB
-                              </span>
-                            </div>
-                          )}
-
-                          {resetTimer !== null && (
-                            <div className="feedback-countdown">
-                              Layar pemindai siap kembali dalam {resetTimer} detik...
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Polaroid Bottom Caption Chin */}
-                  <div className="polaroid-chin-caption">
-                    <Camera size={18} color="#8B6F5A" />
-                    <span className="polaroid-chin-text">📸 Kartu QR Menghadap Kamera Depan</span>
-                  </div>
+                <div className="kiosk-status-title">Mode Aktif: Presensi {action}</div>
+                <div className="kiosk-status-text">
+                  Posisikan kartu QR karyawan di dalam kotak pemindai kamera depan. Presensi diproses dalam 0.3 detik.
                 </div>
               </div>
             </div>
 
-            {/* Clothesline of Hanging Recent Presensi Polaroids with Real Paperclips */}
-            <div className="clothesline-wrapper">
-              <div className="clothesline-header">
-                <img
-                  src="/assets/scrapbook/icon_sparkle.png"
-                  alt="*"
-                  style={{ width: 14, height: 14 }}
-                />
-                <span>Presensi Terkini Hari Ini (Live Stream)</span>
-                <img
-                  src="/assets/scrapbook/icon_sparkle.png"
-                  alt="*"
-                  style={{ width: 14, height: 14 }}
-                />
+            {/* Quick Demo Simulator */}
+            <div className="kiosk-demo-box">
+              <div className="demo-title">
+                <Zap size={14} strokeWidth={2.2} />
+                <span>Simulasi Cepat (Klik Kartu Demo):</span>
               </div>
-              <div className="clothesline-string" />
-              <div className="clothesline-photos-row">
-                {todayRecords.length > 0 ? (
-                  todayRecords.slice(-5).map((rec, index) => {
-                    const member = getMemberById(rec.member_id);
-                    const rotations = ['-2deg', '3deg', '-1deg', '2deg', '-3deg'];
-                    const rot = rotations[index % rotations.length];
-                    const time = rec.check_in_at
-                      ? new Date(rec.check_in_at).toLocaleTimeString('id-ID', {
+              <div className="demo-chips-grid">
+                {demoMembers.map((m) => (
+                  <button
+                    key={m.id}
+                    className="tactile-chip-btn"
+                    onClick={() => handleManualDemoScan(m.active_token || '')}
+                    title={`Scan ${m.full_name}`}
+                  >
+                    <User size={13} strokeWidth={2} />
+                    <span>{m.full_name.split(' ')[0]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Hardware Tablet Bezel Camera */}
+          <div className="kiosk-camera-bezel">
+            <div className="kiosk-camera-viewport">
+              <div id="kiosk-reader-view" />
+
+              {!scanResult && !cameraError && (
+                <div className="scanner-reticle">
+                  <div className="reticle-corner top-left" />
+                  <div className="reticle-corner top-right" />
+                  <div className="reticle-corner bottom-left" />
+                  <div className="reticle-corner bottom-right" />
+                  <div className="scanner-laser-line" />
+                </div>
+              )}
+
+              {cameraError && (
+                <div className="camera-error-overlay">
+                  <AlertCircle size={40} color="#F59E0B" strokeWidth={2} />
+                  <h3>Kamera Belum Aktif</h3>
+                  <p>{cameraError}</p>
+                  <p style={{ marginTop: 8, fontSize: '0.78rem', color: '#94A3B8' }}>
+                    Gunakan tombol Simulasi Cepat di sebelah kiri untuk menguji presensi tanpa webcam.
+                  </p>
+                </div>
+              )}
+
+              {/* Scan Feedback Overlay */}
+              {scanResult && (
+                <div
+                  className={`scan-feedback-overlay ${
+                    scanResult.success ? 'feedback-success' : 'feedback-warning'
+                  }`}
+                >
+                  <div className="feedback-content">
+                    <div className="feedback-icon-tile">
+                      {scanResult.success ? (
+                        <CheckCircle2 size={36} strokeWidth={2.5} />
+                      ) : (
+                        <AlertCircle size={36} strokeWidth={2.5} />
+                      )}
+                    </div>
+                    <h2 className="feedback-title">
+                      {scanResult.success ? 'Presensi Berhasil!' : 'Perhatian'}
+                    </h2>
+                    {scanResult.member_name && (
+                      <div className="feedback-member-name">{scanResult.member_name}</div>
+                    )}
+                    <p className="feedback-message">{scanResult.message}</p>
+                    {scanResult.timestamp && (
+                      <div style={{ marginTop: 8, fontSize: '0.82rem', opacity: 0.9 }}>
+                        Waktu Server:{' '}
+                        {new Date(scanResult.timestamp).toLocaleTimeString('id-ID', {
                           hour: '2-digit',
-                          minute: '2-digit'
-                        })
-                      : '--:--';
-
-                    return (
-                      <div
-                        key={rec.id}
-                        className="hanging-polaroid-item"
-                        style={{ transform: `rotate(${rot})` }}
-                      >
-                        <img
-                          src="/assets/scrapbook/clip_paperclip_bronze.png"
-                          alt="Clip"
-                          className="wooden-clothespin-img"
-                        />
-                        <div className="mini-polaroid-img-box">
-                          {member?.avatar_url ? (
-                            <img
-                              src={member.avatar_url}
-                              alt={member.full_name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <span>{member?.full_name.charAt(0) || '👤'}</span>
-                          )}
-                        </div>
-                        <span className="mini-polaroid-name">{member?.full_name || 'Karyawan'}</span>
-                        <span className="mini-polaroid-time">⏱️ {time} WIB</span>
+                          minute: '2-digit',
+                          second: '2-digit'
+                        })}{' '}
+                        WIB
                       </div>
-                    );
-                  })
-                ) : (
-                  demoMembers.slice(0, 4).map((member, index) => {
-                    const rotations = ['-2deg', '2deg', '-1deg', '3deg'];
-                    const rot = rotations[index % rotations.length];
-                    return (
-                      <div
-                        key={member.id}
-                        className="hanging-polaroid-item"
-                        style={{ transform: `rotate(${rot})` }}
-                      >
-                        <img
-                          src="/assets/scrapbook/clip_paperclip_bronze.png"
-                          alt="Clip"
-                          className="wooden-clothespin-img"
-                        />
-                        <div className="mini-polaroid-img-box">
-                          {member.avatar_url ? (
-                            <img
-                              src={member.avatar_url}
-                              alt={member.full_name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <span>{member.full_name.charAt(0)}</span>
-                          )}
-                        </div>
-                        <span className="mini-polaroid-name">{member.full_name}</span>
-                        <span className="mini-polaroid-time">Kartu ID Siap</span>
+                    )}
+                    {resetTimer !== null && (
+                      <div className="feedback-countdown">
+                        Siap memindai kembali dalam {resetTimer} detik...
                       </div>
-                    );
-                  })
-                )}
-              </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+
+            <div className="camera-bezel-footer">
+              <Camera size={16} strokeWidth={2} />
+              <span>Arahkan kode QR ke lensa kamera</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Attendance Stream */}
+        <div className="kiosk-recent-stream">
+          <div className="stream-header">
+            <Clock size={16} strokeWidth={2} />
+            <span>Presensi Terkini Hari Ini (Real-Time)</span>
+          </div>
+          <div className="stream-cards-row">
+            {todayRecords.length > 0 ? (
+              todayRecords.slice(-4).map((rec) => {
+                const member = getMemberById(rec.member_id);
+                const time = rec.check_in_at
+                  ? new Date(rec.check_in_at).toLocaleTimeString('id-ID', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : '--:--';
+                return (
+                  <div key={rec.id} className="stream-card-item">
+                    <div className="stream-avatar-circle">
+                      {member?.full_name.charAt(0) || '👤'}
+                    </div>
+                    <div>
+                      <span className="stream-name">{member?.full_name || 'Karyawan'}</span>
+                      <span className="stream-time">{time} WIB • Masuk</span>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              demoMembers.slice(0, 3).map((m) => (
+                <div key={m.id} className="stream-card-item" style={{ opacity: 0.65 }}>
+                  <div className="stream-avatar-circle">{m.full_name.charAt(0)}</div>
+                  <div>
+                    <span className="stream-name">{m.full_name}</span>
+                    <span className="stream-time">Siap presensi</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

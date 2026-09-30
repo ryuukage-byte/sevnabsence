@@ -33,12 +33,12 @@ export const DigitalClock: React.FC<DigitalClockProps> = ({ compact = false }) =
   }
 
   return (
-    <div className="digital-clock-card">
+    <div className="digital-clock-modern">
       <div className="clock-time-display">
         <span className="clock-digit">{hours}</span>
         <span className="clock-separator">:</span>
         <span className="clock-digit">{minutes}</span>
-        <span className="clock-separator clock-sub">:</span>
+        <span className="clock-separator" style={{ color: 'var(--text-muted)' }}>:</span>
         <span className="clock-digit clock-seconds">{seconds}</span>
       </div>
       <div className="clock-date-display">{dateStr}</div>

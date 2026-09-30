@@ -32,51 +32,15 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
 
   return (
     <div className="auth-fullscreen-container">
-      <div className="auth-card" style={{ position: 'relative' }}>
-        <img
-          src="/assets/scrapbook/clip_binder_bronze.png"
-          alt="Bronze Clip"
-          style={{
-            position: 'absolute',
-            top: -20,
-            left: 28,
-            width: 46,
-            zIndex: 10,
-            transform: 'rotate(-10deg)',
-            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.28))',
-            pointerEvents: 'none'
-          }}
-        />
-        <img
-          src="/assets/scrapbook/washi_stars_blue.png"
-          alt="Stars Washi Tape"
-          style={{
-            position: 'absolute',
-            top: -14,
-            right: 28,
-            width: 95,
-            zIndex: 10,
-            transform: 'rotate(4deg)',
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
-            pointerEvents: 'none'
-          }}
-        />
-
+      <div className="auth-card">
         {/* Brand & Setup Header */}
         <div className="auth-header">
           <div className="auth-badge-icon">
-            <img
-              src="/assets/scrapbook/badge_paw.png"
-              alt="Paw"
-              style={{ width: 34, height: 34, objectFit: 'contain' }}
-            />
+            <Tablet size={26} strokeWidth={2} />
           </div>
-          <span className="auth-tag">
-            <ShieldCheck size={14} /> Aktivasi Perangkat Baru
-          </span>
           <h1 className="auth-title">Setup Tablet Kiosk</h1>
           <p className="auth-subtitle">
-            Masuk sebagai Administrator untuk menghubungkan perangkat tablet ini ke cabang{' '}
+            Masuk sebagai Administrator untuk menghubungkan tablet ini ke cabang{' '}
             <strong>{org.display_name}</strong>.
           </p>
         </div>

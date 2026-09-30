@@ -35,50 +35,17 @@ export const AdminPasswordGate: React.FC<AdminPasswordGateProps> = ({
 
   return (
     <div className="modal-backdrop" onClick={onCancel}>
-      <div className="modal-card admin-gate-card" style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-        <img
-          src="/assets/scrapbook/clip_binder_blue.png"
-          alt="Blue Clip"
-          style={{
-            position: 'absolute',
-            top: -18,
-            left: 24,
-            width: 42,
-            zIndex: 10,
-            transform: 'rotate(-10deg)',
-            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.25))',
-            pointerEvents: 'none'
-          }}
-        />
-        <img
-          src="/assets/scrapbook/washi_hearts_peach.png"
-          alt="Peach Washi"
-          style={{
-            position: 'absolute',
-            top: -12,
-            right: 24,
-            width: 85,
-            zIndex: 10,
-            transform: 'rotate(4deg)',
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
-            pointerEvents: 'none'
-          }}
-        />
-
+      <div className="modal-card admin-gate-card" onClick={(e) => e.stopPropagation()}>
         <div className="gate-header">
-          <div className="gate-icon-box">
-            <img
-              src="/assets/scrapbook/icon_gear.png"
-              alt="Lock"
-              style={{ width: 30, height: 30, objectFit: 'contain' }}
-            />
+          <div className="tactile-tile-btn" style={{ width: 48, height: 48 }}>
+            <Lock size={22} strokeWidth={2} />
           </div>
           <button className="btn-close" onClick={onCancel} title="Batal & Kembali">
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <h2 className="gate-title">Kunci Keamanan Admin</h2>
+        <h2 className="gate-title" style={{ marginTop: 8 }}>Kunci Keamanan Admin</h2>
         <p className="gate-desc">
           Layar ini terkunci untuk mencegah perubahan data oleh karyawan. Masukkan kata sandi atau PIN Admin untuk melanjutkan.
         </p>
