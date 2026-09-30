@@ -52,8 +52,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
       {/* Metric Stat Cards Grid */}
       <div className="stats-grid">
         <div className="stat-card" onClick={() => onNavigateTab('members')}>
-          <div className="stat-icon-box" style={{ background: '#EEF2FF', color: '#4F46E5' }}>
-            <Users size={22} strokeWidth={2} />
+          <div className="stat-icon-box" style={{ background: '#F2ECE4', color: '#8D7B6D' }}>
+            <Users size={20} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Total Terjadwal</span>
@@ -63,12 +63,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box" style={{ background: '#ECFDF5', color: '#10B981' }}>
-            <CheckCircle2 size={22} strokeWidth={2} />
+          <div className="stat-icon-box" style={{ background: '#EBF4EE', color: '#3B7A57' }}>
+            <CheckCircle2 size={20} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Sudah Hadir (Masuk)</span>
-            <span className="stat-number" style={{ color: '#059669' }}>{checkedIn}</span>
+            <span className="stat-number" style={{ color: '#3B7A57' }}>{checkedIn}</span>
             <span className="stat-hint">
               {Math.round((checkedIn / totalScheduled) * 100 || 0)}% dari total
             </span>
@@ -76,45 +76,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box" style={{ background: '#FFF1F2', color: '#E11D48' }}>
-            <LogOut size={22} strokeWidth={2} />
+          <div className="stat-icon-box" style={{ background: '#F9ECE5', color: '#C87A58' }}>
+            <LogOut size={20} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Sudah Pulang</span>
-            <span className="stat-number" style={{ color: '#E11D48' }}>{checkedOut}</span>
+            <span className="stat-number" style={{ color: '#C87A58' }}>{checkedOut}</span>
             <span className="stat-hint">Selesai shift kerja</span>
           </div>
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box" style={{ background: '#FFFBEB', color: '#D97706' }}>
-            <AlertTriangle size={22} strokeWidth={2} />
+          <div className="stat-icon-box" style={{ background: '#FAF2E4', color: '#C9944A' }}>
+            <AlertTriangle size={20} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Terlambat</span>
-            <span className="stat-number" style={{ color: '#D97706' }}>{lateCount}</span>
+            <span className="stat-number" style={{ color: '#C9944A' }}>{lateCount}</span>
             <span className="stat-hint">Melebihi toleransi</span>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-box" style={{ background: '#F8FAFC', color: '#64748B' }}>
-            <Clock size={22} strokeWidth={2} />
+          <div className="stat-icon-box" style={{ background: '#EFEBE4', color: '#7A6E65' }}>
+            <Clock size={20} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Belum Hadir</span>
-            <span className="stat-number" style={{ color: '#334155' }}>{notYetArrived}</span>
+            <span className="stat-number" style={{ color: '#4E423A' }}>{notYetArrived}</span>
             <span className="stat-hint">Menunggu check-in</span>
           </div>
         </div>
 
         <div className="stat-card" onClick={() => onNavigateTab('attendance')}>
-          <div className="stat-icon-box" style={{ background: '#FAF5FF', color: '#9333EA' }}>
-            <FileQuestion size={22} strokeWidth={2} />
+          <div className="stat-icon-box" style={{ background: '#F4EEF7', color: '#7E528C' }}>
+            <FileQuestion size={20} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Perlu Review</span>
-            <span className="stat-number" style={{ color: '#9333EA' }}>{reviewRequired}</span>
+            <span className="stat-number" style={{ color: '#7E528C' }}>{reviewRequired}</span>
             <span className="stat-hint">Verifikasi anti-joki</span>
           </div>
         </div>
