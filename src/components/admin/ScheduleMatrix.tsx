@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Check, Sparkles, Filter } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, Check, Filter } from 'lucide-react';
 import { attendanceService } from '../../services/attendanceService';
 import type { Schedule, ScheduleType, Shift, Member } from '../../types/attendance';
 

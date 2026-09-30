@@ -16,6 +16,17 @@ Traditional workforce management tools feel punitive, bureaucratic, and cold. Ou
 3. **Glanceable Statuses:** A user approaching the kiosk or checking their mobile dashboard can understand their attendance status in under 2 seconds.
 4. **Delightful Micro-Feedback:** Subtle character/mascot animations and clear sound/visual rings replace generic spinners, giving tactile reassurance that attendance was properly captured.
 
+### 1.2 Iconography Guidelines & Strict Non-AI Visual Identity
+- **Prohibition of Sparkles / AI Symbols:** In accordance with PRD Sections 43 & 46 (Zero AI dependency, normal predictable business rules), the design strictly **forbids the use of AI sparkle icons (`Sparkles`, 4-point stars, magic wands)**.
+- **Functional, Grounded Iconography:** Use clear, semantic, attendance-focused icons:
+  - **Brand Logo:** `QrCode` in Indigo `#4F46E5` on `#EEF2FF` rounded container.
+  - **Presence / Check-in:** `LogIn` / `CheckCircle2` in Emerald `#10B981`.
+  - **Departure / Check-out:** `LogOut` in Coral `#F43F5E`.
+  - **Time & Clock:** `Clock` in Slate `#0F172A`.
+  - **Shifts & Rosters:** `Calendar` / `Layers`.
+  - **Organization & Hardware:** `Building2` / `Tablet`.
+- **Clean Status Badges:** Do not attach decorative sparkle ornaments to status pills, card titles, or modal headers. Every icon must have unambiguous functional meaning.
+
 ---
 
 ## 2. Color System & Design Tokens

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, Calendar, Clock, History, AlertCircle, Sparkles, Building, QrCode } from 'lucide-react';
+import { Calendar, Clock, History, AlertCircle, QrCode } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { attendanceService } from '../../services/attendanceService';
 import { Badge } from '../common/Badge';
@@ -100,7 +100,7 @@ export const MemberDashboard: React.FC = () => {
             {/* Status Card */}
             <div className="today-status-card">
               <div className="card-top-tag">
-                <Sparkles size={16} /> Status Presensi Hari Ini
+                <Clock size={16} /> Status Presensi Hari Ini
               </div>
               <div className="today-date-text">{dateStr}</div>
 

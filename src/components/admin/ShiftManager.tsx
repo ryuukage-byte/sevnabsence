@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, Plus, Edit2, ShieldAlert, Sparkles, Check } from 'lucide-react';
+import { Clock, Plus, Edit2, ShieldAlert, Check } from 'lucide-react';
 import { attendanceService } from '../../services/attendanceService';
 import type { Shift } from '../../types/attendance';
 

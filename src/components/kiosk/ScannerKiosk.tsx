@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import confetti from 'canvas-confetti';
-import { LogIn, LogOut, Camera, AlertCircle, CheckCircle2, RefreshCw, Sparkles, Clock, Info } from 'lucide-react';
+import { LogIn, LogOut, Camera, AlertCircle, CheckCircle2, RefreshCw, Tablet, Clock, Info } from 'lucide-react';
 import { DigitalClock } from '../common/DigitalClock';
 import { Mascot, type MascotState } from '../common/Mascot';
 import { attendanceService } from '../../services/attendanceService';
@@ -160,7 +160,7 @@ export const ScannerKiosk: React.FC = () => {
       <div className="kiosk-header-row">
         <div className="kiosk-welcome-card">
           <div className="welcome-tag">
-            <Sparkles size={16} /> Tablet Attendance Kiosk
+            <Tablet size={16} /> Tablet Attendance Kiosk
           </div>
           <h1 className="kiosk-org-title">{attendanceService.getOrganization().display_name}</h1>
           <p className="kiosk-instructions">

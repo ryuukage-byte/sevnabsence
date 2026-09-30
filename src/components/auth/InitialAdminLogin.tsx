@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Tablet, Sparkles, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Tablet, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { attendanceService } from '../../services/attendanceService';
 
@@ -39,7 +39,7 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
             <Tablet size={32} color="#4F46E5" />
           </div>
           <span className="auth-tag">
-            <Sparkles size={14} /> Aktivasi Perangkat Baru
+            <ShieldCheck size={14} /> Aktivasi Perangkat Baru
           </span>
           <h1 className="auth-title">Setup Tablet Kiosk</h1>
           <p className="auth-subtitle">

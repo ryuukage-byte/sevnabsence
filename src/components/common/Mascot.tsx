@@ -88,13 +88,10 @@ export const Mascot: React.FC<MascotProps> = ({ state, size = 110 }) => {
 
         {state === 'validating' && (
           <>
-            <circle cx="45" cy="58" r="3.5" fill="#FFFFFF" />
+            <circle cx="45" cy="58" r="4.5" fill="#FFFFFF" />
             <circle cx="75" cy="58" r="4.5" fill="#FFFFFF" />
-            {/* Sparkle */}
-            <path
-              d="M60 48 L61 51 L64 52 L61 53 L60 56 L59 53 L56 52 L59 51 Z"
-              fill="#FBBF24"
-            />
+            <circle cx="46.5" cy="58" r="2" fill="#0F172A" />
+            <circle cx="76.5" cy="58" r="2" fill="#0F172A" />
             <path
               d="M55 68 Q 60 72 65 68"
               stroke="#FFFFFF"

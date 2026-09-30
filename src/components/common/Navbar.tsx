@@ -1,5 +1,5 @@
 import React from 'react';
-import { QrCode, User, ShieldCheck, Sparkles, Building2, Lock, Unlock } from 'lucide-react';
+import { QrCode, User, ShieldCheck, Building2, Lock, Unlock } from 'lucide-react';
 
 export type AppMode = 'kiosk' | 'member' | 'admin';
 
@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="app-header">
       <div className="header-brand">
         <div className="brand-logo-icon">
-          <Sparkles size={20} color="#4F46E5" />
+          <QrCode size={22} color="#4F46E5" />
         </div>
         <div className="brand-text">
           <span className="brand-title">Absence</span>
