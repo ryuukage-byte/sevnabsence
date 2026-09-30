@@ -1,0 +1,582 @@
+{
+  "stickers": [
+    {
+      "filename": "stickers_01.png",
+      "width": 171,
+      "height": 180,
+      "left": 10,
+      "top": 4
+    },
+    {
+      "filename": "stickers_02.png",
+      "width": 168,
+      "height": 181,
+      "left": 153,
+      "top": 3
+    },
+    {
+      "filename": "stickers_03.png",
+      "width": 134,
+      "height": 84,
+      "left": 320,
+      "top": 2
+    },
+    {
+      "filename": "stickers_04.png",
+      "width": 130,
+      "height": 86,
+      "left": 449,
+      "top": 1
+    },
+    {
+      "filename": "stickers_05.png",
+      "width": 118,
+      "height": 78,
+      "left": 578,
+      "top": 5
+    },
+    {
+      "filename": "stickers_06.png",
+      "width": 136,
+      "height": 76,
+      "left": 695,
+      "top": 6
+    },
+    {
+      "filename": "stickers_07.png",
+      "width": 72,
+      "height": 100,
+      "left": 830,
+      "top": 29
+    },
+    {
+      "filename": "stickers_08.png",
+      "width": 65,
+      "height": 73,
+      "left": 895,
+      "top": 30
+    },
+    {
+      "filename": "stickers_09.png",
+      "width": 61,
+      "height": 63,
+      "left": 958,
+      "top": 36
+    },
+    {
+      "filename": "stickers_10.png",
+      "width": 80,
+      "height": 93,
+      "left": 270,
+      "top": 83
+    },
+    {
+      "filename": "stickers_11.png",
+      "width": 84,
+      "height": 105,
+      "left": 348,
+      "top": 86
+    },
+    {
+      "filename": "stickers_12.png",
+      "width": 100,
+      "height": 98,
+      "left": 443,
+      "top": 88
+    },
+    {
+      "filename": "stickers_13.png",
+      "width": 102,
+      "height": 107,
+      "left": 544,
+      "top": 82
+    },
+    {
+      "filename": "stickers_14.png",
+      "width": 80,
+      "height": 91,
+      "left": 655,
+      "top": 84
+    },
+    {
+      "filename": "stickers_15.png",
+      "width": 85,
+      "height": 80,
+      "left": 745,
+      "top": 78
+    },
+    {
+      "filename": "stickers_16.png",
+      "width": 81,
+      "height": 77,
+      "left": 927,
+      "top": 100
+    },
+    {
+      "filename": "stickers_17.png",
+      "width": 126,
+      "height": 123,
+      "left": 685,
+      "top": 157
+    },
+    {
+      "filename": "stickers_18.png",
+      "width": 106,
+      "height": 119,
+      "left": 808,
+      "top": 151
+    },
+    {
+      "filename": "stickers_19.png",
+      "width": 763,
+      "height": 584,
+      "left": 8,
+      "top": 176
+    },
+    {
+      "filename": "stickers_20.png",
+      "width": 174,
+      "height": 160,
+      "left": 188,
+      "top": 178
+    },
+    {
+      "filename": "stickers_21.png",
+      "width": 173,
+      "height": 166,
+      "left": 359,
+      "top": 178
+    },
+    {
+      "filename": "stickers_22.png",
+      "width": 155,
+      "height": 130,
+      "left": 532,
+      "top": 191
+    },
+    {
+      "filename": "stickers_23.png",
+      "width": 97,
+      "height": 94,
+      "left": 919,
+      "top": 171
+    },
+    {
+      "filename": "stickers_24.png",
+      "width": 94,
+      "height": 97,
+      "left": 643,
+      "top": 277
+    },
+    {
+      "filename": "stickers_25.png",
+      "width": 94,
+      "height": 90,
+      "left": 745,
+      "top": 272
+    },
+    {
+      "filename": "stickers_26.png",
+      "width": 90,
+      "height": 98,
+      "left": 831,
+      "top": 262
+    },
+    {
+      "filename": "stickers_27.png",
+      "width": 85,
+      "height": 86,
+      "left": 919,
+      "top": 265
+    },
+    {
+      "filename": "stickers_28.png",
+      "width": 144,
+      "height": 107,
+      "left": 546,
+      "top": 316
+    },
+    {
+      "filename": "stickers_29.png",
+      "width": 66,
+      "height": 65,
+      "left": 885,
+      "top": 339
+    },
+    {
+      "filename": "stickers_30.png",
+      "width": 72,
+      "height": 81,
+      "left": 944,
+      "top": 341
+    },
+    {
+      "filename": "stickers_31.png",
+      "width": 225,
+      "height": 182,
+      "left": 690,
+      "top": 358
+    },
+    {
+      "filename": "stickers_32.png",
+      "width": 249,
+      "height": 347,
+      "left": 770,
+      "top": 406
+    },
+    {
+      "filename": "stickers_33.png",
+      "width": 80,
+      "height": 118,
+      "left": 237,
+      "top": 639
+    },
+    {
+      "filename": "stickers_34.png",
+      "width": 67,
+      "height": 62,
+      "left": 312,
+      "top": 688
+    }
+  ],
+  "ui": [
+    {
+      "filename": "ui_01.png",
+      "width": 335,
+      "height": 145,
+      "left": 17,
+      "top": 24
+    },
+    {
+      "filename": "ui_02.png",
+      "width": 322,
+      "height": 152,
+      "left": 351,
+      "top": 17
+    },
+    {
+      "filename": "ui_03.png",
+      "width": 336,
+      "height": 143,
+      "left": 673,
+      "top": 28
+    },
+    {
+      "filename": "ui_04.png",
+      "width": 180,
+      "height": 99,
+      "left": 25,
+      "top": 173
+    },
+    {
+      "filename": "ui_05.png",
+      "width": 168,
+      "height": 96,
+      "left": 207,
+      "top": 176
+    },
+    {
+      "filename": "ui_06.png",
+      "width": 173,
+      "height": 109,
+      "left": 376,
+      "top": 166
+    },
+    {
+      "filename": "ui_07.png",
+      "width": 185,
+      "height": 98,
+      "left": 551,
+      "top": 178
+    },
+    {
+      "filename": "ui_08.png",
+      "width": 265,
+      "height": 113,
+      "left": 739,
+      "top": 169
+    },
+    {
+      "filename": "ui_09.png",
+      "width": 511,
+      "height": 102,
+      "left": 16,
+      "top": 281
+    },
+    {
+      "filename": "ui_10.png",
+      "width": 484,
+      "height": 99,
+      "left": 525,
+      "top": 281
+    },
+    {
+      "filename": "ui_11.png",
+      "width": 184,
+      "height": 91,
+      "left": 15,
+      "top": 385
+    },
+    {
+      "filename": "ui_12.png",
+      "width": 329,
+      "height": 81,
+      "left": 198,
+      "top": 392
+    },
+    {
+      "filename": "ui_13.png",
+      "width": 123,
+      "height": 87,
+      "left": 516,
+      "top": 376
+    },
+    {
+      "filename": "ui_14.png",
+      "width": 105,
+      "height": 67,
+      "left": 639,
+      "top": 396
+    },
+    {
+      "filename": "ui_15.png",
+      "width": 58,
+      "height": 60,
+      "left": 751,
+      "top": 400
+    },
+    {
+      "filename": "ui_16.png",
+      "width": 58,
+      "height": 59,
+      "left": 810,
+      "top": 400
+    },
+    {
+      "filename": "ui_17.png",
+      "width": 62,
+      "height": 61,
+      "left": 881,
+      "top": 399
+    },
+    {
+      "filename": "ui_18.png",
+      "width": 60,
+      "height": 60,
+      "left": 942,
+      "top": 399
+    },
+    {
+      "filename": "ui_19.png",
+      "width": 258,
+      "height": 70,
+      "left": 19,
+      "top": 468
+    },
+    {
+      "filename": "ui_20.png",
+      "width": 241,
+      "height": 66,
+      "left": 278,
+      "top": 476
+    },
+    {
+      "filename": "ui_21.png",
+      "width": 241,
+      "height": 75,
+      "left": 532,
+      "top": 473
+    },
+    {
+      "filename": "ui_22.png",
+      "width": 234,
+      "height": 87,
+      "left": 772,
+      "top": 462
+    },
+    {
+      "filename": "ui_23.png",
+      "width": 114,
+      "height": 112,
+      "left": 23,
+      "top": 544
+    },
+    {
+      "filename": "ui_24.png",
+      "width": 139,
+      "height": 119,
+      "left": 143,
+      "top": 544
+    },
+    {
+      "filename": "ui_25.png",
+      "width": 131,
+      "height": 114,
+      "left": 276,
+      "top": 542
+    },
+    {
+      "filename": "ui_26.png",
+      "width": 122,
+      "height": 121,
+      "left": 403,
+      "top": 542
+    },
+    {
+      "filename": "ui_27.png",
+      "width": 109,
+      "height": 101,
+      "left": 535,
+      "top": 555
+    },
+    {
+      "filename": "ui_28.png",
+      "width": 101,
+      "height": 101,
+      "left": 649,
+      "top": 554
+    },
+    {
+      "filename": "ui_29.png",
+      "width": 118,
+      "height": 106,
+      "left": 763,
+      "top": 552
+    },
+    {
+      "filename": "ui_30.png",
+      "width": 103,
+      "height": 102,
+      "left": 895,
+      "top": 555
+    },
+    {
+      "filename": "ui_31.png",
+      "width": 92,
+      "height": 87,
+      "left": 15,
+      "top": 660
+    },
+    {
+      "filename": "ui_32.png",
+      "width": 75,
+      "height": 85,
+      "left": 102,
+      "top": 662
+    },
+    {
+      "filename": "ui_33.png",
+      "width": 93,
+      "height": 82,
+      "left": 181,
+      "top": 663
+    },
+    {
+      "filename": "ui_34.png",
+      "width": 230,
+      "height": 84,
+      "left": 274,
+      "top": 667
+    },
+    {
+      "filename": "ui_35.png",
+      "width": 83,
+      "height": 77,
+      "left": 502,
+      "top": 674
+    },
+    {
+      "filename": "ui_36.png",
+      "width": 72,
+      "height": 82,
+      "left": 584,
+      "top": 667
+    },
+    {
+      "filename": "ui_37.png",
+      "width": 85,
+      "height": 81,
+      "left": 657,
+      "top": 665
+    },
+    {
+      "filename": "ui_38.png",
+      "width": 178,
+      "height": 78,
+      "left": 742,
+      "top": 668
+    },
+    {
+      "filename": "ui_39.png",
+      "width": 85,
+      "height": 80,
+      "left": 919,
+      "top": 667
+    }
+  ],
+  "panels": [
+    {
+      "filename": "panels_01.png",
+      "width": 402,
+      "height": 755,
+      "left": 4,
+      "top": 5
+    },
+    {
+      "filename": "panels_02.png",
+      "width": 314,
+      "height": 284,
+      "left": 393,
+      "top": 34
+    },
+    {
+      "filename": "panels_03.png",
+      "width": 314,
+      "height": 283,
+      "left": 706,
+      "top": 29
+    },
+    {
+      "filename": "panels_04.png",
+      "width": 310,
+      "height": 219,
+      "left": 710,
+      "top": 299
+    },
+    {
+      "filename": "panels_05.png",
+      "width": 310,
+      "height": 166,
+      "left": 403,
+      "top": 320
+    },
+    {
+      "filename": "panels_06.png",
+      "width": 309,
+      "height": 155,
+      "left": 371,
+      "top": 479
+    },
+    {
+      "filename": "panels_07.png",
+      "width": 215,
+      "height": 132,
+      "left": 683,
+      "top": 494
+    },
+    {
+      "filename": "panels_08.png",
+      "width": 190,
+      "height": 166,
+      "left": 822,
+      "top": 595
+    },
+    {
+      "filename": "panels_09.png",
+      "width": 369,
+      "height": 135,
+      "left": 422,
+      "top": 630
+    }
+  ]
+}

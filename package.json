@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:publish": "tsc -b && vite build --outDir web-publish",
     "lint": "oxlint",
     "preview": "vite preview"
   },

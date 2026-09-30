@@ -27,10 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Scan size={20} strokeWidth={2.2} />
           </div>
           <div className="brand-text">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span className="brand-title">Absence</span>
-              <span className="brand-badge">CALM TACTILE</span>
-            </div>
+            <span className="brand-title">Absence</span>
             <span className="brand-subtitle">
               <Building2 size={12} strokeWidth={2} />
               {orgName}
