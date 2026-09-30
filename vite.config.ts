@@ -5,4 +5,9 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   base: './',
+  server: {
+    watch: {
+      ignored: ['**/web-publish/**', '**/dist/**', '**/*.zip'],
+    },
+  },
 })
