@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { Navbar, type AppMode } from './components/common/Navbar';
 import { ScannerKiosk } from './components/kiosk/ScannerKiosk';
-import { MemberDashboard } from './components/member/MemberDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { MemberManager } from './components/admin/MemberManager';
 import { ScheduleMatrix } from './components/admin/ScheduleMatrix';
@@ -38,9 +37,7 @@ export function App() {
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash === 'member') {
-        setMode('member');
-      } else if (hash.startsWith('admin')) {
+      if (hash.startsWith('admin')) {
         if (!authService.isUnlocked()) {
           setShowPasswordGate(true);
         } else {
@@ -115,8 +112,6 @@ export function App() {
       {/* Main Mode Content */}
       <main className="main-content">
         {mode === 'kiosk' && <ScannerKiosk />}
-
-        {mode === 'member' && <MemberDashboard />}
 
         {mode === 'admin' && isAdminUnlocked && (
           <div className="admin-container">
