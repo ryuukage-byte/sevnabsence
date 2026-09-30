@@ -27,50 +27,75 @@ export const Mascot: React.FC<MascotProps> = ({ state, size = 110 }) => {
         xmlns="http://www.w3.org/2000/svg"
         className="mascot-svg"
       >
-        {/* Soft Background Aura */}
+        {/* Soft Background Paper Aura */}
         <circle
           cx="60"
           cy="60"
           r="54"
           fill={
             state === 'success'
-              ? '#ECFDF5'
+              ? '#D6EEED'
               : state === 'duplicate' || state === 'validating'
-              ? '#FEF3C7'
+              ? '#FFF0D1'
               : state === 'error'
-              ? '#FEE2E2'
-              : '#F1F5F9'
+              ? '#FFE9DF'
+              : '#F5F1E8'
           }
+          stroke="#D8CDBE"
+          strokeWidth="1.5"
           className="mascot-aura"
         />
 
-        {/* Mascot Body (Friendly Rounded Character) */}
+        {/* Die-Cut White Sticker Outer Border */}
+        <rect
+          x="27"
+          y="32"
+          width="66"
+          height="68"
+          rx="30"
+          fill="#FFFFFF"
+          className="mascot-sticker-border"
+        />
+
+        {/* Mascot Body (Soft Mint #7CCFCF with Soft Cocoa Outline #8B6F5A) */}
         <rect
           x="30"
           y="35"
           width="60"
           height="62"
           rx="26"
-          fill="#4F46E5"
+          fill="#7CCFCF"
+          stroke="#5EA9A9"
+          strokeWidth="2"
           className="mascot-body"
         />
 
-        {/* Cheeks */}
-        <circle cx="42" cy="68" r="4.5" fill="#F472B6" opacity="0.6" />
-        <circle cx="78" cy="68" r="4.5" fill="#F472B6" opacity="0.6" />
+        {/* Belly Patch (Warm Ivory) */}
+        <ellipse
+          cx="60"
+          cy="74"
+          rx="18"
+          ry="14"
+          fill="#FFFDF8"
+          opacity="0.85"
+        />
 
-        {/* Eyes based on state */}
+        {/* Cheeks (Soft Peach #FFBFA3) */}
+        <circle cx="41" cy="67" r="5" fill="#FFBFA3" />
+        <circle cx="79" cy="67" r="5" fill="#FFBFA3" />
+
+        {/* Eyes & Expressions based on state */}
         {state === 'idle' && (
           <>
-            <circle cx="45" cy="58" r="4.5" fill="#FFFFFF" />
-            <circle cx="75" cy="58" r="4.5" fill="#FFFFFF" />
-            <circle cx="46.5" cy="57" r="2" fill="#0F172A" />
-            <circle cx="76.5" cy="57" r="2" fill="#0F172A" />
+            <circle cx="45" cy="56" r="4.5" fill="#393F3F" />
+            <circle cx="75" cy="56" r="4.5" fill="#393F3F" />
+            <circle cx="43.5" cy="54.5" r="1.5" fill="#FFFFFF" />
+            <circle cx="73.5" cy="54.5" r="1.5" fill="#FFFFFF" />
             {/* Gentle Smile */}
             <path
-              d="M54 68 C 60 74, 60 74, 66 68"
-              stroke="#FFFFFF"
-              strokeWidth="3"
+              d="M54 67 C 60 72, 60 72, 66 67"
+              stroke="#244E52"
+              strokeWidth="2.5"
               strokeLinecap="round"
             />
           </>
@@ -78,23 +103,23 @@ export const Mascot: React.FC<MascotProps> = ({ state, size = 110 }) => {
 
         {state === 'scanning' && (
           <>
-            <circle cx="45" cy="58" r="5" fill="#6EE7B7" />
-            <circle cx="75" cy="58" r="5" fill="#6EE7B7" />
-            <circle cx="45" cy="58" r="2" fill="#065F46" />
-            <circle cx="75" cy="58" r="2" fill="#065F46" />
-            <rect x="52" y="67" width="16" height="3" rx="1.5" fill="#FFFFFF" />
+            <circle cx="45" cy="56" r="5" fill="#244E52" />
+            <circle cx="75" cy="56" r="5" fill="#244E52" />
+            <circle cx="44" cy="55" r="2" fill="#FFFFFF" />
+            <circle cx="74" cy="55" r="2" fill="#FFFFFF" />
+            <rect x="53" y="66" width="14" height="3" rx="1.5" fill="#244E52" />
           </>
         )}
 
         {state === 'validating' && (
           <>
-            <circle cx="45" cy="58" r="4.5" fill="#FFFFFF" />
-            <circle cx="75" cy="58" r="4.5" fill="#FFFFFF" />
-            <circle cx="46.5" cy="58" r="2" fill="#0F172A" />
-            <circle cx="76.5" cy="58" r="2" fill="#0F172A" />
+            <circle cx="45" cy="56" r="4.5" fill="#393F3F" />
+            <circle cx="75" cy="56" r="4.5" fill="#393F3F" />
+            <circle cx="44" cy="54.5" r="1.5" fill="#FFFFFF" />
+            <circle cx="74" cy="54.5" r="1.5" fill="#FFFFFF" />
             <path
-              d="M55 68 Q 60 72 65 68"
-              stroke="#FFFFFF"
+              d="M55 67 Q 60 71 65 67"
+              stroke="#244E52"
               strokeWidth="2.5"
               strokeLinecap="round"
             />
@@ -105,33 +130,33 @@ export const Mascot: React.FC<MascotProps> = ({ state, size = 110 }) => {
           <>
             {/* Happy Curved Eyes ^_^ */}
             <path
-              d="M39 60 Q 45 53 51 60"
-              stroke="#FFFFFF"
+              d="M39 58 Q 45 50 51 58"
+              stroke="#244E52"
               strokeWidth="3.5"
               strokeLinecap="round"
             />
             <path
-              d="M69 60 Q 75 53 81 60"
-              stroke="#FFFFFF"
+              d="M69 58 Q 75 50 81 58"
+              stroke="#244E52"
               strokeWidth="3.5"
               strokeLinecap="round"
             />
             {/* Big Grin */}
             <path
-              d="M52 67 Q 60 77 68 67 Z"
-              fill="#FFFFFF"
+              d="M52 65 Q 60 75 68 65 Z"
+              fill="#244E52"
             />
           </>
         )}
 
         {state === 'duplicate' && (
           <>
-            <circle cx="45" cy="58" r="4" fill="#FFFFFF" />
-            <circle cx="75" cy="58" r="4" fill="#FFFFFF" />
-            <circle cx="47" cy="58" r="2" fill="#0F172A" />
-            <circle cx="77" cy="58" r="2" fill="#0F172A" />
+            <circle cx="45" cy="56" r="4" fill="#393F3F" />
+            <circle cx="75" cy="56" r="4" fill="#393F3F" />
+            <circle cx="44" cy="55" r="1.5" fill="#FFFFFF" />
+            <circle cx="74" cy="55" r="1.5" fill="#FFFFFF" />
             {/* Small 'O' mouth */}
-            <circle cx="60" cy="70" r="3.5" fill="#FFFFFF" />
+            <circle cx="60" cy="69" r="3.5" fill="#244E52" />
           </>
         )}
 
@@ -139,40 +164,40 @@ export const Mascot: React.FC<MascotProps> = ({ state, size = 110 }) => {
           <>
             {/* Concerned Eyes >_< */}
             <path
-              d="M40 56 L50 62 M50 56 L40 62"
-              stroke="#FFFFFF"
+              d="M40 54 L50 60 M50 54 L40 60"
+              stroke="#393F3F"
               strokeWidth="3"
               strokeLinecap="round"
             />
             <path
-              d="M70 56 L80 62 M80 56 L70 62"
-              stroke="#FFFFFF"
+              d="M70 54 L80 60 M80 54 L70 60"
+              stroke="#393F3F"
               strokeWidth="3"
               strokeLinecap="round"
             />
             {/* Wavy Mouth */}
             <path
-              d="M53 72 Q 60 68 67 72"
-              stroke="#FFFFFF"
+              d="M53 71 Q 60 67 67 71"
+              stroke="#393F3F"
               strokeWidth="2.5"
               strokeLinecap="round"
             />
           </>
         )}
 
-        {/* Small ID badge in hand */}
+        {/* Small ID badge in hand (Scrapbook Die-Cut Polaroid Card) */}
         <rect
-          x="48"
-          y="84"
-          width="24"
-          height="18"
-          rx="4"
-          fill="#FFFFFF"
-          stroke="#E2E8F0"
+          x="47"
+          y="82"
+          width="26"
+          height="20"
+          rx="5"
+          fill="#FFFDF8"
+          stroke="#D8CDBE"
           strokeWidth="1.5"
         />
-        <rect x="53" y="88" width="14" height="2" rx="1" fill="#6366F1" />
-        <rect x="53" y="93" width="9" height="2" rx="1" fill="#94A3B8" />
+        <rect x="52" y="86" width="16" height="2.5" rx="1" fill="#7CCFCF" />
+        <rect x="52" y="91" width="10" height="2" rx="1" fill="#A9D7F5" />
       </svg>
     </div>
   );

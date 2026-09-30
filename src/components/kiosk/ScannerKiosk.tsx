@@ -289,11 +289,11 @@ export const ScannerKiosk: React.FC = () => {
                 <div className="feedback-content">
                   {scanResult.success ? (
                     <div className="feedback-icon success-icon">
-                      <CheckCircle2 size={54} color="#10B981" />
+                      <CheckCircle2 size={54} color="#244E52" />
                     </div>
                   ) : (
                     <div className="feedback-icon warning-icon">
-                      <AlertCircle size={54} color="#F59E0B" />
+                      <AlertCircle size={54} color="#6D4E1F" />
                     </div>
                   )}
 

@@ -36,7 +36,7 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
         {/* Brand & Setup Header */}
         <div className="auth-header">
           <div className="auth-badge-icon">
-            <Tablet size={32} color="#4F46E5" />
+            <Tablet size={32} color="#244E52" />
           </div>
           <span className="auth-tag">
             <ShieldCheck size={14} /> Aktivasi Perangkat Baru

@@ -38,7 +38,7 @@ export const AdminPasswordGate: React.FC<AdminPasswordGateProps> = ({
       <div className="modal-card admin-gate-card" onClick={(e) => e.stopPropagation()}>
         <div className="gate-header">
           <div className="gate-icon-box">
-            <Lock size={28} color="#4F46E5" />
+            <Lock size={28} color="#244E52" />
           </div>
           <button className="btn-close" onClick={onCancel} title="Batal & Kembali">
             <X size={20} />

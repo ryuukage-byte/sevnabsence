@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="app-header">
       <div className="header-brand">
         <div className="brand-logo-icon">
-          <QrCode size={22} color="#4F46E5" />
+          <QrCode size={22} color="#244E52" />
         </div>
         <div className="brand-text">
           <span className="brand-title">Absence</span>
@@ -54,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className={`mode-nav-btn ${currentMode === 'admin' ? 'active' : ''}`}
           onClick={() => onSelectMode('admin')}
         >
-          {isAdminUnlocked ? <Unlock size={18} color="#10B981" /> : <Lock size={18} />}
+          {isAdminUnlocked ? <Unlock size={18} color="#244E52" /> : <Lock size={18} />}
           <span>Admin</span>
           {!isAdminUnlocked && <span className="nav-lock-badge">Terkunci</span>}
         </button>

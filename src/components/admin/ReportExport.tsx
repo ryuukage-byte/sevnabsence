@@ -91,7 +91,7 @@ export const ReportExport: React.FC = () => {
       {/* CSV Export Details Card */}
       <div className="export-spec-card">
         <div className="spec-card-icon">
-          <FileSpreadsheet size={40} color="#10B981" />
+          <FileSpreadsheet size={40} color="#244E52" />
         </div>
         <div className="spec-card-body">
           <h3>Spesifikasi Format CSV</h3>

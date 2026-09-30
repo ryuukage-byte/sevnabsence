@@ -1,219 +1,163 @@
-# 02_DESIGN.md — Design System & UI/UX Guidelines
+# 02_DESIGN.md — Soft Mint Sky: Illustrated Scrapbook Design System
 
-**Project:** Web-Based Employee Attendance System  
-**Product:** Kiosk & Management Portal  
-**Document Version:** 1.0  
-**Design Philosophy:** Soft, Friendly, Modern, Approachable, Tablet-First  
-
----
-
-## 1. UI/UX Principles & Visual Identity
-
-### 1.1 The "Friendly Kiosk" Principle
-Traditional workforce management tools feel punitive, bureaucratic, and cold. Our design flips this expectation:
-1. **Welcoming, Not Intimidating:** Rounded corners, warm neutrals, and encouraging copy ("Selamat Datang!", "Sampai Jumpa!") make clocking in an enjoyable daily touchpoint.
-2. **Generous Touch Targets for Tablets:** Minimum button dimensions are 56px–72px height with ample spacing to prevent mis-taps on wall-mounted or counter tablets.
-3. **Glanceable Statuses:** A user approaching the kiosk or checking their mobile dashboard can understand their attendance status in under 2 seconds.
-4. **Delightful Micro-Feedback:** Subtle character/mascot animations and clear sound/visual rings replace generic spinners, giving tactile reassurance that attendance was properly captured.
-
-### 1.2 Iconography Guidelines & Strict Non-AI Visual Identity
-- **Prohibition of Sparkles / AI Symbols:** In accordance with PRD Sections 43 & 46 (Zero AI dependency, normal predictable business rules), the design strictly **forbids the use of AI sparkle icons (`Sparkles`, 4-point stars, magic wands)**.
-- **Functional, Grounded Iconography:** Use clear, semantic, attendance-focused icons:
-  - **Brand Logo:** `QrCode` in Indigo `#4F46E5` on `#EEF2FF` rounded container.
-  - **Presence / Check-in:** `LogIn` / `CheckCircle2` in Emerald `#10B981`.
-  - **Departure / Check-out:** `LogOut` in Coral `#F43F5E`.
-  - **Time & Clock:** `Clock` in Slate `#0F172A`.
-  - **Shifts & Rosters:** `Calendar` / `Layers`.
-  - **Organization & Hardware:** `Building2` / `Tablet`.
-- **Clean Status Badges:** Do not attach decorative sparkle ornaments to status pills, card titles, or modal headers. Every icon must have unambiguous functional meaning.
+**Project:** Web-Based Employee Attendance System (`Absence` / `sevnabsence`)  
+**Design System:** Soft Mint Sky — Playful Illustrated Skeuomorphic UI  
+**Sub-Style:** Kawaii Scrapbook / Character Dossier / Stickerbook  
+**Aesthetics:** Fresh • Calm • Soft • Cozy • Playful • Tactile  
+**Version:** 2.0 (Updated from Soft Mint Sky specification)  
 
 ---
 
-## 2. Color System & Design Tokens
+## 00. Visual Direction Summary
 
-The palette pairs a calming slate neutral base with warm emerald greens (Check-in/Masuk/Success) and warm amber/coral tones (Check-out/Pulang/Warning).
+The system is designed to feel like a **warm, tactile scrapbook, character dossier, or 2D game journal**, rather than a cold, corporate SaaS or punitive punch-clock. 
 
-```
-Primary Brand:
-  - Deep Emerald / Forest Slate:  #0F172A (Text / Base dark)
-  - Warm Card Surface:           #FFFFFF / #F8FAFC
-  - Accent Friendly Indigo:       #6366F1 / #4F46E5
-
-Functional / Semantic Colors:
-  - MASUK (Check-In) Emerald:     #10B981 (Hover: #059669, Bg: #ECFDF5)
-  - PULANG (Check-Out) Coral:     #F43F5E (Hover: #E11D48, Bg: #FFF1F2)
-  - Late / Warning Amber:         #F59E0B (Bg: #FFFBEB)
-  - Absence / Holiday Violet:     #8B5CF6 (Bg: #F5F3FF)
-  - Neutral Borders & Lines:      #E2E8F0
-  - Neutral Secondary Text:       #64748B
-```
-
-### 2.1 CSS Design Tokens (`tokens.css`)
-
-```css
-:root {
-  /* Brand & Neutrals */
-  --bg-app: #F8FAFC;
-  --surface-card: #FFFFFF;
-  --surface-hover: #F1F5F9;
-  --text-main: #0F172A;
-  --text-muted: #64748B;
-  --border-light: #E2E8F0;
-  --border-focus: #6366F1;
-
-  /* Primary Action: MASUK (Check-In) */
-  --action-masuk: #10B981;
-  --action-masuk-hover: #059669;
-  --action-masuk-light: #ECFDF5;
-  --action-masuk-border: #A7F3D0;
-
-  /* Primary Action: PULANG (Check-Out) */
-  --action-pulang: #F43F5E;
-  --action-pulang-hover: #E11D48;
-  --action-pulang-light: #FFF1F2;
-  --action-pulang-border: #FECDD3;
-
-  /* Semantic Highlights */
-  --status-present: #10B981;
-  --status-late: #F59E0B;
-  --status-late-bg: #FEF3C7;
-  --status-leave: #8B5CF6;
-  --status-leave-bg: #EDE9FE;
-  --status-absent: #EF4444;
-  --status-absent-bg: #FEE2E2;
-
-  /* Radii & Shadows */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
-  
-  --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
-  --shadow-floating: 0 12px 32px -4px rgba(15, 23, 42, 0.12);
-  --shadow-active: 0 20px 40px -8px rgba(16, 185, 129, 0.25);
-
-  /* Typography Scale */
-  --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-}
-```
+### Core Characteristics:
+- **Paper Surface & Ivory Base:** Warm Ivory (`#FFFDF8`) background, Paper Beige (`#F5F1E8`) card surfaces, and subtle Warm Linen (`#D8CDBE`) borders.
+- **Color Accents:** Fresh Soft Mint (`#7CCFCF`) for primary actions, Sky Blue (`#A9D7F5`) for secondary/info elements, Butter Yellow (`#FFD88A`) for badges/rewards, and Soft Peach (`#FFBFA3`) for subtle highlights and washi tape accents.
+- **Modern 2D Skeuomorphic Depth:** Tactile hard-drop paper shadows (`0 4px 0 #E7DDCD`), top inset highlights (`inset 0 2px 0 rgba(255,255,255,.85)`), and realistic button press transitions (`translateY(3px)` with reduced shadow).
+- **Die-cut Stickers & Polaroid Cards:** Mascot character (*Koji*) and badges feature clean white die-cut borders with soft drop shadows.
+- **Scrapbook Motifs:** Semi-translucent washi tape strips, paper clip outlines, notebook tabs, and grid graph paper touches.
+- **Strict Non-AI Visual Identity:** Strict prohibition of AI sparkle stars (`Sparkles`, 4-point magic stars). All icons represent concrete, functional attendance and scheduling actions.
+- **Content First & High Accessibility:** No glassmorphism, no eye-straining neon gradients, and dark readable ink (`#393F3F` / `#5C5A57`) ensuring WCAG AA compliance.
 
 ---
 
-## 3. Typography Hierarchy
+## 01. Color Palette Swatches & Semantic Tokens
 
-Using a modern, human-centric sans-serif font family (**Plus Jakarta Sans** or **Inter**):
+### Color Balance Proportion:
+- **70% Neutral Base:** Warm Ivory (`#FFFDF8`), Soft Canvas (`#FAF7F0`), Paper Beige (`#F5F1E8`).
+- **20% Brand Palette:** Soft Mint (`#7CCFCF`), Sky Blue (`#A9D7F5`).
+- **10% Accents:** Butter Yellow (`#FFD88A`), Soft Peach (`#FFBFA3`), Gentle Lavender (`#DCCCF3`).
 
-| Style Level | Size / Line Height | Weight | Purpose |
+### Complete Palette Specification:
+
+| Token Name | HEX | Role & Usage | Text On Color |
 |---|---|---|---|
-| **Display Kiosk Clock** | 48px – 64px / 1.1 | Bold (700) | Live real-time clock on Kiosk screen |
-| **Heading 1 (Page Title)** | 28px – 32px / 1.2 | Bold (700) | Main section headers |
-| **Heading 2 (Card Title)** | 20px – 24px / 1.3 | Semi-Bold (600) | Modal & Widget headers |
-| **Heading 3 (Subhead)** | 16px – 18px / 1.4 | Semi-Bold (600) | Form labels & Table columns |
-| **Body Primary** | 15px – 16px / 1.5 | Regular (400) | Primary narrative & data values |
-| **Body Secondary / Caption** | 13px – 14px / 1.4 | Medium (500) | Timestamps, metadata, hints |
-| **Action Button Labels** | 18px – 22px / 1.0 | Bold (700) | Kiosk buttons (`MASUK`, `PULANG`) |
+| **Soft Mint** | `#7CCFCF` | Primary CTA, active tab, check-in indicator | `#244E52` (Deep Teal) |
+| **Soft Mint Hover** | `#69BBBB` | Primary button hover state | `#244E52` |
+| **Soft Mint Pressed** | `#59A9A9` | Primary button active state (3px pressed) | `#244E52` |
+| **Mint Soft Surface** | `#D6EEED` | Subdued mint pill, active nav item background | `#244E52` |
+| **Sky Blue** | `#A9D7F5` | Secondary button, info card, calendar accent | `#375C73` (Deep Sky) |
+| **Sky Blue Soft** | `#EAF5FD` | Secondary button fill, info notification bg | `#375C73` |
+| **Butter Yellow** | `#FFD88A` | Badge, shift highlight, warning pill | `#6D4E1F` (Warm Amber) |
+| **Soft Peach** | `#FFBFA3` | Check-out (Pulang) button, decorative tape | `#764B3A` (Warm Terracotta) |
+| **Warm Ivory** | `#FFFDF8` | Body background, card face | `#5C5A57` / `#393F3F` |
+| **Paper Beige** | `#F5F1E8` | Card container, modal surface, navbar bg | `#5C5A57` |
+| **Paper Depth** | `#EEE8DB` | Inset surface, table header, depth layer | `#393F3F` |
+| **Warm Linen Line** | `#D8CDBE` | Default 1.5px border, card outlines | — |
+| **Ink Strong** | `#393F3F` | Main headlines, high-contrast values, clock | — |
+| **Warm Charcoal** | `#5C5A57` | Body copy, secondary titles, card headers | — |
+| **Warm Gray** | `#6E6B67` | Subtitles, supporting text | — |
+| **Muted Ink** | `#776F65` | Input placeholders, captions | — |
+| **Soft Cocoa** | `#8B6F5A` | Illustration outlines, doodle borders | — |
+| **Sticker White** | `#FFFFFF` | Die-cut outlines, polaroid photo borders | — |
 
 ---
 
-## 4. Key Component Specifications
+## 02. Typography & Font System
 
-### 4.1 Kiosk Mode Header & Clock
-- Displays the **Organization Display Name** (e.g. *"ABC Care — Shimada Branch"*).
-- Displays high-visibility live digital clock with seconds pulse and local Indonesian/English date format (e.g. *"Rabu, 30 September 2026"*).
-- Subdued battery/online status indicator icon.
+Using warm, rounded, friendly Google Fonts:
+- **Display / Headlines:** `Fredoka`, `Nunito` (Weight 700–800)
+- **UI & Body:** `Nunito`, `Nunito Sans` (Weight 500, 600, 700)
+- **Decorative Notes / Badges:** `Patrick Hand` (handwritten cursive for small tape notes & sticker badges)
+- **Monospace (Time & Codes):** `JetBrains Mono` or tabular numerals
 
-### 4.2 Big Action Switcher: `[ MASUK ]` vs `[ PULANG ]`
-- **Side-by-side or stacked pills** with distinctive visual identities:
-  - **MASUK:** Emerald green badge, sun/sunrise icon, cheerful hover effect.
-  - **PULANG:** Sunset/moon icon, coral-rose tone.
-- When pressed, the active mode illuminates with an animated ring and immediately engages the front-camera viewport below.
-
-### 4.3 Front-Camera Viewfinder Component
-- **Framing:** Centered, rounded viewport (`border-radius: 24px; border: 4px solid var(--accent)`).
-- **Target Reticle:** Subtle animated glowing corner guides (brackets) framing the expected QR card placement area.
-- **Mirroring:** The video stream is horizontally flipped (`transform: scaleX(-1)`) by default so user movement feels natural like looking into a mirror.
-- **Scanner State Badge:** Text pill directly below the frame: *"Arahkan kartu QR Anda ke kamera depan"* (Position your QR card facing the camera).
-
-### 4.4 Result Feedback Modal / Card (Full Screen Overlay)
-- Automatically appears upon successful QR parsing and backend clearance.
-- **Structure:**
-  1. Animated character / checkmark icon.
-  2. Large celebratory heading: *"Berhasil!"* (or friendly error state).
-  3. Member Name in prominent text: *"Musa Al-Fatih"*.
-  4. Badge: *"MASUK — 07:52:14 WIB"*.
-  5. Schedule notice: *"Shift Pagi (08:00 - 17:00) • Tepat Waktu"*.
-  6. Auto-dismiss progress bar (3 seconds countdown before resetting to scanner).
-
-### 4.5 Monthly Schedule Matrix (Admin)
-- Sticky first column for **Employee Name & Position**.
-- Sticky header row for days of the month (1, 2, 3... 31) with weekend columns visually tinted.
-- Cell design: Compact, high-contrast colored pills:
-  - `A` (Shift A - Emerald)
-  - `B` (Shift B - Sky Blue)
-  - `C` (Shift C - Indigo)
-  - `OFF` (Slate grey)
-  - `CUTI` / `LEAVE` (Purple)
-  - `SAKIT` / `SICK` (Amber)
-- Clicking any cell pops a micro-menu for instant single-click shift reassignment.
+### Typographic Scale:
+- **Kiosk Digital Clock:** 56px–64px | Weight 700 | Tabular numbers
+- **H1 (Page Title):** 32px–36px | Weight 800
+- **H2 (Card / Modal Title):** 22px–26px | Weight 700
+- **H3 (Section Header):** 18px–20px | Weight 700
+- **Body:** 15px–16px | Weight 500–600 | Line-height 1.6
+- **Small / Metadata:** 13px–14px | Weight 600
+- **Button Labels:** 16px–18px | Weight 700
 
 ---
 
-## 5. Layout & Responsive Behavior
+## 03. 2D Skeuomorphic Depth & Tactile Effects
 
-### 5.1 Tablet Kiosk Mode (Landscape 1024x768 / 1280x800)
-- **Split Screen Composition:**
-  - **Left Half (45%):** Business Branding, Live Clock, `MASUK` / `PULANG` mode buttons, Today's Quick Summary counter.
-  - **Right Half (55%):** Front camera viewfinder card, alignment guidelines, scan feedback overlays.
-- Zero pinch-to-zoom, fixed viewport, full screen PWA standalone experience.
+Three elevation tiers are used across the UI:
 
-### 5.2 Tablet Kiosk Mode (Portrait iPad 768x1024)
-- **Top:** Business branding + Live clock.
-- **Center:** Front camera viewfinder card.
-- **Bottom:** Large sticky dual buttons: `[ MASUK ]` and `[ PULANG ]`.
+### Level 0 — Flat Inset
+- **Properties:** Background `#EEE8DB` or `#FAF7F0`, border 1.5px `#D8CDBE`, shadow none.
+- **Used for:** Form text inputs, nested tables, metadata strips.
 
-### 5.3 Member Mobile View (375px - 430px)
-- Bottom navigation bar: `[ Hari Ini ]`, `[ Jadwal ]`, `[ Riwayat ]`, `[ Profil ]`.
-- Today card with prominent attendance status ring:
-  - Not Checked In -> Grey / Dashed
-  - Checked In -> Radiant Emerald with timestamp
-  - Checked Out -> Clean Blue with total hours worked.
+### Level 1 — Paper Raised (Default Cards & Panels)
+- **Properties:**
+  - Background: `#FFFDF8` on `#F5F1E8`
+  - Border: 1.5px solid `#D8CDBE`
+  - Inset Highlight: `inset 0 2px 0 rgba(255, 255, 255, 0.85)`
+  - Hard Paper Shadow: `0 4px 0 #E7DDCD, 0 8px 18px rgba(91, 78, 64, 0.07)`
+  - Border Radius: 20px (mobile: 16px)
+- **Used for:** Attendance cards, shift rosters, employee dossiers, modal dialogs.
 
-### 5.4 Admin Desktop Console (1280px+)
-- Collapsible sidebar with navigation (`Hari Ini`, `Karyawan`, `Jadwal`, `Shift`, `Presensi`, `Laporan`, `Pengaturan`).
-- Top bar with organization switcher, quick search, and profile dropdown.
-- Fluid data tables with pagination, search filters, and batch CSV export buttons.
+### Level 2 — Floating Die-Cut Sticker / Mascot
+- **Properties:**
+  - Outline: 4px–6px solid `#FFFFFF`
+  - Sticker Shadow: `0 6px 0 rgba(139, 111, 90, 0.12), 0 12px 25px rgba(67, 52, 37, 0.12)`
+  - Optional slight tilt: `-2deg` to `+2deg` for stickers (cards remain straight for readability).
+- **Used for:** Mascot *Koji*, celebration result badges, printable ID cards.
 
----
-
-## 6. Micro-Interactions & Animation Guidelines
-
-Animations must remain **fast (under 350ms)**, **lightweight**, **non-blocking**, and **support `prefers-reduced-motion`**.
-
-### 6.1 Mascot / Character Micro-States
-Instead of clinical spinning wheels, a friendly, lightweight vector character ("Koji the Timekeeper") or fluid geometric glyphs illustrate scan stages:
-
-```
-[ IDLE ]       --> Character waves or holds empty attendance card.
-[ SCANNING ]   --> Subtle scanning beam waves vertically across the card.
-[ VALIDATING ] --> Character leans forward with a thinking sparkle (max 400ms).
-[ SUCCESS ]    --> Character jumps happily with confetti burst, green checkmark.
-[ DUPLICATE ]  --> Character politely raises hand with a friendly "Already checked in!" smile.
-[ INVALID ]    --> Character scratches head gently, indicating "QR card unrecognized".
-```
-
-### 6.2 Key Interaction Transitions
-1. **Button Tap:** Scale down to `0.97` on pointer down, release with subtle spring (`transform: scale(1.0)`).
-2. **Scanner Reticle Glow:** Subtle pulsating opacity (from `0.6` to `1.0` every 2 seconds) signaling active video processing.
-3. **Modal Entrance:** Slide up 16px with fade-in (`cubic-bezier(0.16, 1, 0.3, 1)` duration `250ms`).
-4. **Auto-Dismiss Ring:** Circular SVG stroke countdown timer smoothly completing in 3000ms.
+### Tactile Buttons:
+- **Primary (Soft Mint):**
+  - Background: `#7CCFCF`
+  - Text: `#244E52`
+  - Border: 1.5px solid `#5EA9A9`
+  - Shadow: `0 4px 0 #59A9A9`, `inset 0 2px 0 rgba(255, 255, 255, 0.45)`
+  - Active: `transform: translateY(3px); box-shadow: 0 1px 0 #59A9A9;`
+- **Check-Out (Soft Peach):**
+  - Background: `#FFBFA3`
+  - Text: `#764B3A`
+  - Border: 1.5px solid `#EAA183`
+  - Shadow: `0 4px 0 #EAA183`, `inset 0 2px 0 rgba(255, 255, 255, 0.45)`
+  - Active: `transform: translateY(3px); box-shadow: 0 1px 0 #EAA183;`
 
 ---
 
-## 7. Accessibility & Offline Considerations
-- **High Contrast Ratios:** All text elements exceed WCAG AA ratio (minimum 4.5:1 for body, 3:1 for large display text).
-- **Camera Fallback:** Clear user-friendly alert if camera permission is denied with instructions to grant permission in browser settings.
-- **Network Lost Alert:** Friendly banner: *"Koneksi terputus. Menghubungkan kembali ke server..."* to prevent scans that cannot be authenticated.
+## 04. Component Styling Specifications
+
+### 4.1 Header & Navigation Tab
+- Header background is Paper Beige `#F5F1E8` with a bottom border `#D8CDBE`.
+- Navigation items styled as tactile journal tabs with rounded top corners.
+- Active tab has Soft Mint surface `#D6EEED`, deep teal text `#244E52`, and a raised appearance.
+
+### 4.2 Kiosk Viewport & Washi Tape Accents
+- The camera viewfinder is framed in a warm polaroid border with rounded corners (`24px`).
+- Diagonal decorative **washi tape** strips (`#A9D7F5` or `#FFBFA3` at 70% opacity) pinned at corners.
+- Dual touch buttons (`[ MASUK ]` in Soft Mint and `[ PULANG ]` in Soft Peach) with minimum 64px height.
+
+### 4.3 Mascot (*Koji*) Micro-Interactions
+- Rendered as a high-resolution die-cut sticker with a white border.
+- States:
+  - `IDLE`: Gentle floating breathing animation.
+  - `SCANNING`: Ears perked, attentive gaze towards camera.
+  - `SUCCESS`: Cheerful jump with confetti particles and green check stamp.
+  - `DUPLICATE`: Friendly reminder hand gesture with yellow butter badge.
+  - `INVALID`: Curious tilt with soft peach question mark.
+
+### 4.4 Member Portal: Character Dossier Card
+- Employee profile presented as an illustrated "ID Dossier" with polaroid photo, lanyard clip motif, and quick QR card.
+- Attendance calendar resembles a monthly planner notebook with soft dashed lines and pastel status stamps.
+
+### 4.5 Admin Console: Monthly Roster Spreadsheet
+- Styled like an open binder notebook with tabbed dividers.
+- Sticky column for employee roster; sticky header for dates 1..31.
+- Shift assignments displayed as compact pill stickers with distinct pastel backgrounds and high-contrast labels.
+
+---
+
+## 05. Strict DO and DON'T Rules
+
+### DO:
+1. Keep backgrounds warm and clean (Warm Ivory `#FFFDF8` / Soft Canvas `#FAF7F0`).
+2. Always pair pastel backgrounds with dark readable ink (`#244E52` on mint, `#375C73` on sky, `#6D4E1F` on yellow).
+3. Use generous spacing (whitespace) to maintain a peaceful, cozy atmosphere.
+4. Keep all button tap targets at 44px minimum (64px on Kiosk).
+5. Maintain consistent 20px card radius and 1.5px linen borders.
+
+### DON'T:
+1. **NO AI ICONS OR SPARKLES:** Never use `Sparkles`, 4-point star bursts, or magic wands.
+2. **NO NEON / HARSH CONTRASTS:** Avoid pitch-black (`#000000`) text or glowing saturated neons.
+3. **NO GLASSMORPHISM:** Avoid transparent frosted-glass blur panels; use solid paper layers.
+4. **NO ROTATING IMPORTANT DATA:** Only stickers or decorative washi tape can have slight tilt (`±2deg`); data cards and tables must always stay perfectly horizontal.
+5. **NO WHITE TEXT ON LIGHT PASTEL:** White text on light mint or light yellow fails WCAG AA and is forbidden.
