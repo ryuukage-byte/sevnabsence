@@ -579,78 +579,233 @@ a {
 }
 
 /* ==========================================================================
-   KIOSK MODE STYLES
+   AUTHENTIC SCRAPBOOK JOURNAL BINDER STYLES (MATCHING REFERENCE IMAGE 2)
    ========================================================================== */
 .kiosk-container {
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 16px 20px 48px;
   width: 100%;
 }
 
-.kiosk-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 24px;
-  margin-bottom: 24px;
+/* Outer Leather Binder Frame */
+.scrapbook-leather-binder {
+  background: linear-gradient(145deg, #6B4E38 0%, #4D3322 100%);
+  padding: 12px;
+  border-radius: 30px;
+  box-shadow: 0 20px 48px rgba(58, 38, 22, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  border: 1.5px solid #3E2616;
+  position: relative;
 }
 
-.kiosk-welcome-card {
-  flex: 1;
-  background: var(--color-bg);
-  padding: 24px 32px;
-  border-radius: var(--radius-lg);
-  border: 1.5px solid var(--color-border);
-  box-shadow: var(--shadow-paper);
+/* Stitched Leather Edge */
+.binder-stitch-outer {
+  border: 2px dashed rgba(245, 220, 185, 0.55);
+  border-radius: 24px;
+  padding: 8px;
+  display: flex;
+  position: relative;
+}
+
+/* Spiral / Grommet Spine on the left */
+.binder-spine-strip {
+  width: 36px;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 30px 0;
+  flex-shrink: 0;
+}
+
+.grommet-eyelet {
+  width: 18px;
+  height: 38px;
+  background: #C87533;
+  border-radius: 6px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
   justify-content: center;
   position: relative;
 }
 
-.kiosk-welcome-card::before {
-  content: '';
+.grommet-ring {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #FAF7F0;
+  border: 3px solid #783C12;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Main Inner Paper Sheet (Cream Graph Paper with Grid) */
+.scrapbook-inner-sheet {
+  flex: 1;
+  background-color: #FFFDF8;
+  background-image: 
+    linear-gradient(to right, rgba(216, 205, 190, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(216, 205, 190, 0.35) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border-radius: 18px;
+  padding: 30px 34px;
+  border: 1.5px solid #D8CDBE;
+  box-shadow: 0 8px 24px rgba(91, 78, 64, 0.12);
+  position: relative;
+  overflow: visible;
+}
+
+/* Paw Print Stamp Trails across the sheet */
+.paw-print-stamp {
   position: absolute;
-  top: -8px;
-  left: 36px;
-  width: 56px;
-  height: 16px;
-  background: rgba(169, 215, 245, 0.85); /* Sky Blue Washi Tape */
-  transform: rotate(-3deg);
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(91, 78, 64, 0.12);
+  font-size: 1.5rem;
+  color: #8B6F5A;
+  opacity: 0.12;
+  user-select: none;
   pointer-events: none;
 }
 
-.welcome-tag {
-  display: inline-flex;
+/* Hanging Luggage Tag Bookmark at top right */
+.luggage-tag-bookmark {
+  position: absolute;
+  top: -24px;
+  right: 48px;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: var(--color-on-primary);
-  background: var(--color-primary-soft);
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  border: 1px solid #A3DEDB;
-  align-self: flex-start;
-  margin-bottom: 10px;
+  transform: rotate(3deg);
+  transition: transform 0.2s ease-out;
 }
 
-.kiosk-org-title {
+.luggage-tag-bookmark:hover {
+  transform: rotate(0deg) translateY(-2px);
+}
+
+.luggage-tag-string {
+  width: 2px;
+  height: 28px;
+  background: #D4A373;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.luggage-tag-body {
+  background: #E8883B;
+  color: #FFFFFF;
+  border-radius: 10px;
+  border: 2px solid #C46D29;
+  box-shadow: 0 6px 14px rgba(58, 38, 22, 0.25);
+  padding: 8px 14px 16px;
+  text-align: center;
+  position: relative;
+  min-width: 105px;
+}
+
+.luggage-tag-grommet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid #783C12;
+  margin: 0 auto 6px auto;
+}
+
+.luggage-tag-title {
   font-family: var(--font-display);
-  font-size: 1.85rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+.luggage-tag-brand {
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: block;
+  margin-top: 2px;
+}
+
+.luggage-tag-checkers {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 9px;
+  border-radius: 0 0 8px 8px;
+  background-image: 
+    linear-gradient(45deg, #7A3F16 25%, transparent 25%),
+    linear-gradient(-45deg, #7A3F16 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #7A3F16 75%),
+    linear-gradient(-45deg, transparent 75%, #7A3F16 75%);
+  background-size: 8px 8px;
+}
+
+/* Dossier Header Card */
+.dossier-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  position: relative;
+  padding-bottom: 18px;
+  border-bottom: 2px dashed #D8CDBE;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.dossier-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dossier-main-title {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
   font-weight: 700;
   color: var(--color-ink-strong);
   letter-spacing: -0.5px;
-  margin-bottom: 4px;
 }
 
-.kiosk-instructions {
+.dossier-sub-badge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--color-secondary-soft);
+  color: var(--color-on-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.dossier-tagline {
   font-size: 0.95rem;
-  color: var(--color-text-muted);
+  color: var(--color-text);
   font-weight: 600;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 580px;
+}
+
+.dossier-tags-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.dossier-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-outline);
+  background: rgba(245, 241, 232, 0.85);
+  border: 1px solid var(--color-border);
+  padding: 3px 9px;
+  border-radius: 999px;
 }
 
 /* Live Digital Clock (Scrapbook Ink & Mint Edition) */
@@ -658,14 +813,14 @@ a {
   background: #393F3F;
   border: 2px solid #5EA9A9;
   color: #FFFDF8;
-  padding: 20px 32px;
+  padding: 16px 26px;
   border-radius: var(--radius-lg);
   box-shadow: 0 5px 0 #244E52, 0 12px 24px rgba(36, 78, 82, 0.16);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 320px;
+  min-width: 280px;
   position: relative;
 }
 
@@ -685,7 +840,7 @@ a {
 
 .clock-time-display {
   font-family: var(--font-mono);
-  font-size: 2.85rem;
+  font-size: 2.6rem;
   font-weight: 700;
   letter-spacing: 2px;
   display: flex;
@@ -694,7 +849,7 @@ a {
 }
 
 .clock-seconds {
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   color: var(--color-accent-yellow);
   margin-left: 2px;
 }
@@ -704,7 +859,7 @@ a {
 }
 
 .clock-date-display {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: #FAF7F0;
   font-weight: 600;
   margin-top: 4px;
@@ -733,7 +888,7 @@ a {
   padding: 18px 24px;
   border-radius: var(--radius-lg);
   border: 2px solid var(--color-border);
-  background: var(--color-bg);
+  background: #FFFDF8;
   cursor: pointer;
   box-shadow: 0 4px 0 #E7DDCD, 0 8px 16px rgba(91, 78, 64, 0.06);
   transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, background 0.16s ease-out;
@@ -848,7 +1003,7 @@ a {
 
 /* Mascot Interactive Scrapbook Card */
 .kiosk-mascot-card {
-  background: var(--color-bg-alt);
+  background: #FFFDF8;
   border-radius: var(--radius-lg);
   border: 1.5px solid var(--color-border);
   padding: 20px;
@@ -860,9 +1015,22 @@ a {
   position: relative;
 }
 
+.kiosk-mascot-card::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 40px;
+  width: 54px;
+  height: 16px;
+  background: rgba(255, 216, 138, 0.85); /* Butter yellow washi tape */
+  transform: rotate(2deg);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(91, 78, 64, 0.12);
+}
+
 .mascot-speech {
   flex: 1;
-  background: #FFFDF8;
+  background: #FAF7F0;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 14px 18px;
@@ -872,7 +1040,7 @@ a {
 
 .mascot-name {
   font-family: var(--font-hand);
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-outline);
   display: block;
@@ -934,6 +1102,191 @@ a {
 .demo-scan-btn:active {
   transform: translateY(2px);
   box-shadow: 0 0 0 transparent;
+}
+
+/* Polaroid Camera Frame (matching Image 2) */
+.polaroid-camera-card {
+  background: #FFFFFF;
+  padding: 14px 14px 22px 14px;
+  border-radius: 20px;
+  box-shadow: 0 8px 0 rgba(139, 111, 90, 0.12), 0 18px 36px rgba(67, 52, 37, 0.16);
+  border: 1.5px solid #E5DECE;
+  position: relative;
+  transform: rotate(1deg);
+  transition: transform 0.2s ease-out;
+}
+
+.polaroid-camera-card:hover {
+  transform: rotate(0deg);
+}
+
+/* Washi tape pinned to the polaroid */
+.polaroid-washi-tape-pin {
+  position: absolute;
+  top: -12px;
+  left: 36px;
+  width: 74px;
+  height: 22px;
+  background: rgba(169, 215, 245, 0.85);
+  transform: rotate(-4deg);
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(91, 78, 64, 0.15);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.polaroid-paperclip-pin {
+  position: absolute;
+  top: -10px;
+  right: 28px;
+  width: 18px;
+  height: 38px;
+  border: 3px solid #8B6F5A;
+  border-radius: 10px;
+  z-index: 10;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+  background: transparent;
+}
+
+.polaroid-viewport-screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #1E2327;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #E5DECE;
+}
+
+.polaroid-chin-caption {
+  margin-top: 14px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.polaroid-chin-text {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-outline);
+}
+
+/* Clothesline of Hanging Recent Presensi Polaroids (matching Image 2) */
+.clothesline-wrapper {
+  margin-top: 36px;
+  padding-top: 28px;
+  position: relative;
+  border-top: 2px dashed #A9D7F5;
+}
+
+.clothesline-header {
+  position: absolute;
+  top: -14px;
+  left: 28px;
+  background: #FFFDF8;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-outline);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 #E7DDCD;
+}
+
+.clothesline-string {
+  position: absolute;
+  top: 32px;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: #7FA8C9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.clothesline-photos-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 16px 8px 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.hanging-polaroid-item {
+  position: relative;
+  background: #FFFFFF;
+  padding: 8px 8px 14px 8px;
+  border-radius: 8px;
+  border: 1.5px solid #E5DECE;
+  box-shadow: 0 6px 14px rgba(91, 78, 64, 0.12);
+  min-width: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  cursor: default;
+}
+
+.hanging-polaroid-item:hover {
+  transform: translateY(-4px) rotate(0deg) !important;
+  box-shadow: 0 10px 20px rgba(91, 78, 64, 0.18);
+}
+
+.wooden-clothespin {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 24px;
+  background: #D4A373;
+  border: 1px solid #B07D48;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.mini-polaroid-img-box {
+  width: 114px;
+  height: 84px;
+  border-radius: 6px;
+  background: #FAF7F0;
+  border: 1px solid #D8CDBE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-on-primary);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.mini-polaroid-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-ink-strong);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 114px;
+}
+
+.mini-polaroid-time {
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-outline);
+  margin-top: 2px;
 }
 
 /* Camera Viewfinder Panel (Polaroid Photo Styling) */

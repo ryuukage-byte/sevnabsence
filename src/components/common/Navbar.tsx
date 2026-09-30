@@ -1,5 +1,5 @@
 import React from 'react';
-import { QrCode, User, ShieldCheck, Building2, Lock, Unlock } from 'lucide-react';
+import { QrCode, User, Building2, Lock, Unlock } from 'lucide-react';
 
 export type AppMode = 'kiosk' | 'member' | 'admin';
 
@@ -20,12 +20,29 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <header className="app-header">
+      {/* Brand & Branch Stamp */}
       <div className="header-brand">
         <div className="brand-logo-icon">
           <QrCode size={22} color="#244E52" />
         </div>
         <div className="brand-text">
-          <span className="brand-title">Absence</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="brand-title">Absence</span>
+            <span
+              style={{
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                padding: '2px 6px',
+                borderRadius: 4,
+                backgroundColor: '#FFD88A',
+                color: '#6D4E1F',
+                border: '1px solid #FFE099',
+                fontFamily: 'var(--font-display)'
+              }}
+            >
+              DOSSIER
+            </span>
+          </div>
           <span className="brand-subtitle">
             <Building2 size={12} style={{ display: 'inline', marginRight: 4 }} />
             {orgName}
@@ -33,6 +50,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
+      {/* Notebook Index Tabs */}
       <nav className="mode-nav">
         <button
           className={`mode-nav-btn ${currentMode === 'kiosk' ? 'active' : ''}`}

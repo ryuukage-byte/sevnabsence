@@ -1,4 +1,5 @@
 import React from 'react';
+import { Camera, Check, AlertTriangle, HelpCircle } from 'lucide-react';
 
 export type MascotState = 'idle' | 'scanning' | 'validating' | 'success' | 'duplicate' | 'error';
 
@@ -7,198 +8,113 @@ interface MascotProps {
   size?: number;
 }
 
-export const Mascot: React.FC<MascotProps> = ({ state, size = 110 }) => {
+export const Mascot: React.FC<MascotProps> = ({ state, size = 130 }) => {
   return (
     <div
-      className={`mascot-container mascot-${state}`}
+      className={`mascot-sticker-wrapper mascot-state-${state}`}
       style={{
         width: size,
         height: size,
+        position: 'relative',
         display: 'inline-flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        userSelect: 'none'
       }}
     >
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 120 120"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="mascot-svg"
-      >
-        {/* Soft Background Paper Aura */}
-        <circle
-          cx="60"
-          cy="60"
-          r="54"
-          fill={
+      {/* Background Soft Paper Aura Stamp */}
+      <div
+        className="mascot-paper-halo"
+        style={{
+          position: 'absolute',
+          width: size * 0.95,
+          height: size * 0.95,
+          borderRadius: '50%',
+          backgroundColor:
             state === 'success'
-              ? '#D6EEED'
+              ? 'rgba(124, 207, 207, 0.25)'
               : state === 'duplicate' || state === 'validating'
-              ? '#FFF0D1'
+              ? 'rgba(255, 216, 138, 0.35)'
               : state === 'error'
-              ? '#FFE9DF'
-              : '#F5F1E8'
-          }
-          stroke="#D8CDBE"
-          strokeWidth="1.5"
-          className="mascot-aura"
-        />
+              ? 'rgba(255, 191, 163, 0.35)'
+              : 'rgba(245, 241, 232, 0.7)',
+          border: '1.5px dashed rgba(216, 205, 190, 0.8)',
+          transform: state === 'success' ? 'scale(1.08)' : 'scale(1)',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+      />
 
-        {/* Die-Cut White Sticker Outer Border */}
-        <rect
-          x="27"
-          y="32"
-          width="66"
-          height="68"
-          rx="30"
-          fill="#FFFFFF"
-          className="mascot-sticker-border"
-        />
+      {/* Illustrated Koji Mascot Sticker */}
+      <img
+        src="/koji_mascot.png"
+        alt="Koji Attendance Mascot"
+        className={`mascot-sticker-img ${state === 'success' ? 'mascot-bounce' : ''}`}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          position: 'relative',
+          zIndex: 2,
+          filter:
+            state === 'success'
+              ? 'drop-shadow(0 10px 18px rgba(91, 78, 64, 0.22))'
+              : 'drop-shadow(0 6px 12px rgba(91, 78, 64, 0.16))',
+          transform:
+            state === 'success'
+              ? 'rotate(-2deg) scale(1.05)'
+              : state === 'scanning'
+              ? 'rotate(1deg)'
+              : 'rotate(-1deg)',
+          transition: 'transform 0.25s ease-out'
+        }}
+      />
 
-        {/* Mascot Body (Soft Mint #7CCFCF with Soft Cocoa Outline #8B6F5A) */}
-        <rect
-          x="30"
-          y="35"
-          width="60"
-          height="62"
-          rx="26"
-          fill="#7CCFCF"
-          stroke="#5EA9A9"
-          strokeWidth="2"
-          className="mascot-body"
-        />
-
-        {/* Belly Patch (Warm Ivory) */}
-        <ellipse
-          cx="60"
-          cy="74"
-          rx="18"
-          ry="14"
-          fill="#FFFDF8"
-          opacity="0.85"
-        />
-
-        {/* Cheeks (Soft Peach #FFBFA3) */}
-        <circle cx="41" cy="67" r="5" fill="#FFBFA3" />
-        <circle cx="79" cy="67" r="5" fill="#FFBFA3" />
-
-        {/* Eyes & Expressions based on state */}
-        {state === 'idle' && (
-          <>
-            <circle cx="45" cy="56" r="4.5" fill="#393F3F" />
-            <circle cx="75" cy="56" r="4.5" fill="#393F3F" />
-            <circle cx="43.5" cy="54.5" r="1.5" fill="#FFFFFF" />
-            <circle cx="73.5" cy="54.5" r="1.5" fill="#FFFFFF" />
-            {/* Gentle Smile */}
-            <path
-              d="M54 67 C 60 72, 60 72, 66 67"
-              stroke="#244E52"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </>
-        )}
-
-        {state === 'scanning' && (
-          <>
-            <circle cx="45" cy="56" r="5" fill="#244E52" />
-            <circle cx="75" cy="56" r="5" fill="#244E52" />
-            <circle cx="44" cy="55" r="2" fill="#FFFFFF" />
-            <circle cx="74" cy="55" r="2" fill="#FFFFFF" />
-            <rect x="53" y="66" width="14" height="3" rx="1.5" fill="#244E52" />
-          </>
-        )}
-
-        {state === 'validating' && (
-          <>
-            <circle cx="45" cy="56" r="4.5" fill="#393F3F" />
-            <circle cx="75" cy="56" r="4.5" fill="#393F3F" />
-            <circle cx="44" cy="54.5" r="1.5" fill="#FFFFFF" />
-            <circle cx="74" cy="54.5" r="1.5" fill="#FFFFFF" />
-            <path
-              d="M55 67 Q 60 71 65 67"
-              stroke="#244E52"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </>
-        )}
-
-        {state === 'success' && (
-          <>
-            {/* Happy Curved Eyes ^_^ */}
-            <path
-              d="M39 58 Q 45 50 51 58"
-              stroke="#244E52"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-            />
-            <path
-              d="M69 58 Q 75 50 81 58"
-              stroke="#244E52"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-            />
-            {/* Big Grin */}
-            <path
-              d="M52 65 Q 60 75 68 65 Z"
-              fill="#244E52"
-            />
-          </>
-        )}
-
-        {state === 'duplicate' && (
-          <>
-            <circle cx="45" cy="56" r="4" fill="#393F3F" />
-            <circle cx="75" cy="56" r="4" fill="#393F3F" />
-            <circle cx="44" cy="55" r="1.5" fill="#FFFFFF" />
-            <circle cx="74" cy="55" r="1.5" fill="#FFFFFF" />
-            {/* Small 'O' mouth */}
-            <circle cx="60" cy="69" r="3.5" fill="#244E52" />
-          </>
-        )}
-
-        {state === 'error' && (
-          <>
-            {/* Concerned Eyes >_< */}
-            <path
-              d="M40 54 L50 60 M50 54 L40 60"
-              stroke="#393F3F"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <path
-              d="M70 54 L80 60 M80 54 L70 60"
-              stroke="#393F3F"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            {/* Wavy Mouth */}
-            <path
-              d="M53 71 Q 60 67 67 71"
-              stroke="#393F3F"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </>
-        )}
-
-        {/* Small ID badge in hand (Scrapbook Die-Cut Polaroid Card) */}
-        <rect
-          x="47"
-          y="82"
-          width="26"
-          height="20"
-          rx="5"
-          fill="#FFFDF8"
-          stroke="#D8CDBE"
-          strokeWidth="1.5"
-        />
-        <rect x="52" y="86" width="16" height="2.5" rx="1" fill="#7CCFCF" />
-        <rect x="52" y="91" width="10" height="2" rx="1" fill="#A9D7F5" />
-      </svg>
+      {/* Floating Status Emotion Badge (Die-Cut Mini Sticker) */}
+      <div
+        className="mascot-emotion-badge"
+        style={{
+          position: 'absolute',
+          top: -4,
+          right: -4,
+          zIndex: 3,
+          backgroundColor:
+            state === 'success'
+              ? '#7CCFCF'
+              : state === 'scanning'
+              ? '#A9D7F5'
+              : state === 'validating'
+              ? '#FFD88A'
+              : state === 'duplicate'
+              ? '#FFD88A'
+              : state === 'error'
+              ? '#FFBFA3'
+              : '#FFFDF8',
+          color:
+            state === 'success' || state === 'scanning'
+              ? '#244E52'
+              : state === 'duplicate' || state === 'validating'
+              ? '#6D4E1F'
+              : '#764B3A',
+          width: 32,
+          height: 32,
+          borderRadius: '50%',
+          border: '2.5px solid #FFFFFF',
+          boxShadow: '0 3px 6px rgba(91, 78, 64, 0.18)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px',
+          fontWeight: 800,
+          animation: state === 'scanning' ? 'pulse 1.5s infinite' : 'none'
+        }}
+      >
+        {state === 'idle' && <Camera size={16} />}
+        {state === 'scanning' && <Camera size={16} />}
+        {state === 'validating' && <HelpCircle size={16} />}
+        {state === 'success' && <Check size={18} strokeWidth={3} />}
+        {state === 'duplicate' && <AlertTriangle size={16} />}
+        {state === 'error' && <AlertTriangle size={16} />}
+      </div>
     </div>
   );
 };
