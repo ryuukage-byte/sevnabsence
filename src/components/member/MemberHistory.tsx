@@ -29,7 +29,7 @@ export const MemberHistory: React.FC<MemberHistoryProps> = ({ memberId, memberNa
 
       {myRecords.length === 0 ? (
         <div className="empty-history-state">
-          <Clock size={48} color="#94A3B8" />
+          <Clock size={48} color="#A69B91" />
           <h3>Belum Ada Riwayat Presensi</h3>
           <p>Lakukan presensi scan QR pada tablet Kiosk untuk mulai mencatat kehadiran.</p>
         </div>

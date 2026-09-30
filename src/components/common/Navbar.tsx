@@ -29,7 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="brand-text">
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span className="brand-title">Absence</span>
-              <span className="brand-badge">SKEUO</span>
+              <span className="brand-badge">CALM TACTILE</span>
             </div>
             <span className="brand-subtitle">
               <Building2 size={12} strokeWidth={2} />
@@ -65,7 +65,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           title="Panel Administrator (Perlu Sandi)"
         >
           {isAdminUnlocked ? (
-            <Unlock size={17} strokeWidth={2} color="#10B981" />
+            <Unlock size={17} strokeWidth={2} color="#3B7A57" />
           ) : (
             <Shield size={17} strokeWidth={2} />
           )}

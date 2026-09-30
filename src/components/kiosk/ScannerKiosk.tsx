@@ -168,7 +168,7 @@ export const ScannerKiosk: React.FC = () => {
           <div>
             <div className="kiosk-brand-title">
               <span>Kiosk Presensi Mandiri</span>
-              <span className="kiosk-badge-pill">MODERN SKEUO v1.0</span>
+              <span className="kiosk-badge-pill">ONLINE • AKTIF</span>
             </div>
             <p className="kiosk-subtitle">
               Sistem absensi cepat & aman cabang <strong>{org.display_name}</strong>. Cukup tunjukkan kartu QR ke kamera.
@@ -272,10 +272,10 @@ export const ScannerKiosk: React.FC = () => {
 
               {cameraError && (
                 <div className="camera-error-overlay">
-                  <AlertCircle size={40} color="#F59E0B" strokeWidth={2} />
+                  <AlertCircle size={40} color="#C9944A" strokeWidth={2} />
                   <h3>Kamera Belum Aktif</h3>
                   <p>{cameraError}</p>
-                  <p style={{ marginTop: 8, fontSize: '0.78rem', color: '#94A3B8' }}>
+                  <p style={{ marginTop: 8, fontSize: '0.78rem', color: '#A69B91' }}>
                     Gunakan tombol Simulasi Cepat di sebelah kiri untuk menguji presensi tanpa webcam.
                   </p>
                 </div>

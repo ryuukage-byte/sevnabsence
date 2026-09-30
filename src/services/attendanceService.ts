@@ -31,7 +31,7 @@ const DEFAULT_SHIFTS: Shift[] = [
     early_tolerance_mins: 30,
     late_tolerance_mins: 10,
     is_overtime_allowed: false,
-    color_code: '#10B981'
+    color_code: '#3B7A57'
   },
   {
     id: 'b0000000-0000-0000-0000-000000000002',
@@ -43,7 +43,7 @@ const DEFAULT_SHIFTS: Shift[] = [
     early_tolerance_mins: 30,
     late_tolerance_mins: 10,
     is_overtime_allowed: false,
-    color_code: '#0284C7'
+    color_code: '#C9944A'
   },
   {
     id: 'b0000000-0000-0000-0000-000000000003',
@@ -55,7 +55,7 @@ const DEFAULT_SHIFTS: Shift[] = [
     early_tolerance_mins: 30,
     late_tolerance_mins: 10,
     is_overtime_allowed: false,
-    color_code: '#8B5CF6'
+    color_code: '#8D7B6D'
   }
 ];
 

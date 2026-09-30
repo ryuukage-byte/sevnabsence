@@ -240,7 +240,7 @@ export const AttendanceLog: React.FC = () => {
 
             <form onSubmit={handleSaveCorrection} className="modal-form">
               <div className="correction-warning-banner">
-                <AlertTriangle size={18} color="#D97706" />
+                <AlertTriangle size={18} color="#C9944A" />
                 <p>
                   Sesuai aturan kepatuhan, jam asli scan tidak akan dihapus. Perubahan akan
                   dicatat ke dalam tabel audit log beserta identitas administrator dan alasan
@@ -254,7 +254,7 @@ export const AttendanceLog: React.FC = () => {
                   type="text"
                   disabled
                   value={selectedForCorrection.attendance_date}
-                  className="bg-slate-100 font-mono"
+                  className="input-disabled font-mono"
                 />
               </div>
 

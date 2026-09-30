@@ -53,12 +53,12 @@ export const ReportExport: React.FC = () => {
       {/* Summary Analytics Cards */}
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon-box bg-emerald-50 text-emerald-600">
-            <CheckCircle2 size={24} />
+          <div className="stat-icon-box" style={{ background: '#EBF4EE', color: '#3B7A57' }}>
+            <CheckCircle2 size={22} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Total Kehadiran Tepat Waktu</span>
-            <span className="stat-number text-emerald-600">{presentCount}</span>
+            <span className="stat-number" style={{ color: '#3B7A57' }}>{presentCount}</span>
             <span className="stat-hint">
               {totalScans > 0 ? Math.round((presentCount / totalScans) * 100) : 100}% rasio disiplin
             </span>
@@ -66,23 +66,23 @@ export const ReportExport: React.FC = () => {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-box bg-amber-50 text-amber-600">
-            <AlertTriangle size={24} />
+          <div className="stat-icon-box" style={{ background: '#FAF2E4', color: '#C9944A' }}>
+            <AlertTriangle size={22} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Insiden Terlambat</span>
-            <span className="stat-number text-amber-600">{lateCount}</span>
+            <span className="stat-number" style={{ color: '#C9944A' }}>{lateCount}</span>
             <span className="stat-hint">Total akumulasi: {totalLateMinutes} menit</span>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-box bg-indigo-50 text-indigo-600">
-            <Clock size={24} />
+          <div className="stat-icon-box" style={{ background: '#F2ECE4', color: '#8D7B6D' }}>
+            <Clock size={22} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
             <span className="stat-label">Rata-rata Jam Kerja</span>
-            <span className="stat-number text-indigo-600">{avgWorkHours} jam</span>
+            <span className="stat-number" style={{ color: '#4E423A' }}>{avgWorkHours} jam</span>
             <span className="stat-hint">Per presensi selesai</span>
           </div>
         </div>
@@ -91,7 +91,7 @@ export const ReportExport: React.FC = () => {
       {/* CSV Export Details Card */}
       <div className="export-spec-card">
         <div className="spec-card-icon">
-          <FileSpreadsheet size={40} color="#244E52" />
+          <FileSpreadsheet size={36} color="#3B7A57" strokeWidth={2} />
         </div>
         <div className="spec-card-body">
           <h3>Spesifikasi Format CSV</h3>

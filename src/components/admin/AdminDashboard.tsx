@@ -133,7 +133,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
 
           {todayRecords.length === 0 ? (
             <div className="empty-activity-box">
-              <Clock size={36} color="#94A3B8" />
+              <Clock size={36} color="#A69B91" />
               <p>Belum ada presensi yang tercatat hari ini.</p>
             </div>
           ) : (

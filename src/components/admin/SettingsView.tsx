@@ -110,7 +110,7 @@ export const SettingsView: React.FC = () => {
         {/* Supabase Connection Status Card */}
         <div className="settings-card">
           <div className="card-header-line">
-            <Database size={20} className="text-emerald-600" />
+            <Database size={20} color="#3B7A57" strokeWidth={2.2} />
             <h3>Status Konektivitas Supabase</h3>
           </div>
 

@@ -16,7 +16,7 @@ export const ShiftManager: React.FC = () => {
     early_tolerance_mins: 30,
     late_tolerance_mins: 10,
     is_overtime_allowed: false,
-    color_code: '#10B981'
+    color_code: '#3B7A57'
   });
 
   const handleOpenAdd = () => {
@@ -29,7 +29,7 @@ export const ShiftManager: React.FC = () => {
       early_tolerance_mins: 30,
       late_tolerance_mins: 10,
       is_overtime_allowed: false,
-      color_code: '#10B981'
+      color_code: '#3B7A57'
     });
     setShowModal(true);
   };
@@ -100,7 +100,7 @@ export const ShiftManager: React.FC = () => {
             </div>
 
             <div className="shift-hours-row font-mono">
-              <Clock size={20} className="text-slate-500" />
+              <Clock size={20} style={{ color: 'var(--text-muted)' }} />
               <span>
                 {shift.start_time} — {shift.end_time} WIB
               </span>
@@ -243,7 +243,7 @@ export const ShiftManager: React.FC = () => {
               <div className="form-group">
                 <label>Warna Badge Identitas Shift</label>
                 <div className="color-picker-row">
-                  {['#10B981', '#0284C7', '#8B5CF6', '#F59E0B', '#EC4899', '#64748B'].map(
+                  {['#3B7A57', '#C87A58', '#C9944A', '#8D7B6D', '#7E528C', '#5C7A82'].map(
                     (color) => (
                       <button
                         key={color}
