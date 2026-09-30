@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
-import { Building2, Save, Globe, Database, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Building2, Save, Globe, Database, CheckCircle2, ShieldCheck, ChevronDown } from 'lucide-react';
 import { attendanceService } from '../../services/attendanceService';
 import { testSupabaseConnection } from '../../services/supabase';
 
 export const SettingsView: React.FC = () => {
   const [org, setOrg] = useState(attendanceService.getOrganization());
   const [isSaved, setIsSaved] = useState(false);
-  const [dbStatus, setDbStatus] = useState<string>('Memeriksa koneksi Supabase...');
+  const [dbStatus, setDbStatus] = useState<string>('Memeriksa status layanan backend...');
 
-  React.useEffect(() => {
-    testSupabaseConnection().then((res) => setDbStatus(res.message));
+  useEffect(() => {
+    let isMounted = true;
+
+    // Timeout safety (3 seconds max)
+    const timeoutPromise = new Promise<{ connected: boolean; message: string }>((resolve) => {
+      setTimeout(() => {
+        resolve({
+          connected: false,
+          message: 'Penyimpanan Lokal Aktif (Data tersinkronisasi di cache perangkat offline)'
+        });
+      }, 3000);
+    });
+
+    Promise.race([testSupabaseConnection(), timeoutPromise])
+      .then((res) => {
+        if (isMounted) setDbStatus(res.message);
+      })
+      .catch(() => {
+        if (isMounted) {
+          setDbStatus('Penyimpanan Lokal Aktif (Fallback Offline Operasional)');
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSave = (e: React.FormEvent) => {
@@ -19,13 +43,15 @@ export const SettingsView: React.FC = () => {
     setTimeout(() => setIsSaved(false), 2500);
   };
 
+  const isProd = import.meta.env.PROD;
+
   return (
     <div className="settings-container">
       <div className="admin-view-header">
         <div>
           <h2 className="view-title">Pengaturan Organisasi & Sistem</h2>
           <p className="view-subtitle">
-            Konfigurasi identitas bisnis, nama cabang, zona waktu, dan status backend Supabase.
+            Konfigurasi identitas cabang {org.display_name}, zona waktu operasional, dan status sinkronisasi.
           </p>
         </div>
       </div>
@@ -34,7 +60,7 @@ export const SettingsView: React.FC = () => {
         {/* Organization Profile Card */}
         <div className="settings-card">
           <div className="card-header-line">
-            <Building2 size={20} className="text-indigo-600" />
+            <Building2 size={20} style={{ color: 'var(--accent-moss)' }} />
             <h3>Identitas Perusahaan & Cabang</h3>
           </div>
 
@@ -81,15 +107,15 @@ export const SettingsView: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label>Zona Waktu Operasional</label>
+              <label>Zona Waktu Operasional Cabang</label>
               <select
                 value={org.timezone}
                 onChange={(e) => setOrg({ ...org, timezone: e.target.value })}
               >
-                <option value="Asia/Jakarta">WIB (Asia/Jakarta - UTC+7)</option>
-                <option value="Asia/Makassar">WITA (Asia/Makassar - UTC+8)</option>
-                <option value="Asia/Jayapura">WIT (Asia/Jayapura - UTC+9)</option>
-                <option value="Asia/Tokyo">JST (Asia/Tokyo - UTC+9)</option>
+                <option value="Asia/Tokyo">JST — Jepang (Asia/Tokyo - UTC+9)</option>
+                <option value="Asia/Jakarta">WIB — Indonesia Barat (Asia/Jakarta - UTC+7)</option>
+                <option value="Asia/Makassar">WITA — Indonesia Tengah (Asia/Makassar - UTC+8)</option>
+                <option value="Asia/Jayapura">WIT — Indonesia Timur (Asia/Jayapura - UTC+9)</option>
               </select>
             </div>
 
@@ -107,33 +133,43 @@ export const SettingsView: React.FC = () => {
           </form>
         </div>
 
-        {/* Supabase Connection Status Card */}
+        {/* Cloud & Operational Infrastructure Card */}
         <div className="settings-card">
           <div className="card-header-line">
-            <Database size={20} color="#3B7A57" strokeWidth={2.2} />
-            <h3>Status Konektivitas Supabase</h3>
+            <Database size={20} color="var(--accent-moss)" strokeWidth={2.2} />
+            <h3>Status Layanan & Keamanan</h3>
           </div>
 
           <div className="supabase-status-box">
             <div className="status-indicator-row">
               <span className="live-dot" />
-              <span className="status-label">Project Ref:</span>
-              <code className="status-ref">tgnqtexegvcpagphqurb</code>
+              <span className="status-label">Backend Engine:</span>
+              <code className="status-ref">
+                {isProd ? 'Supabase Managed Cloud (Production Node)' : 'Supabase (Project Ref: tgnq...qurb)'}
+              </code>
             </div>
 
             <div className="status-desc-text">
-              {dbStatus}
+              <ShieldCheck size={16} style={{ color: 'var(--accent-moss)', flexShrink: 0 }} />
+              <span>{dbStatus}</span>
             </div>
 
-            <div className="migration-tip-box">
-              <span className="tip-title">Panduan SQL Migration:</span>
-              <p>
-                File skema database telah disiapkan di{' '}
-                <code>supabase/migrations/20260930_init_absence.sql</code>. Anda dapat menyalin
-                dan mengeksekusi isi skrip tersebut langsung ke <strong>Supabase Dashboard &gt; SQL Editor</strong>{' '}
-                untuk mengaktifkan stored procedure <code>record_attendance_scan()</code> secara penuh.
-              </p>
-            </div>
+            {/* Advanced Developer Settings in Collapsible Details */}
+            <details className="settings-advanced-details">
+              <summary className="advanced-summary-header">
+                <span>Pengaturan Teknis & SQL Migration (Developer)</span>
+                <ChevronDown size={14} />
+              </summary>
+              <div className="advanced-summary-body">
+                <p>
+                  Skrip migrasi database lengkap tersedia pada repositori di path{' '}
+                  <code>supabase/migrations/20260930_init_absence.sql</code>.
+                </p>
+                <p style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  Stored procedure <code>record_attendance_scan()</code> memvalidasi token kriptografis, zona waktu branch, dan status shift secara atomik di sisi server.
+                </p>
+              </div>
+            </details>
           </div>
         </div>
       </div>

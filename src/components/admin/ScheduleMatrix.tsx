@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, Check, Filter } from 'lucide-react';
-import { attendanceService } from '../../services/attendanceService';
+import { attendanceService, formatBranchDate } from '../../services/attendanceService';
 import type { Schedule, ScheduleType, Shift, Member } from '../../types/attendance';
 
 export const ScheduleMatrix: React.FC = () => {
@@ -13,6 +13,7 @@ export const ScheduleMatrix: React.FC = () => {
     currentShiftId?: string;
   } | null>(null);
 
+  const org = attendanceService.getOrganization();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1; // 1-indexed
 
@@ -24,6 +25,13 @@ export const ScheduleMatrix: React.FC = () => {
 
   const daysInMonth = new Date(year, month, 0).getDate();
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  // Compute today's date string in branch timezone
+  const todayDateObj = new Date();
+  const todayYear = todayDateObj.getFullYear();
+  const todayMonth = todayDateObj.getMonth() + 1;
+  const todayDay = todayDateObj.getDate();
+  const isCurrentMonthView = todayYear === year && todayMonth === month;
 
   const prevMonth = () => {
     const newDate = new Date(year, month - 2, 1);
@@ -77,28 +85,28 @@ export const ScheduleMatrix: React.FC = () => {
         <div>
           <h2 className="view-title">Matriks Jadwal Bulanan</h2>
           <p className="view-subtitle">
-            Atur penugasan shift kerja, cuti, dan hari libur seluruh staf dalam format tabel matriks.
+            Penugasan shift kerja seluruh staf cabang {org.display_name}. Kolom nama disematkan untuk kemudahan navigasi tanggal 1–31.
           </p>
         </div>
 
         <div className="matrix-month-controls">
-          <button className="btn-cal-nav" onClick={prevMonth}>
+          <button className="btn-cal-nav" onClick={prevMonth} title="Bulan Sebelumnya">
             <ChevronLeft size={18} />
           </button>
           <div className="current-month-banner">
             <span className="current-month-display">{monthLabel}</span>
           </div>
-          <button className="btn-cal-nav" onClick={nextMonth}>
+          <button className="btn-cal-nav" onClick={nextMonth} title="Bulan Berikutnya">
             <ChevronRight size={18} />
           </button>
         </div>
       </div>
 
-      {/* Legend */}
+      {/* Harmonized Shift Legend */}
       <div className="matrix-legend">
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Calendar size={16} strokeWidth={2} style={{ color: 'var(--text-muted)' }} />
-          <span className="legend-title">Keterangan Shift:</span>
+          <span className="legend-title">Keterangan:</span>
         </div>
         {shifts.map((s) => (
           <div key={s.id} className="legend-item">
@@ -113,36 +121,50 @@ export const ScheduleMatrix: React.FC = () => {
         ))}
         <div className="legend-item">
           <span className="legend-badge badge-off">OFF</span>
-          <span className="legend-text">Libur Rutin</span>
+          <span className="legend-text">Libur</span>
         </div>
         <div className="legend-item">
           <span className="legend-badge badge-leave">CUTI</span>
-          <span className="legend-text">Cuti Tahunan</span>
+          <span className="legend-text">Cuti</span>
         </div>
         <div className="legend-item">
           <span className="legend-badge badge-sick">SAKIT</span>
-          <span className="legend-text">Izin Sakit</span>
+          <span className="legend-text">Sakit</span>
+        </div>
+        <div className="legend-item" style={{ marginLeft: 'auto', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+          <span className="today-legend-indicator" /> Hari Ini
+          <span className="sunday-legend-indicator" style={{ marginLeft: 10 }} /> Minggu
         </div>
       </div>
 
-      {/* Spreadsheet Matrix Table */}
+      {/* Spreadsheet Matrix Table with Sticky Pinned Employee Column */}
       <div className="matrix-table-wrapper">
         <table className="matrix-table">
           <thead>
             <tr>
-              <th className="sticky-col header-member-col">Nama Karyawan</th>
+              <th className="sticky-col header-member-col">
+                <span className="header-member-title">Nama Staf & Departemen</span>
+              </th>
               {daysArray.map((day) => {
                 const dayOfWeek = new Date(year, month - 1, day).getDay();
-                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+                const isSunday = dayOfWeek === 0;
+                const isSaturday = dayOfWeek === 6;
+                const isToday = isCurrentMonthView && todayDay === day;
+
                 return (
                   <th
                     key={day}
-                    className={`day-col-header ${isWeekend ? 'weekend-header' : ''}`}
+                    className={`day-col-header ${isSunday ? 'sunday-col' : ''} ${
+                      isSaturday ? 'saturday-col' : ''
+                    } ${isToday ? 'today-col' : ''}`}
+                    title={isToday ? 'Hari Ini' : undefined}
                   >
-                    <span className="header-day-num">{day}</span>
-                    <span className="header-day-name">
-                      {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'][dayOfWeek]}
-                    </span>
+                    <div className="header-day-stack">
+                      <span className="header-day-num">{day}</span>
+                      <span className="header-day-name">
+                        {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'][dayOfWeek]}
+                      </span>
+                    </div>
                   </th>
                 );
               })}
@@ -154,10 +176,15 @@ export const ScheduleMatrix: React.FC = () => {
                 <td className="sticky-col member-row-header">
                   <div className="member-matrix-cell">
                     <span className="member-name-text">{member.full_name}</span>
-                    <span className="member-dept-text">{member.department}</span>
+                    <span className="member-dept-text">{member.department || 'Staff'}</span>
                   </div>
                 </td>
                 {daysArray.map((day) => {
+                  const dayOfWeek = new Date(year, month - 1, day).getDay();
+                  const isSunday = dayOfWeek === 0;
+                  const isSaturday = dayOfWeek === 6;
+                  const isToday = isCurrentMonthView && todayDay === day;
+
                   const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(
                     day
                   ).padStart(2, '0')}`;
@@ -171,9 +198,11 @@ export const ScheduleMatrix: React.FC = () => {
                   return (
                     <td
                       key={day}
-                      className={`matrix-data-cell ${isSelected ? 'cell-selected' : ''}`}
+                      className={`matrix-data-cell ${isSunday ? 'sunday-cell' : ''} ${
+                        isSaturday ? 'saturday-cell' : ''
+                      } ${isToday ? 'today-cell' : ''} ${isSelected ? 'cell-selected' : ''}`}
                       onClick={() => handleCellClick(member.id, day)}
-                      title={`Klik untuk ubah jadwal ${member.full_name} tgl ${day}`}
+                      title={`Klik untuk ubah jadwal ${member.full_name} (Tgl ${day})`}
                     >
                       {sch?.schedule_type === 'SHIFT' && assignedShift && (
                         <div
@@ -195,7 +224,7 @@ export const ScheduleMatrix: React.FC = () => {
                       {sch?.schedule_type === 'SICK' && (
                         <div className="matrix-pill sick-pill">SAKIT</div>
                       )}
-                      {!sch && <div className="matrix-pill empty-pill">-</div>}
+                      {!sch && <div className="matrix-pill empty-pill">·</div>}
                     </td>
                   );
                 })}

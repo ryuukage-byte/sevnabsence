@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import confetti from 'canvas-confetti';
 import {
   LogIn,
   LogOut,
@@ -8,14 +7,18 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
-  Sparkles,
-  Info,
-  Check,
   User,
-  Zap
+  Zap,
+  Building2,
+  ShieldCheck,
+  RotateCcw
 } from 'lucide-react';
 import { DigitalClock } from '../common/DigitalClock';
-import { attendanceService } from '../../services/attendanceService';
+import {
+  attendanceService,
+  formatBranchTime,
+  formatBranchDate
+} from '../../services/attendanceService';
 import { playSuccessChime, playWarningChime, playErrorChime } from '../../services/audioService';
 import type { AttendanceAction, ScanResult, Member, AttendanceRecord } from '../../types/attendance';
 
@@ -31,6 +34,7 @@ export const ScannerKiosk: React.FC = () => {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingRef = useRef(false);
   const actionRef = useRef<AttendanceAction>(action);
+  const timerIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     actionRef.current = action;
@@ -45,7 +49,7 @@ export const ScannerKiosk: React.FC = () => {
     loadData();
   }, []);
 
-  // Initialize camera
+  // Initialize camera safely
   useEffect(() => {
     let isMounted = true;
     const scannerId = 'kiosk-reader-view';
@@ -63,8 +67,8 @@ export const ScannerKiosk: React.FC = () => {
         html5QrCodeRef.current = html5QrCode;
 
         const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
+          fps: 12,
+          qrbox: { width: 260, height: 260 },
           aspectRatio: 1.0
         };
 
@@ -88,7 +92,7 @@ export const ScannerKiosk: React.FC = () => {
           const msg =
             err instanceof Error
               ? err.message
-              : 'Kamera depan tidak dapat diakses atau izin ditolak';
+              : 'Kamera tidak dapat diakses atau izin ditolak';
           setCameraError(msg);
         }
       }
@@ -98,6 +102,10 @@ export const ScannerKiosk: React.FC = () => {
 
     return () => {
       isMounted = false;
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
       const scanner = html5QrCodeRef.current;
       if (scanner) {
         try {
@@ -122,25 +130,25 @@ export const ScannerKiosk: React.FC = () => {
 
       if (result.success) {
         playSuccessChime();
-        confetti({
-          particleCount: 40,
-          spread: 55,
-          origin: { y: 0.6 }
-        });
       } else if (result.code.includes('DUPLICATE')) {
         playWarningChime();
       } else {
         playErrorChime();
       }
 
-      // Auto-reset timer (3s)
+      // Auto-reset timer (3 seconds)
       let countdown = 3;
       setResetTimer(countdown);
-      const interval = setInterval(() => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+
+      timerIntervalRef.current = window.setInterval(() => {
         countdown -= 1;
         setResetTimer(countdown);
         if (countdown <= 0) {
-          clearInterval(interval);
+          if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+            timerIntervalRef.current = null;
+          }
           setScanResult(null);
           setResetTimer(null);
           isProcessingRef.current = false;
@@ -158,110 +166,76 @@ export const ScannerKiosk: React.FC = () => {
   };
 
   const org = attendanceService.getOrganization();
-  const getMemberById = (id: string) => demoMembers.find((m) => m.id === id);
+  const tzLabel = org.timezone === 'Asia/Tokyo' ? 'JST' : 'WIB';
+
+  // Last recent attendance
+  const lastRecord = todayRecords.length > 0 ? todayRecords[todayRecords.length - 1] : null;
 
   return (
     <div className="kiosk-container">
       <div className="kiosk-card-frame">
         {/* Kiosk Header Bar */}
         <div className="kiosk-header-bar">
-          <div>
+          <div className="kiosk-header-left">
             <div className="kiosk-brand-title">
-              <span>Kiosk Presensi Mandiri</span>
-              <span className="kiosk-badge-pill">ONLINE • AKTIF</span>
+              <span className="kiosk-title-text">Kiosk Presensi Mandiri</span>
+              <span className="kiosk-badge-pill">
+                <span className="kiosk-pulse-dot" />
+                ONLINE • {org.branch_name} ({tzLabel})
+              </span>
             </div>
             <p className="kiosk-subtitle">
-              Sistem absensi cepat & aman cabang <strong>{org.display_name}</strong>. Cukup tunjukkan kartu QR ke kamera.
+              Arahkan kartu QR karyawan ke lensa kamera untuk mencatat kehadiran.
             </p>
           </div>
 
-          {/* Minimalist Tactile Digital Clock */}
-          <DigitalClock />
+          <DigitalClock timezone={org.timezone} />
         </div>
 
-        {/* Main Grid: Actions & Viewfinder */}
-        <div className="kiosk-grid">
-          {/* Left Column: Action Selectors & Status */}
-          <div className="kiosk-left-panel">
-            {/* Tactile Action Buttons */}
-            <div className="action-buttons-group">
-              <button
-                className={`tactile-action-btn masuk ${action === 'MASUK' ? 'active' : ''}`}
-                onClick={() => {
-                  setAction('MASUK');
-                  setScanResult(null);
-                  isProcessingRef.current = false;
-                }}
-              >
-                <div className="action-icon-tile">
-                  <LogIn size={26} strokeWidth={2.4} />
-                </div>
-                <div>
-                  <span className="btn-title">PRESENSI MASUK</span>
-                  <span className="btn-subtext">Mulai jam kerja • Catat waktu hadir</span>
-                </div>
-              </button>
+        {/* Hero Segmented Mode Switcher (Min 48px touch targets) */}
+        <div className="kiosk-mode-selector-wrapper">
+          <div className="kiosk-segmented-control" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={action === 'MASUK'}
+              className={`kiosk-segment-btn masuk ${action === 'MASUK' ? 'active' : ''}`}
+              onClick={() => {
+                setAction('MASUK');
+                setScanResult(null);
+                isProcessingRef.current = false;
+              }}
+            >
+              <LogIn size={20} strokeWidth={2.4} />
+              <span className="kiosk-segment-label">PRESENSI MASUK</span>
+            </button>
 
-              <button
-                className={`tactile-action-btn pulang ${action === 'PULANG' ? 'active' : ''}`}
-                onClick={() => {
-                  setAction('PULANG');
-                  setScanResult(null);
-                  isProcessingRef.current = false;
-                }}
-              >
-                <div className="action-icon-tile">
-                  <LogOut size={26} strokeWidth={2.4} />
-                </div>
-                <div>
-                  <span className="btn-title">PRESENSI PULANG</span>
-                  <span className="btn-subtext">Selesai dinas • Catat waktu pulang</span>
-                </div>
-              </button>
-            </div>
-
-            {/* Status / Instructions Card */}
-            <div className="kiosk-status-card">
-              <div className="kiosk-status-icon">
-                <Camera size={22} strokeWidth={2} />
-              </div>
-              <div>
-                <div className="kiosk-status-title">Mode Aktif: Presensi {action}</div>
-                <div className="kiosk-status-text">
-                  Posisikan kartu QR karyawan di dalam kotak pemindai kamera depan. Presensi diproses dalam 0.3 detik.
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Demo Simulator */}
-            <div className="kiosk-demo-box">
-              <div className="demo-title">
-                <Zap size={14} strokeWidth={2.2} />
-                <span>Simulasi Cepat (Klik Kartu Demo):</span>
-              </div>
-              <div className="demo-chips-grid">
-                {demoMembers.map((m) => (
-                  <button
-                    key={m.id}
-                    className="tactile-chip-btn"
-                    onClick={() => handleManualDemoScan(m.active_token || '')}
-                    title={`Scan ${m.full_name}`}
-                  >
-                    <User size={13} strokeWidth={2} />
-                    <span>{m.full_name.split(' ')[0]}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={action === 'PULANG'}
+              className={`kiosk-segment-btn pulang ${action === 'PULANG' ? 'active' : ''}`}
+              onClick={() => {
+                setAction('PULANG');
+                setScanResult(null);
+                isProcessingRef.current = false;
+              }}
+            >
+              <LogOut size={20} strokeWidth={2.4} />
+              <span className="kiosk-segment-label">PRESENSI PULANG</span>
+            </button>
           </div>
+        </div>
 
-          {/* Right Column: Hardware Tablet Bezel Camera */}
+        {/* Hero Viewfinder Area */}
+        <div className="kiosk-hero-camera-area">
           <div className="kiosk-camera-bezel">
             <div className="kiosk-camera-viewport">
               <div id="kiosk-reader-view" />
 
+              {/* Single Clean Reticle */}
               {!scanResult && !cameraError && (
-                <div className="scanner-reticle">
+                <div className="scanner-reticle single-reticle">
                   <div className="reticle-corner top-left" />
                   <div className="reticle-corner top-right" />
                   <div className="reticle-corner bottom-left" />
@@ -270,53 +244,60 @@ export const ScannerKiosk: React.FC = () => {
                 </div>
               )}
 
+              {/* Camera Error / Standby Overlay */}
               {cameraError && (
                 <div className="camera-error-overlay">
-                  <AlertCircle size={40} color="#C9944A" strokeWidth={2} />
+                  <AlertCircle size={40} color="var(--accent-copper)" strokeWidth={2} />
                   <h3>Kamera Belum Aktif</h3>
                   <p>{cameraError}</p>
-                  <p style={{ marginTop: 8, fontSize: '0.78rem', color: '#A69B91' }}>
-                    Gunakan tombol Simulasi Cepat di sebelah kiri untuk menguji presensi tanpa webcam.
-                  </p>
+                  {import.meta.env.DEV && (
+                    <p style={{ marginTop: 8, fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      [DEV MODE] Anda dapat menggunakan simulasi kartu di bawah untuk uji coba.
+                    </p>
+                  )}
                 </div>
               )}
 
-              {/* Scan Feedback Overlay */}
+              {/* Tactile Stamped Seal Result Overlay */}
               {scanResult && (
                 <div
-                  className={`scan-feedback-overlay ${
+                  className={`scan-feedback-overlay tactile-stamp-overlay ${
                     scanResult.success ? 'feedback-success' : 'feedback-warning'
                   }`}
                 >
-                  <div className="feedback-content">
-                    <div className="feedback-icon-tile">
+                  <div className="tactile-stamp-badge">
+                    <div className="stamp-icon-tile">
                       {scanResult.success ? (
-                        <CheckCircle2 size={36} strokeWidth={2.5} />
+                        <CheckCircle2 size={44} strokeWidth={2.5} />
                       ) : (
-                        <AlertCircle size={36} strokeWidth={2.5} />
+                        <AlertCircle size={44} strokeWidth={2.5} />
                       )}
                     </div>
-                    <h2 className="feedback-title">
-                      {scanResult.success ? 'Presensi Berhasil!' : 'Perhatian'}
-                    </h2>
+
+                    <div className="stamp-title-seal">
+                      {scanResult.success
+                        ? action === 'MASUK'
+                          ? 'HADIR TERCATAT'
+                          : 'PULANG TERCATAT'
+                        : 'PERHATIAN'}
+                    </div>
+
                     {scanResult.member_name && (
                       <div className="feedback-member-name">{scanResult.member_name}</div>
                     )}
+
                     <p className="feedback-message">{scanResult.message}</p>
+
                     {scanResult.timestamp && (
-                      <div style={{ marginTop: 8, fontSize: '0.82rem', opacity: 0.9 }}>
-                        Waktu Server:{' '}
-                        {new Date(scanResult.timestamp).toLocaleTimeString('id-ID', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })}{' '}
-                        WIB
+                      <div className="stamp-timestamp">
+                        Waktu Server: {formatBranchTime(scanResult.timestamp, org.timezone, true)}{' '}
+                        {tzLabel}
                       </div>
                     )}
+
                     {resetTimer !== null && (
-                      <div className="feedback-countdown">
-                        Siap memindai kembali dalam {resetTimer} detik...
+                      <div className="stamp-countdown">
+                        Siap memindai lagi ({resetTimer}s)
                       </div>
                     )}
                   </div>
@@ -324,54 +305,64 @@ export const ScannerKiosk: React.FC = () => {
               )}
             </div>
 
+            {/* Viewfinder Contextual Instruction */}
             <div className="camera-bezel-footer">
               <Camera size={16} strokeWidth={2} />
-              <span>Arahkan kode QR ke lensa kamera</span>
+              <span>
+                {scanResult
+                  ? 'Menunggu pemindaian berikutnya...'
+                  : `Arahkan kartu QR untuk Presensi ${action}`}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Live Attendance Stream */}
-        <div className="kiosk-recent-stream">
-          <div className="stream-header">
-            <Clock size={16} strokeWidth={2} />
-            <span>Presensi Terkini Hari Ini (Real-Time)</span>
-          </div>
-          <div className="stream-cards-row">
-            {todayRecords.length > 0 ? (
-              todayRecords.slice(-4).map((rec) => {
-                const member = getMemberById(rec.member_id);
-                const time = rec.check_in_at
-                  ? new Date(rec.check_in_at).toLocaleTimeString('id-ID', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })
-                  : '--:--';
-                return (
-                  <div key={rec.id} className="stream-card-item">
-                    <div className="stream-avatar-circle">
-                      {member?.full_name.charAt(0) || '👤'}
-                    </div>
-                    <div>
-                      <span className="stream-name">{member?.full_name || 'Karyawan'}</span>
-                      <span className="stream-time">{time} WIB • Masuk</span>
-                    </div>
-                  </div>
-                );
-              })
+        {/* Compact Recent Activity Bar */}
+        <div className="kiosk-status-strip">
+          <div className="kiosk-strip-info">
+            <Clock size={15} strokeWidth={2} />
+            <span>Aktivitas Terakhir:</span>
+            {lastRecord ? (
+              <span className="strip-record-text">
+                <strong>{lastRecord.member_name}</strong> •{' '}
+                {lastRecord.check_out_at
+                  ? `Pulang ${formatBranchTime(lastRecord.check_out_at, org.timezone)}`
+                  : `Masuk ${formatBranchTime(lastRecord.check_in_at, org.timezone)}`}{' '}
+                {tzLabel}
+              </span>
             ) : (
-              demoMembers.slice(0, 3).map((m) => (
-                <div key={m.id} className="stream-card-item" style={{ opacity: 0.65 }}>
-                  <div className="stream-avatar-circle">{m.full_name.charAt(0)}</div>
-                  <div>
-                    <span className="stream-name">{m.full_name}</span>
-                    <span className="stream-time">Siap presensi</span>
-                  </div>
-                </div>
-              ))
+              <span className="strip-record-text muted">Belum ada presensi tercatat hari ini</span>
             )}
           </div>
+          <div className="kiosk-device-health">
+            <ShieldCheck size={14} strokeWidth={2} color="var(--accent-moss)" />
+            <span>Sistem Aman • JST UTC+9</span>
+          </div>
         </div>
+
+        {/* Developer Only Quick Simulation (Hidden in Production) */}
+        {import.meta.env.DEV && (
+          <div className="kiosk-dev-simulation-tray">
+            <div className="dev-tray-label">
+              <Zap size={13} strokeWidth={2.4} />
+              <span>[DEV ONLY] Uji Presensi Cepat:</span>
+            </div>
+            <div className="dev-chips-row">
+              {demoMembers.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  className="dev-chip-btn"
+                  onClick={() => handleManualDemoScan(m.active_token || '')}
+                  title={`Simulasi scan kartu ${m.full_name}`}
+                >
+                  <User size={12} strokeWidth={2} />
+                  <span>{m.full_name.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -8,7 +8,8 @@ import {
   Activity,
   Layers,
   Lock,
-  LogOut
+  Menu,
+  X
 } from 'lucide-react';
 import { Navbar, type AppMode } from './components/common/Navbar';
 import { ScannerKiosk } from './components/kiosk/ScannerKiosk';
@@ -32,6 +33,7 @@ export function App() {
 
   const [mode, setMode] = useState<AppMode>('kiosk');
   const [adminTab, setAdminTab] = useState<string>('today');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [org] = useState(attendanceService.getOrganization());
 
   useEffect(() => {
@@ -63,6 +65,7 @@ export function App() {
       }
     }
     setMode(newMode);
+    setMobileMenuOpen(false);
     window.location.hash = newMode;
   };
 
@@ -77,12 +80,36 @@ export function App() {
     authService.lockAdmin();
     setIsAdminUnlocked(false);
     setMode('kiosk');
+    setMobileMenuOpen(false);
     window.location.hash = 'kiosk';
   };
 
   const handleSelectAdminTab = (tab: string) => {
     setAdminTab(tab);
+    setMobileMenuOpen(false);
     window.location.hash = `admin/${tab}`;
+  };
+
+  // Human title for current tab on mobile top bar
+  const getTabTitle = (tab: string) => {
+    switch (tab) {
+      case 'today':
+        return 'Monitoring Hari Ini';
+      case 'members':
+        return 'Data Karyawan & QR';
+      case 'schedule':
+        return 'Matriks Jadwal';
+      case 'shifts':
+        return 'Shift & Toleransi';
+      case 'attendance':
+        return 'Log Presensi';
+      case 'reports':
+        return 'Laporan & Ekspor';
+      case 'settings':
+        return 'Pengaturan';
+      default:
+        return 'Admin';
+    }
   };
 
   // 1. Initial Launch / First-Time Device Activation Screen
@@ -100,7 +127,7 @@ export function App() {
 
   return (
     <div className="app-container">
-      {/* Top Navigation */}
+      {/* Top Header */}
       <Navbar
         currentMode={mode}
         onSelectMode={handleSelectMode}
@@ -114,10 +141,53 @@ export function App() {
         {mode === 'kiosk' && <ScannerKiosk />}
 
         {mode === 'admin' && isAdminUnlocked && (
-          <div className="admin-container">
-            {/* Admin Sidebar Navigation */}
-            <aside className="admin-sidebar">
-              <span className="sidebar-heading">Menu Utama</span>
+          <div className="admin-layout-wrapper">
+            {/* Mobile Admin Navigation Header Bar */}
+            <div className="admin-mobile-top-bar">
+              <button
+                type="button"
+                className="admin-mobile-drawer-toggle"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle Menu"
+              >
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                <span>{getTabTitle(adminTab)}</span>
+              </button>
+
+              <button
+                type="button"
+                className="admin-mobile-lock-btn"
+                onClick={handleLockAdmin}
+                title="Kunci Admin & Kembali ke Kiosk"
+              >
+                <Lock size={15} />
+                <span>Kunci</span>
+              </button>
+            </div>
+
+            {/* Mobile Drawer Backdrop */}
+            {mobileMenuOpen && (
+              <div
+                className="admin-sidebar-backdrop"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+            )}
+
+            <div className="admin-container">
+              {/* Admin Sidebar Navigation (Desktop Fixed, Mobile Drawer) */}
+              <aside className={`admin-sidebar ${mobileMenuOpen ? 'mobile-drawer-open' : ''}`}>
+                <div className="sidebar-mobile-header">
+                  <span>Menu Navigasi Admin</span>
+                  <button
+                    type="button"
+                    className="btn-sidebar-close"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <span className="sidebar-heading">Menu Utama</span>
 
               <button
                 className={`admin-nav-item ${adminTab === 'today' ? 'active' : ''}`}
@@ -179,7 +249,7 @@ export function App() {
                 <span>Pengaturan Organisasi</span>
               </button>
 
-              {/* Quick Lock & Return to Kiosk */}
+              {/* Single Unified Lock Button */}
               <div className="sidebar-lock-box">
                 <button className="btn-sidebar-lock" onClick={handleLockAdmin}>
                   <Lock size={15} strokeWidth={2.2} />
@@ -188,7 +258,7 @@ export function App() {
               </div>
             </aside>
 
-            {/* Admin View Area */}
+            {/* Admin Main Content Area */}
             <section className="admin-content-area">
               {adminTab === 'today' && (
                 <AdminDashboard onNavigateTab={handleSelectAdminTab} />
@@ -201,7 +271,8 @@ export function App() {
               {adminTab === 'settings' && <SettingsView />}
             </section>
           </div>
-        )}
+        </div>
+      )}
       </main>
 
       {/* Password Gate Dialog (shown when clicking Admin while locked) */}

@@ -68,10 +68,11 @@ async function capture() {
   });
   await sleep(200);
   await page.evaluate(() => {
-    const chip = document.querySelector('.tactile-chip-btn');
+    const chip = document.querySelector('.dev-chip-btn') || document.querySelector('.tactile-chip-btn');
     if (chip) chip.click();
   });
-  await sleep(800);
+  await page.waitForSelector('.tactile-stamp-badge', { timeout: 4000 }).catch(() => {});
+  await sleep(300);
   await page.screenshot({ path: path.join(OUTPUT_DIR, '03_kiosk_scan_berhasil_feedback.png') });
 
   // 6. Tablet Portrait Kiosk

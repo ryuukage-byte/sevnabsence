@@ -8,8 +8,8 @@ interface InitialAdminLoginProps {
 }
 
 export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess }) => {
-  const [email, setEmail] = useState('admin@abccare.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState(import.meta.env.DEV ? 'admin@abccare.com' : '');
+  const [password, setPassword] = useState(import.meta.env.DEV ? 'admin123' : '');
   const [error, setError] = useState<string | null>(null);
   const org = attendanceService.getOrganization();
 
@@ -80,18 +80,20 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
           </button>
         </form>
 
-        <div className="auth-demo-helper">
-          <div className="helper-label">Kredensial Demo Awal:</div>
-          <div className="helper-creds font-mono">
-            <span>admin@abccare.com</span> / <span>admin123</span>
+        {import.meta.env.DEV && (
+          <div className="auth-demo-helper">
+            <div className="helper-label">[DEV ONLY] Kredensial Demo Awal:</div>
+            <div className="helper-creds font-mono">
+              <span>admin@abccare.com</span> / <span>admin123</span>
+            </div>
+            <button type="button" className="btn-helper-fill" onClick={handleUseDemo}>
+              <CheckCircle2 size={14} /> Isi Otomatis Kredensial Demo
+            </button>
           </div>
-          <button type="button" className="btn-helper-fill" onClick={handleUseDemo}>
-            <CheckCircle2 size={14} /> Isi Otomatis Kredensial Demo
-          </button>
-        </div>
+        )}
 
         <div className="auth-footer-note">
-          Setelah login pertama ini, tablet akan langsung masuk ke layar <strong>Kiosk Presensi</strong> untuk karyawan, dan menu Admin akan selalu terkunci password.
+          Setelah login pertama ini, tablet akan langsung masuk ke layar <strong>Kiosk Presensi</strong> untuk karyawan, dan menu Admin akan selalu terlindungi kata sandi.
         </div>
       </div>
     </div>

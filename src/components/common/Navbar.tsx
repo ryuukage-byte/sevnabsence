@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scan, User, Shield, Lock, Unlock, Building2 } from 'lucide-react';
+import { Scan, Shield, Unlock, Building2 } from 'lucide-react';
 
 export type AppMode = 'kiosk' | 'admin';
 
@@ -8,23 +8,27 @@ interface NavbarProps {
   onSelectMode: (mode: AppMode) => void;
   orgName: string;
   isAdminUnlocked: boolean;
-  onLockAdmin: () => void;
+  onLockAdmin?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentMode,
   onSelectMode,
   orgName,
-  isAdminUnlocked,
-  onLockAdmin
+  isAdminUnlocked
 }) => {
   return (
     <header className="app-header">
-      {/* Brand & Branch Info with Tactile Tile */}
+      {/* Brand & Branch Info with Koji Mascot Tile */}
       <div className="header-brand-container">
-        <div className="header-brand">
-          <div className="tactile-tile-btn" title="Absence System">
-            <Scan size={20} strokeWidth={2.2} />
+        <div className="header-brand" onClick={() => onSelectMode('kiosk')} style={{ cursor: 'pointer' }}>
+          <div className="tactile-tile-btn brand-koji-tile" title="Absence System with Koji">
+            <img
+              src="/koji_mascot.png"
+              alt="Koji Mascot"
+              className="navbar-koji-img"
+              style={{ width: 28, height: 28, objectFit: 'contain' }}
+            />
           </div>
           <div className="brand-text">
             <span className="brand-title">Absence</span>
@@ -43,35 +47,25 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => onSelectMode('kiosk')}
           title="Mode Kiosk Presensi Kamera"
         >
-          <Scan size={17} strokeWidth={2} />
-          <span>Kiosk Presensi</span>
+          <Scan size={16} strokeWidth={2} />
+          <span>Kiosk</span>
         </button>
 
         <button
           className={`mode-nav-btn ${currentMode === 'admin' ? 'active' : ''}`}
           onClick={() => onSelectMode('admin')}
-          title="Panel Administrator (Perlu Sandi)"
+          title="Panel Administrator"
         >
           {isAdminUnlocked ? (
-            <Unlock size={17} strokeWidth={2} color="#3B7A57" />
+            <Unlock size={16} strokeWidth={2} color="var(--success)" />
           ) : (
-            <Shield size={17} strokeWidth={2} />
+            <Shield size={16} strokeWidth={2} />
           )}
           <span>Admin</span>
           {!isAdminUnlocked && <span className="nav-lock-mini-badge">Kunci</span>}
         </button>
-
-        {isAdminUnlocked && (
-          <button
-            className="btn-lock-session"
-            onClick={onLockAdmin}
-            title="Kunci sesi admin dan kembali ke Kiosk"
-          >
-            <Lock size={13} strokeWidth={2.2} />
-            <span>Kunci</span>
-          </button>
-        )}
       </nav>
     </header>
   );
 };
+

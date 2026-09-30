@@ -6,6 +6,7 @@ import type {
   AttendanceRecord,
   ScanResult,
   AttendanceAction,
+  AttendanceStatus,
   Organization,
   ReviewStatus,
   ScheduleType
@@ -17,7 +18,7 @@ const DEFAULT_ORG: Organization = {
   company_name: 'ABC Care',
   branch_name: 'Shimada Branch',
   display_name: 'ABC Care - Shimada',
-  timezone: 'Asia/Jakarta'
+  timezone: 'Asia/Tokyo'
 };
 
 const DEFAULT_SHIFTS: Shift[] = [
@@ -121,6 +122,75 @@ class AttendanceService {
   constructor() {
     this.loadFromStorage();
     this.initSchedulesIfEmpty();
+    this.initRecordsIfEmpty();
+  }
+
+  private initRecordsIfEmpty() {
+    if (this.records.length === 0) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+
+      this.records = [
+        {
+          id: 'rec_init_001',
+          organization_id: this.org.id,
+          member_id: this.members[0].id,
+          member_name: this.members[0].full_name,
+          department: this.members[0].department,
+          shift_name: this.shifts[0].name,
+          attendance_date: todayStr,
+          check_in_at: `${todayStr}T08:02:15+09:00`,
+          check_out_at: undefined,
+          check_in_source: 'KIOSK_TABLET',
+          check_out_source: '',
+          status: 'PRESENT',
+          late_minutes: 0,
+          early_arrival_minutes: 0,
+          work_duration_minutes: 0,
+          review_status: 'NORMAL'
+        },
+        {
+          id: 'rec_init_002',
+          organization_id: this.org.id,
+          member_id: this.members[1].id,
+          member_name: this.members[1].full_name,
+          department: this.members[1].department,
+          shift_name: this.shifts[1].name,
+          attendance_date: todayStr,
+          check_in_at: `${todayStr}T13:25:40+09:00`,
+          check_out_at: undefined,
+          check_in_source: 'KIOSK_TABLET',
+          check_out_source: '',
+          status: 'LATE',
+          late_minutes: 15,
+          early_arrival_minutes: 0,
+          work_duration_minutes: 0,
+          review_status: 'NORMAL'
+        },
+        {
+          id: 'rec_init_003',
+          organization_id: this.org.id,
+          member_id: this.members[2].id,
+          member_name: this.members[2].full_name,
+          department: this.members[2].department,
+          shift_name: this.shifts[0].name,
+          attendance_date: todayStr,
+          check_in_at: `${todayStr}T07:55:00+09:00`,
+          check_out_at: `${todayStr}T17:05:00+09:00`,
+          check_in_source: 'KIOSK_TABLET',
+          check_out_source: 'KIOSK_TABLET',
+          status: 'PRESENT',
+          late_minutes: 0,
+          early_arrival_minutes: 5,
+          work_duration_minutes: 550,
+          review_status: 'NORMAL'
+        }
+      ];
+      this.saveToStorage();
+    }
   }
 
   private loadFromStorage() {
@@ -269,21 +339,42 @@ class AttendanceService {
         };
       }
 
-      // Compute late / early tolerances
-      let status: 'PRESENT' | 'LATE' = 'PRESENT';
+      // Compute late / early tolerances & sensible shift matching
+      let status: AttendanceStatus = 'PRESENT';
+      let reviewStatus: ReviewStatus = 'NORMAL';
+      let reviewReason: string | undefined = undefined;
       let lateMinutes = 0;
       let earlyArrivalMins = 0;
+      let feedbackMsg = 'Presensi masuk berhasil dicatat!';
 
       if (assignedShift) {
         const [shiftH, shiftM] = assignedShift.start_time.split(':').map(Number);
+        const [endH, endM] = assignedShift.end_time.split(':').map(Number);
         const shiftStartMins = shiftH * 60 + shiftM;
-        const currentMins = now.getHours() * 60 + now.getMinutes();
+        let shiftEndMins = endH * 60 + endM;
+        if (shiftEndMins < shiftStartMins) {
+          shiftEndMins += 24 * 60; // Cross-midnight shift (e.g. 21:00 - 06:00)
+        }
 
-        if (currentMins > shiftStartMins + assignedShift.late_tolerance_mins) {
+        let currentMins = now.getHours() * 60 + now.getMinutes();
+        if (assignedShift.start_time > assignedShift.end_time && currentMins < shiftStartMins && currentMins <= shiftEndMins - 24 * 60) {
+          currentMins += 24 * 60;
+        }
+
+        const diffFromStart = currentMins - shiftStartMins;
+
+        // If scan is > 4 hours after shift start -> flag as REVIEW_REQUIRED / PENDING_REVIEW
+        if (diffFromStart > 240) {
+          status = 'REVIEW_REQUIRED';
+          reviewStatus = 'PENDING_REVIEW';
+          lateMinutes = diffFromStart;
+          reviewReason = `Presensi masuk selisih ${Math.floor(diffFromStart / 60)} jam dari jadwal ${assignedShift.name}. Perlu review supervisor.`;
+          feedbackMsg = `Presensi tercatat di luar jam shift wajar (${assignedShift.name}). Ditandai untuk review.`;
+        } else if (diffFromStart > assignedShift.late_tolerance_mins) {
           status = 'LATE';
-          lateMinutes = currentMins - shiftStartMins;
-        } else if (currentMins < shiftStartMins) {
-          earlyArrivalMins = shiftStartMins - currentMins;
+          lateMinutes = diffFromStart;
+        } else if (diffFromStart < 0) {
+          earlyArrivalMins = Math.abs(diffFromStart);
         }
       }
 
@@ -303,7 +394,8 @@ class AttendanceService {
         late_minutes: lateMinutes,
         early_arrival_minutes: earlyArrivalMins,
         work_duration_minutes: 0,
-        review_status: 'NORMAL'
+        review_status: reviewStatus,
+        review_reason: reviewReason
       };
 
       this.records.unshift(newRecord);
@@ -312,7 +404,7 @@ class AttendanceService {
       return {
         success: true,
         code: 'CHECK_IN_SUCCESS',
-        message: 'Presensi masuk berhasil dicatat!',
+        message: feedbackMsg,
         member_name: member.full_name,
         action: 'MASUK',
         timestamp: now.toISOString(),
@@ -552,3 +644,86 @@ class AttendanceService {
 }
 
 export const attendanceService = new AttendanceService();
+
+/**
+ * Format minutes into human-readable hours and minutes:
+ * 8 -> "8 m"
+ * 75 -> "1 j 15 m"
+ * 953 -> "15 j 53 m"
+ * 0 -> "–" (or empty fallback)
+ */
+export function formatDuration(minutes: number | undefined | null, emptyFallback = '–'): string {
+  if (minutes === undefined || minutes === null || minutes <= 0) {
+    return emptyFallback;
+  }
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  if (hours === 0) return `${mins} m`;
+  if (mins === 0) return `${hours} j`;
+  return `${hours} j ${mins} m`;
+}
+
+/**
+ * Format late minutes with "+" prefix:
+ * 0 -> "Tepat Waktu"
+ * 8 -> "+8 m"
+ * 953 -> "+15 j 53 m"
+ */
+export function formatLateDuration(minutes: number | undefined | null): string {
+  if (!minutes || minutes <= 0) return 'Tepat Waktu';
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  if (hours === 0) return `+${mins} m`;
+  if (mins === 0) return `+${hours} j`;
+  return `+${hours} j ${mins} m`;
+}
+
+/**
+ * Format timestamp strictly in the organization's branch timezone (default Asia/Tokyo)
+ * Output format: HH:mm or HH:mm:ss with colon separator (24h)
+ */
+export function formatBranchTime(
+  value: string | Date | undefined | null,
+  timezone = 'Asia/Tokyo',
+  includeSeconds = false
+): string {
+  if (!value) return '–';
+  try {
+    const d = typeof value === 'string' ? new Date(value) : value;
+    if (isNaN(d.getTime())) return '–';
+    const formatter = new Intl.DateTimeFormat('ja-JP', {
+      timeZone: timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: includeSeconds ? '2-digit' : undefined,
+      hour12: false
+    });
+    return formatter.format(d);
+  } catch {
+    return '–';
+  }
+}
+
+/**
+ * Format date in branch timezone: "1 Okt 2026" or "Sen, 1 Okt"
+ */
+export function formatBranchDate(
+  value: string | Date | undefined | null,
+  timezone = 'Asia/Tokyo',
+  options?: Intl.DateTimeFormatOptions
+): string {
+  if (!value) return '–';
+  try {
+    const d = typeof value === 'string' ? new Date(value) : value;
+    if (isNaN(d.getTime())) return '–';
+    const defaultOpts: Intl.DateTimeFormatOptions = {
+      timeZone: timezone,
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    };
+    return new Intl.DateTimeFormat('id-ID', options || defaultOpts).format(d);
+  } catch {
+    return '–';
+  }
+}

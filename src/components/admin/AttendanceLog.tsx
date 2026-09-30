@@ -10,7 +10,11 @@ import {
   ShieldAlert,
   FileText
 } from 'lucide-react';
-import { attendanceService } from '../../services/attendanceService';
+import {
+  attendanceService,
+  formatBranchTime,
+  formatLateDuration
+} from '../../services/attendanceService';
 import { Badge } from '../common/Badge';
 import type { AttendanceRecord, ReviewStatus } from '../../types/attendance';
 
@@ -21,6 +25,9 @@ export const AttendanceLog: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [reviewFilter, setReviewFilter] = useState('ALL');
+
+  const org = attendanceService.getOrganization();
+  const tzLabel = org.timezone === 'Asia/Tokyo' ? 'JST' : 'WIB';
 
   // Correction Modal State
   const [selectedForCorrection, setSelectedForCorrection] = useState<AttendanceRecord | null>(
@@ -41,7 +48,7 @@ export const AttendanceLog: React.FC = () => {
     const matchesStatus = statusFilter === 'ALL' || r.status === statusFilter;
     const matchesReview =
       reviewFilter === 'ALL' ||
-      (reviewFilter === 'PENDING' && r.review_status !== 'NORMAL');
+      (reviewFilter === 'PENDING' && (r.review_status !== 'NORMAL' || r.status === 'REVIEW_REQUIRED'));
     return matchesSearch && matchesStatus && matchesReview;
   });
 
@@ -49,18 +56,12 @@ export const AttendanceLog: React.FC = () => {
     setSelectedForCorrection(record);
     setNewCheckInTime(
       record.check_in_at
-        ? new Date(record.check_in_at).toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
+        ? formatBranchTime(record.check_in_at, org.timezone)
         : '08:00'
     );
     setNewCheckOutTime(
       record.check_out_at
-        ? new Date(record.check_out_at).toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
+        ? formatBranchTime(record.check_out_at, org.timezone)
         : '17:00'
     );
     setCorrectionReason('');
@@ -99,7 +100,7 @@ export const AttendanceLog: React.FC = () => {
         <div>
           <h2 className="view-title">Log Presensi & Audit Kehadiran</h2>
           <p className="view-subtitle">
-            Pantau riwayat presensi, lakukan koreksi waktu, dan verifikasi anti-joki (proxy scan).
+            Riwayat presensi cabang {org.display_name} ({tzLabel}). Seluruh waktu ditampilkan seragam dalam format 24 jam.
           </p>
         </div>
       </div>
@@ -110,7 +111,7 @@ export const AttendanceLog: React.FC = () => {
           <Search size={18} className="search-icon" />
           <input
             type="text"
-            placeholder="Cari nama karyawan atau tanggal (YYYY-MM-DD)..."
+            placeholder="Cari nama staf atau tanggal (YYYY-MM-DD)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -119,14 +120,15 @@ export const AttendanceLog: React.FC = () => {
         <div className="filter-select-group">
           <Filter size={18} />
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-            <option value="ALL">Semua Status</option>
+            <option value="ALL">Semua Status Kehadiran</option>
             <option value="PRESENT">Tepat Waktu</option>
             <option value="LATE">Terlambat</option>
+            <option value="REVIEW_REQUIRED">Shift Tidak Cocok / Perlu Review</option>
             <option value="CORRECTED">Dikoreksi</option>
           </select>
 
           <select value={reviewFilter} onChange={(e) => setReviewFilter(e.target.value)}>
-            <option value="ALL">Semua Review</option>
+            <option value="ALL">Semua Status Review</option>
             <option value="PENDING">Perlu Review / Ditandai</option>
           </select>
         </div>
@@ -137,15 +139,15 @@ export const AttendanceLog: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Tanggal</th>
-              <th>Nama Karyawan</th>
-              <th>Departemen</th>
-              <th>Shift</th>
-              <th>Presensi Masuk</th>
-              <th>Presensi Pulang</th>
-              <th>Status</th>
-              <th>Anti-Joki Review</th>
-              <th>Aksi</th>
+              <th style={{ width: '110px' }}>Tanggal</th>
+              <th style={{ minWidth: '160px' }}>Nama Karyawan</th>
+              <th style={{ width: '130px' }}>Departemen</th>
+              <th style={{ minWidth: '140px', whiteSpace: 'nowrap' }}>Shift Kerja</th>
+              <th style={{ width: '120px' }}>Presensi Masuk</th>
+              <th style={{ width: '120px' }}>Presensi Pulang</th>
+              <th style={{ minWidth: '140px' }}>Status</th>
+              <th style={{ width: '130px' }}>Anti-Joki</th>
+              <th style={{ width: '150px', textAlign: 'center' }}>Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -158,43 +160,54 @@ export const AttendanceLog: React.FC = () => {
             ) : (
               filteredRecords.map((rec) => (
                 <tr key={rec.id}>
-                  <td className="font-mono font-semibold">{rec.attendance_date}</td>
+                  <td className="font-mono font-semibold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {rec.attendance_date}
+                  </td>
                   <td>
                     <span className="font-semibold">{rec.member_name}</span>
                   </td>
                   <td>{rec.department || '-'}</td>
-                  <td>{rec.shift_name || 'Shift A'}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    <span className="shift-badge-nowrap">{rec.shift_name || 'Shift A'}</span>
+                  </td>
                   <td>
                     {rec.check_in_at ? (
-                      <span className="font-mono text-emerald-600 font-semibold">
-                        {new Date(rec.check_in_at).toLocaleTimeString('id-ID', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })}
+                      <span
+                        className="font-mono text-emerald-600 font-semibold"
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                      >
+                        {formatBranchTime(rec.check_in_at, org.timezone, true)}
                       </span>
                     ) : (
-                      '-'
+                      '–'
                     )}
                   </td>
                   <td>
                     {rec.check_out_at ? (
-                      <span className="font-mono text-rose-600 font-semibold">
-                        {new Date(rec.check_out_at).toLocaleTimeString('id-ID', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })}
+                      <span
+                        className="font-mono text-rose-600 font-semibold"
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                      >
+                        {formatBranchTime(rec.check_out_at, org.timezone, true)}
                       </span>
                     ) : (
                       <span className="text-muted text-xs">Belum Pulang</span>
                     )}
                   </td>
                   <td>
-                    <Badge status={rec.status} size="sm" />
-                    {rec.late_minutes > 0 && (
-                      <span className="late-subtag">+{rec.late_minutes}m</span>
-                    )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      <Badge status={rec.status} size="sm" />
+                      {rec.late_minutes > 0 && rec.status === 'LATE' && (
+                        <span className="late-subtag" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                          {formatLateDuration(rec.late_minutes)}
+                        </span>
+                      )}
+                      {rec.status === 'REVIEW_REQUIRED' && (
+                        <span className="review-subtag-note" title={rec.review_reason || 'Shift tidak cocok'}>
+                          Perlu Verifikasi Shift
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td>
                     <Badge status={rec.review_status} size="sm" />
@@ -202,13 +215,15 @@ export const AttendanceLog: React.FC = () => {
                   <td>
                     <div className="action-buttons-cell">
                       <button
+                        type="button"
                         className="btn-action-sm btn-correct"
                         onClick={() => handleOpenCorrection(rec)}
                         title="Koreksi jam presensi (Audit trail disimpan)"
                       >
-                        <Edit3 size={14} /> Koreksi
+                        <Edit3 size={13} /> Koreksi
                       </button>
                       <button
+                        type="button"
                         className="btn-action-sm btn-review"
                         onClick={() => {
                           setSelectedForReview(rec);
@@ -216,7 +231,7 @@ export const AttendanceLog: React.FC = () => {
                         }}
                         title="Verifikasi keabsahan presensi"
                       >
-                        <ShieldCheck size={14} /> Review
+                        <ShieldCheck size={13} /> Review
                       </button>
                     </div>
                   </td>
@@ -240,11 +255,10 @@ export const AttendanceLog: React.FC = () => {
 
             <form onSubmit={handleSaveCorrection} className="modal-form">
               <div className="correction-warning-banner">
-                <AlertTriangle size={18} color="#C9944A" />
+                <AlertTriangle size={18} color="var(--accent-amber)" />
                 <p>
                   Sesuai aturan kepatuhan, jam asli scan tidak akan dihapus. Perubahan akan
-                  dicatat ke dalam tabel audit log beserta identitas administrator dan alasan
-                  koreksi.
+                  dicatat ke dalam tabel audit log beserta alasan koreksi.
                 </p>
               </div>
 
@@ -259,7 +273,7 @@ export const AttendanceLog: React.FC = () => {
               </div>
 
               <div className="form-row">
-                <div className="form-group">
+                <div className="form-group" style={{ flex: 1 }}>
                   <label>Jam Masuk Baru</label>
                   <input
                     type="time"
@@ -268,7 +282,7 @@ export const AttendanceLog: React.FC = () => {
                     onChange={(e) => setNewCheckInTime(e.target.value)}
                   />
                 </div>
-                <div className="form-group">
+                <div className="form-group" style={{ flex: 1 }}>
                   <label>Jam Pulang Baru (Opsional)</label>
                   <input
                     type="time"
@@ -298,7 +312,7 @@ export const AttendanceLog: React.FC = () => {
                   Batal
                 </button>
                 <button type="submit" className="btn-primary">
-                  Simpan Perubahan & Catat Audit
+                  Simpan Perubahan
                 </button>
               </div>
             </form>
@@ -306,7 +320,7 @@ export const AttendanceLog: React.FC = () => {
         </div>
       )}
 
-      {/* Anti-Proxy Review Modal */}
+      {/* Anti-Proxy Review Modal - Restructured Action Buttons */}
       {selectedForReview && (
         <div className="modal-backdrop" onClick={() => setSelectedForReview(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -328,13 +342,18 @@ export const AttendanceLog: React.FC = () => {
                 <div>
                   <strong>Jam Scan Masuk:</strong>{' '}
                   {selectedForReview.check_in_at
-                    ? new Date(selectedForReview.check_in_at).toLocaleTimeString()
-                    : '-'}
+                    ? `${formatBranchTime(selectedForReview.check_in_at, org.timezone, true)} ${tzLabel}`
+                    : '–'}
                 </div>
+                {selectedForReview.review_reason && (
+                  <div style={{ marginTop: 6, color: 'var(--accent-copper)' }}>
+                    <strong>Catatan Sistem:</strong> {selectedForReview.review_reason}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
-                <label>Catatan Hasil Verifikasi:</label>
+                <label>Catatan Hasil Verifikasi Petugas:</label>
                 <textarea
                   rows={3}
                   placeholder="Contoh: Terkonfirmasi staf benar-benar hadir secara fisik di ruangan..."
@@ -343,32 +362,37 @@ export const AttendanceLog: React.FC = () => {
                 />
               </div>
 
-              <div className="review-actions-row">
-                <button
-                  type="button"
-                  className="btn-review-valid"
-                  onClick={() => handleApplyReview('VERIFIED')}
-                >
-                  <ShieldCheck size={18} />
-                  <span>Tandai Sah (Verified)</span>
-                </button>
+              <div className="review-actions-unified">
+                <div className="review-decisions-row">
+                  <button
+                    type="button"
+                    className="btn-review-valid"
+                    onClick={() => handleApplyReview('VERIFIED')}
+                  >
+                    <ShieldCheck size={16} />
+                    <span>Tandai Sah (Verified)</span>
+                  </button>
 
-                <button
-                  type="button"
-                  className="btn-review-invalid"
-                  onClick={() => handleApplyReview('FLAGGED_INVALID')}
-                >
-                  <ShieldAlert size={18} />
-                  <span>Tandai Tidak Sah (Joki / Palsu)</span>
-                </button>
+                  <button
+                    type="button"
+                    className="btn-review-invalid"
+                    onClick={() => handleApplyReview('FLAGGED_INVALID')}
+                  >
+                    <ShieldAlert size={16} />
+                    <span>Tandai Tidak Sah (Joki / Palsu)</span>
+                  </button>
+                </div>
 
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setSelectedForReview(null)}
-                >
-                  Tutup
-                </button>
+                <div className="review-cancel-row">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setSelectedForReview(null)}
+                    style={{ width: '100%' }}
+                  >
+                    Tutup Tanpa Perubahan
+                  </button>
+                </div>
               </div>
             </div>
           </div>

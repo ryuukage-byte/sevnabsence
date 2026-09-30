@@ -86,12 +86,14 @@ export const AdminPasswordGate: React.FC<AdminPasswordGateProps> = ({
           </div>
         </form>
 
-        <div className="gate-quick-helper">
-          <span className="helper-hint">Password Demo: <code>admin123</code></span>
-          <button type="button" className="btn-quick-fill" onClick={handleAutofillDemo}>
-            <CheckCircle2 size={14} /> Isi Demo
-          </button>
-        </div>
+        {import.meta.env.DEV && (
+          <div className="gate-quick-helper">
+            <span className="helper-hint">[DEV ONLY] Password Demo: <code>admin123</code></span>
+            <button type="button" className="btn-quick-fill" onClick={handleAutofillDemo}>
+              <CheckCircle2 size={14} /> Isi Demo
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
