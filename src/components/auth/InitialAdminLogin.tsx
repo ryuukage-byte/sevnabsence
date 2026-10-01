@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Tablet, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Tablet, Lock, Mail, ArrowRight, UserCheck, UserPlus, LogIn } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { attendanceService } from '../../services/attendanceService';
 
@@ -8,8 +8,10 @@ interface InitialAdminLoginProps {
 }
 
 export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess }) => {
-  const [email, setEmail] = useState(import.meta.env.DEV ? 'admin@abccare.com' : '');
+  const [authMode, setAuthMode] = useState<'signin' | 'register'>('signin');
+  const [identifier, setIdentifier] = useState(import.meta.env.DEV ? 'admin@abccare.com' : '');
   const [password, setPassword] = useState(import.meta.env.DEV ? 'admin123' : '');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const org = attendanceService.getOrganization();
 
@@ -17,17 +19,25 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
     e.preventDefault();
     setError(null);
 
-    const res = authService.initialAdminLogin(email, password);
-    if (res.success) {
-      onSuccess();
+    if (authMode === 'register') {
+      if (password !== confirmPassword) {
+        setError('Konfirmasi kata sandi tidak cocok.');
+        return;
+      }
+      const res = authService.registerAdmin(identifier, password);
+      if (res.success) {
+        onSuccess();
+      } else {
+        setError(res.message);
+      }
     } else {
-      setError(res.message);
+      const res = authService.signInAdmin(identifier, password);
+      if (res.success) {
+        onSuccess();
+      } else {
+        setError(res.message);
+      }
     }
-  };
-
-  const handleUseDemo = () => {
-    setEmail('admin@abccare.com');
-    setPassword('admin123');
   };
 
   return (
@@ -38,11 +48,40 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
           <div className="auth-badge-icon">
             <Tablet size={26} strokeWidth={2} />
           </div>
-          <h1 className="auth-title">Setup Tablet Kiosk</h1>
+          <h1 className="auth-title">
+            {authMode === 'signin' ? 'Sign In Administrator' : 'Daftar Administrator'}
+          </h1>
           <p className="auth-subtitle">
-            Masuk sebagai Administrator untuk menghubungkan tablet ini ke cabang{' '}
-            <strong>{org.display_name}</strong>.
+            {authMode === 'signin'
+              ? `Masuk ke akun Administrator untuk mengaktifkan Kiosk cabang ${org.display_name}.`
+              : `Daftarkan akun Administrator baru untuk mengelola Kiosk presensi cabang ${org.display_name}.`}
           </p>
+        </div>
+
+        {/* Segmented Mode Switcher: Sign In vs Daftar */}
+        <div className="auth-mode-switch">
+          <button
+            type="button"
+            className={`auth-mode-tab ${authMode === 'signin' ? 'active' : ''}`}
+            onClick={() => {
+              setAuthMode('signin');
+              setError(null);
+            }}
+          >
+            <LogIn size={15} />
+            <span>Sign In</span>
+          </button>
+          <button
+            type="button"
+            className={`auth-mode-tab ${authMode === 'register' ? 'active' : ''}`}
+            onClick={() => {
+              setAuthMode('register');
+              setError(null);
+            }}
+          >
+            <UserPlus size={15} />
+            <span>Daftar Akun</span>
+          </button>
         </div>
 
         {error && <div className="auth-error-banner">{error}</div>}
@@ -50,14 +89,16 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label>
-              <Mail size={16} /> Email Administrator
+              <Mail size={16} /> Email atau Username Admin
             </label>
             <input
-              type="email"
+              type="text"
               required
-              placeholder="admin@perusahaan.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              autoCapitalize="none"
+              autoCorrect="off"
+              placeholder="Contoh: admin atau admin@abccare.com"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
             />
           </div>
 
@@ -68,32 +109,64 @@ export const InitialAdminLogin: React.FC<InitialAdminLoginProps> = ({ onSuccess 
             <input
               type="password"
               required
-              placeholder="Masukkan password..."
+              placeholder="Masukkan kata sandi..."
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
+          {authMode === 'register' && (
+            <div className="form-group">
+              <label>
+                <UserCheck size={16} /> Ulangi Kata Sandi
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="Ketik ulang kata sandi..."
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          )}
+
           <button type="submit" className="btn-auth-submit">
-            <span>Aktifkan Kiosk Presensi</span>
+            <span>{authMode === 'signin' ? 'Sign In' : 'Daftar & Aktifkan Kiosk'}</span>
             <ArrowRight size={18} />
           </button>
         </form>
 
-        {import.meta.env.DEV && (
-          <div className="auth-demo-helper">
-            <div className="helper-label">[DEV ONLY] Kredensial Demo Awal:</div>
-            <div className="helper-creds font-mono">
-              <span>admin@abccare.com</span> / <span>admin123</span>
-            </div>
-            <button type="button" className="btn-helper-fill" onClick={handleUseDemo}>
-              <CheckCircle2 size={14} /> Isi Otomatis Kredensial Demo
-            </button>
-          </div>
-        )}
-
-        <div className="auth-footer-note">
-          Setelah login pertama ini, tablet akan langsung masuk ke layar <strong>Kiosk Presensi</strong> untuk karyawan, dan menu Admin akan selalu terlindungi kata sandi.
+        {/* Clean Link Switcher (Replaces the old explanation note) */}
+        <div className="auth-switch-text">
+          {authMode === 'signin' ? (
+            <>
+              Belum punya akun admin?
+              <button
+                type="button"
+                className="auth-switch-btn"
+                onClick={() => {
+                  setAuthMode('register');
+                  setError(null);
+                }}
+              >
+                Daftar Akun
+              </button>
+            </>
+          ) : (
+            <>
+              Sudah punya akun admin?
+              <button
+                type="button"
+                className="auth-switch-btn"
+                onClick={() => {
+                  setAuthMode('signin');
+                  setError(null);
+                }}
+              >
+                Sign In
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

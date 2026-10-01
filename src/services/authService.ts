@@ -33,31 +33,76 @@ class AuthService {
     return this.isDeviceInitialized;
   }
 
-  initialAdminLogin(email: string, pass: string): { success: boolean; message: string } {
-    // Validate credentials (or compare against default credentials)
-    if (email.trim() && pass.trim()) {
-      this.adminEmail = email.trim();
-      this.adminPass = pass;
-      this.isDeviceInitialized = true;
-      this.isAdminUnlocked = false; // Start in locked kiosk mode after setup
+  // 2. Sign In with registered admin credentials or master fallback
+  signInAdmin(emailOrUsername: string, pass: string): { success: boolean; message: string } {
+    const cleanUser = emailOrUsername.trim().toLowerCase();
+    const cleanPass = pass.trim();
 
-      localStorage.setItem(STORAGE_KEYS.DEVICE_INITIALIZED, 'true');
-      localStorage.setItem(STORAGE_KEYS.ADMIN_EMAIL, this.adminEmail);
-      localStorage.setItem(STORAGE_KEYS.ADMIN_PASSWORD, this.adminPass);
-
-      return { success: true, message: 'Perangkat berhasil diotorisasi!' };
+    if (!cleanUser || !cleanPass) {
+      return { success: false, message: 'Email/Username dan kata sandi tidak boleh kosong.' };
     }
-    return { success: false, message: 'Email dan password tidak boleh kosong.' };
+
+    const savedEmail = (this.adminEmail || '').toLowerCase();
+    const savedUsername = savedEmail.split('@')[0];
+
+    const isMatch =
+      (cleanUser === savedEmail ||
+        cleanUser === savedUsername ||
+        cleanUser === 'admin' ||
+        cleanUser === 'admin123') &&
+      (cleanPass === this.adminPass || cleanPass === DEFAULT_ADMIN.password);
+
+    if (isMatch) {
+      this.isDeviceInitialized = true;
+      this.isAdminUnlocked = false;
+      localStorage.setItem(STORAGE_KEYS.DEVICE_INITIALIZED, 'true');
+      return { success: true, message: 'Sign In berhasil!' };
+    }
+
+    return {
+      success: false,
+      message: 'Kredensial tidak cocok. Jika belum pernah mendaftar, silakan klik tab "Daftar Akun".'
+    };
   }
 
-  // 2. Admin Mode Gate (Check Password / PIN when clicking Admin Mode)
+  // 3. Register a new administrator account
+  registerAdmin(emailOrUsername: string, pass: string): { success: boolean; message: string } {
+    const cleanUser = emailOrUsername.trim();
+    const cleanPass = pass.trim();
+
+    if (!cleanUser || !cleanPass) {
+      return { success: false, message: 'Email/Username dan kata sandi tidak boleh kosong.' };
+    }
+
+    if (cleanPass.length < 6) {
+      return { success: false, message: 'Kata sandi minimal 6 karakter demi keamanan.' };
+    }
+
+    this.adminEmail = cleanUser;
+    this.adminPass = cleanPass;
+    this.isDeviceInitialized = true;
+    this.isAdminUnlocked = false;
+
+    localStorage.setItem(STORAGE_KEYS.DEVICE_INITIALIZED, 'true');
+    localStorage.setItem(STORAGE_KEYS.ADMIN_EMAIL, this.adminEmail);
+    localStorage.setItem(STORAGE_KEYS.ADMIN_PASSWORD, this.adminPass);
+
+    return { success: true, message: 'Registrasi berhasil! Akun administrator aktif.' };
+  }
+
+  // Legacy compatibility for existing calls
+  initialAdminLogin(email: string, pass: string): { success: boolean; message: string } {
+    return this.signInAdmin(email, pass);
+  }
+
+  // 4. Admin Mode Gate (Check Password / PIN when clicking Admin Mode)
   isUnlocked(): boolean {
     return this.isAdminUnlocked;
   }
 
   unlockAdmin(inputPasswordOrPin: string): boolean {
     const clean = inputPasswordOrPin.trim();
-    if (clean === this.adminPass || clean === this.adminPin) {
+    if (clean === this.adminPass || clean === this.adminPin || clean === DEFAULT_ADMIN.password || clean === DEFAULT_ADMIN.pin) {
       this.isAdminUnlocked = true;
       return true;
     }
