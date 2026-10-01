@@ -1,0 +1,278 @@
+/* ==========================================================================
+   KIOSK VIEW - SIMPLICITY MODERN SKEUOMORPHISM
+   ========================================================================== */
+
+.kiosk-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  width: 100%;
+}
+
+.kiosk-card-frame {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: 36px 40px;
+  position: relative;
+}
+
+/* Header & Status Bar */
+
+.kiosk-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 32px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.kiosk-brand-title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kiosk-badge-pill {
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  border: 1px solid var(--border-strong);
+  letter-spacing: 0.5px;
+}
+
+.kiosk-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Digital Clock (Tactile Minimal) */
+
+.digital-clock-modern {
+  background: linear-gradient(180deg, var(--surface-card) 0%, var(--surface-warm) 100%);
+  border: 1px solid var(--border-light);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-tile);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+}
+
+.clock-time-display {
+  font-family: var(--font-mono);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-main);
+  display: flex;
+  align-items: baseline;
+}
+
+.clock-seconds {
+  font-size: var(--text-xl);
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.clock-date-display {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Hardware Tablet Camera Viewfinder */
+
+.kiosk-camera-bezel {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-tile-active);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kiosk-camera-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--surface-dark);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+#kiosk-reader-view {
+  width: 100%;
+  height: 100%;
+}
+
+#kiosk-reader-view video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transform: scaleX(-1);
+  /* Mirror camera */
+}
+
+/* Modern Reticle */
+
+.scanner-reticle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+}
+
+.reticle-corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: var(--accent-sage);
+  border-style: solid;
+  border-width: 0;
+}
+
+.reticle-corner.top-left {
+  top: 0;
+  left: 0;
+  border-top-width: 3px;
+  border-left-width: 3px;
+  border-top-left-radius: 8px;
+}
+
+.reticle-corner.top-right {
+  top: 0;
+  right: 0;
+  border-top-width: 3px;
+  border-right-width: 3px;
+  border-top-right-radius: 8px;
+}
+
+.reticle-corner.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 3px;
+  border-left-width: 3px;
+  border-bottom-left-radius: 8px;
+}
+
+.reticle-corner.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 3px;
+  border-right-width: 3px;
+  border-bottom-right-radius: 8px;
+}
+
+.scanner-laser-line {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-sage), transparent);
+  box-shadow: 0 0 8px var(--accent-sage);
+  animation: laserScan 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes laserScan {
+  0% { top: 10%; opacity: 0.4; }
+  100% { top: 90%; opacity: 1; }
+}
+
+.camera-bezel-footer {
+  padding: 12px 6px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* Scan Feedback Overlay */
+
+.scan-feedback-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-sticky);
+  padding: 24px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.scan-feedback-overlay.feedback-success {
+  background: rgba(59, 122, 87, 0.94);
+  color: var(--text-on-brand);
+}
+
+.scan-feedback-overlay.feedback-warning {
+  background: rgba(201, 148, 74, 0.95);
+  color: var(--text-on-brand);
+}
+
+.feedback-member-name {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.feedback-message {
+  font-size: var(--text-base);
+  opacity: 0.95;
+  max-width: 320px;
+}
+
+/* Camera Error Card */
+
+.camera-error-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-dark-raised);
+  color: var(--surface-warm);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.camera-error-overlay h3 {
+  font-size: var(--text-md);
+  font-weight: 700;
+  margin: 12px 0 6px;
+}
+
+.camera-error-overlay p {
+  font-size: var(--text-xs);
+  color: var(--text-on-dark-muted);
+  max-width: 280px;
+}

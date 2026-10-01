@@ -54,7 +54,7 @@ async function capture() {
   // 4. Kiosk Pulang
   console.log('📸 02: Mode Kiosk Presensi Pulang...');
   await page.evaluate(() => {
-    const pulangBtn = document.querySelector('.tactile-action-btn.pulang');
+    const pulangBtn = document.querySelector('.kiosk-segment-btn.pulang');
     if (pulangBtn) pulangBtn.click();
   });
   await sleep(400);
@@ -63,12 +63,12 @@ async function capture() {
   // 5. Scan Berhasil (Simulasi)
   console.log('📸 03: Kiosk Scan Berhasil (Feedback Card & Maskot Koji)...');
   await page.evaluate(() => {
-    const masukBtn = document.querySelector('.tactile-action-btn.masuk');
+    const masukBtn = document.querySelector('.kiosk-segment-btn.masuk');
     if (masukBtn) masukBtn.click();
   });
   await sleep(200);
   await page.evaluate(() => {
-    const chip = document.querySelector('.dev-chip-btn') || document.querySelector('.tactile-chip-btn');
+    const chip = document.querySelector('.dev-chip-btn');
     if (chip) chip.click();
   });
   await page.waitForSelector('.tactile-stamp-badge', { timeout: 4000 }).catch(() => {});

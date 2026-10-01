@@ -24,7 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="header-brand" onClick={() => onSelectMode('kiosk')} style={{ cursor: 'pointer' }}>
           <div className="tactile-tile-btn brand-koji-tile" title="Absence System with Koji">
             <img
-              src="/koji_mascot.png"
+              src={`${import.meta.env.BASE_URL}koji_mascot.png`}
               alt="Koji Mascot"
               className="navbar-koji-img"
               style={{ width: 28, height: 28, objectFit: 'contain' }}
@@ -57,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           title="Panel Administrator"
         >
           {isAdminUnlocked ? (
-            <Unlock size={16} strokeWidth={2} color="var(--success)" />
+            <Unlock size={16} strokeWidth={2} color="var(--status-present)" />
           ) : (
             <Shield size={16} strokeWidth={2} />
           )}

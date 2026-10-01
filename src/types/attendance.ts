@@ -49,6 +49,8 @@ export interface Member {
   is_active: boolean;
   active_token?: string;
   avatar_url?: string;
+  gender?: string;
+  date_of_birth?: string;
 }
 
 export interface QRToken {

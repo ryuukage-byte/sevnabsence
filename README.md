@@ -66,7 +66,7 @@ Buka peramban di `http://localhost:5173`.
 
 ## 🗄️ Setup Database Supabase
 
-Skrip migrasi database lengkap tersedia di [supabase/migrations/20260930_init_absence.sql](file:///c:/project/Absence/supabase/migrations/20260930_init_absence.sql).
+Skrip migrasi database lengkap tersedia di [supabase/migrations/20260930_init_absence.sql](./supabase/migrations/20260930_init_absence.sql).
 
 Langkah instalasi di Supabase:
 1. Buka [Supabase Dashboard](https://supabase.com/dashboard).
@@ -79,11 +79,11 @@ Langkah instalasi di Supabase:
 
 ## 📄 Dokumentasi Desain & Spesifikasi
 
-- [01_PRD.md](file:///c:/project/Absence/01_PRD.md) — Product Requirements Document
-- [02_DESIGN.md](file:///c:/project/Absence/02_DESIGN.md) — UI/UX Principles & Design System
-- [03_DATABASE.md](file:///c:/project/Absence/03_DATABASE.md) — Schema, Constraints & RLS
-- [04_SYSTEM_FLOW.md](file:///c:/project/Absence/04_SYSTEM_FLOW.md) — Mermaid Workflows & Logic Flow
-- [05_TECH_SPEC.md](file:///c:/project/Absence/05_TECH_SPEC.md) — Technical Specification & PWA
-- [06_IMPLEMENTATION_PLAN.md](file:///c:/project/Absence/06_IMPLEMENTATION_PLAN.md) — Milestone Roadmap
-- [07_TESTING.md](file:///c:/project/Absence/07_TESTING.md) — Test Cases & QA Matrix
-- [08_DEPLOYMENT.md](file:///c:/project/Absence/08_DEPLOYMENT.md) — Deployment & Tablet Hardening
+- [01_PRD.md](./01_PRD.md) — Product Requirements Document
+- [02_DESIGN.md](./02_DESIGN.md) — UI/UX Principles & Design System
+- [03_DATABASE.md](./03_DATABASE.md) — Schema, Constraints & RLS
+- [04_SYSTEM_FLOW.md](./04_SYSTEM_FLOW.md) — Mermaid Workflows & Logic Flow
+- [05_TECH_SPEC.md](./05_TECH_SPEC.md) — Technical Specification & PWA
+- [06_IMPLEMENTATION_PLAN.md](./06_IMPLEMENTATION_PLAN.md) — Milestone Roadmap
+- [07_TESTING.md](./07_TESTING.md) — Test Cases & QA Matrix
+- [08_DEPLOYMENT.md](./08_DEPLOYMENT.md) — Deployment & Tablet Hardening

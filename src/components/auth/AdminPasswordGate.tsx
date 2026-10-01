@@ -40,7 +40,7 @@ export const AdminPasswordGate: React.FC<AdminPasswordGateProps> = ({
           <div className="tactile-tile-btn" style={{ width: 48, height: 48 }}>
             <Lock size={22} strokeWidth={2} />
           </div>
-          <button className="btn-close" onClick={onCancel} title="Batal & Kembali">
+          <button className="btn-close" onClick={onCancel} title="Batal & Kembali" aria-label="Batal dan kembali">
             <X size={18} />
           </button>
         </div>

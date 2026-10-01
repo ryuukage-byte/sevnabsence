@@ -1,0 +1,88 @@
+/* --------------------------------------------------------------------------
+   SHIFT MANAGER 2-COLUMN LAYOUT & COLOR PICKER
+   -------------------------------------------------------------------------- */
+
+.shifts-two-column-layout {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 20px;
+}
+
+.shift-title-block {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+}
+
+.shift-night-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--text-3xs);
+  font-weight: 700;
+  background: var(--status-off-bg);
+  color: var(--text-body);
+  padding: 2px 6px;
+  border-radius: var(--radius-2xs);
+}
+
+.shifts-policy-sidebar .policy-box {
+  background: var(--surface-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-tile);
+  padding: 20px;
+}
+
+.policy-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-sage);
+  margin-bottom: 14px;
+}
+
+.policy-header h4 {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.policy-content p {
+  font-size: var(--text-sm);
+  color: var(--text-body);
+  line-height: 1.5;
+}
+
+.policy-separator {
+  height: 1px;
+  background: var(--border-light);
+  margin: 12px 0;
+}
+
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.color-dot {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: var(--radius-round);
+  border: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.color-dot.selected {
+  border-color: var(--text-main);
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,280 @@
+/* --------------------------------------------------------------------------
+   BALANCED 2 HERO + 4 SECONDARY METRIC GRID
+   -------------------------------------------------------------------------- */
+
+.kpi-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.kpi-hero-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-tile);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.kpi-hero-card:hover {
+  box-shadow: var(--shadow-tile-hover);
+  transform: translateY(-1px);
+}
+
+.kpi-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kpi-hero-label {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.kpi-hero-badge {
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.kpi-hero-badge.success {
+  background: var(--status-present-bg);
+  color: var(--status-present);
+}
+
+.kpi-hero-badge.warning {
+  background: var(--status-absent-bg);
+  color: var(--status-absent);
+}
+
+.kpi-hero-number-wrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.kpi-hero-number {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.kpi-hero-total {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.kpi-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--surface-inset);
+  border-radius: var(--radius-2xs);
+  overflow: hidden;
+}
+
+.kpi-progress-bar {
+  height: 100%;
+  border-radius: var(--radius-2xs);
+  transition: width 0.3s ease;
+}
+
+.kpi-hero-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 500;
+  border-top: 1px solid var(--border-light);
+  padding-top: 10px;
+}
+
+/* 4 Secondary Flat Tiles */
+
+.kpi-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.kpi-flat-tile {
+  background: var(--surface-card);
+  border-radius: var(--radius-tile);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-tile);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.kpi-flat-tile:hover {
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+.kpi-tile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-control);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-tile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-tile-label {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.kpi-tile-number {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+/* Activity Avatar with Initials Fallback */
+
+.activity-avatar-tile {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-control);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+  border: 1px solid var(--border-light);
+}
+
+.activity-avatar-tile.masuk {
+  background: var(--status-present-bg);
+  color: var(--status-present);
+}
+
+.activity-avatar-tile.pulang {
+  background: var(--status-absent-bg);
+  color: var(--status-absent);
+}
+
+.activity-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-dept-tag {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  background: var(--surface-inset);
+  color: var(--text-muted);
+  padding: 1px 6px;
+  border-radius: var(--radius-2xs);
+}
+
+/* Structured Shift Rows in Today Dashboard */
+
+.shifts-structured-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.shifts-table-header {
+  display: grid;
+  grid-template-columns: 1.6fr 1.2fr 0.8fr;
+  padding: 8px 12px;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.shifts-rows-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.shift-row-item {
+  display: grid;
+  grid-template-columns: 1.6fr 1.2fr 0.8fr;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.shift-row-item:last-child {
+  border-bottom: none;
+}
+
+.shift-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shift-color-indicator {
+  width: 8px;
+  height: 28px;
+  border-radius: var(--radius-2xs);
+  flex-shrink: 0;
+}
+
+.shift-name-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.shift-name-block strong {
+  font-size: var(--text-sm);
+  color: var(--text-main);
+}
+
+.shift-code-pill {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+.shift-hours-cell {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.shift-policy-cell {
+  text-align: right;
+}
+
+.tolerance-badge {
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  color: var(--accent-caramel);
+  background: var(--status-late-bg);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}

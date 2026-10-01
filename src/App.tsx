@@ -24,7 +24,6 @@ import { InitialAdminLogin } from './components/auth/InitialAdminLogin';
 import { AdminPasswordGate } from './components/auth/AdminPasswordGate';
 import { attendanceService } from './services/attendanceService';
 import { authService } from './services/authService';
-import './styles/index.css';
 
 export function App() {
   const [isInitialized, setIsInitialized] = useState<boolean>(authService.isInitialized());

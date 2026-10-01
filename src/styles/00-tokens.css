@@ -1,0 +1,211 @@
+/* ==========================================================================
+   SEVN ABSENCE - MODERN SKEUOMORPHIC DESIGN SYSTEM
+   Style: Simplicity Modern Skeuomorphism (Tactile, Clean, Minimalist)
+   ========================================================================== */
+
+
+:root {
+  /* Canvas & Neutral Surfaces (Calm Warm Linen & Porcelain) */
+  --bg-app: #F5F2EB;                 /* Warm linen canvas */
+  --surface-card: #FFFFFF;           /* Ceramic porcelain white */
+  --surface-muted: #F8F5EE;          /* Warm off-white */
+  --surface-inset: #E7E1D6;          /* Recessed well tone */
+  --surface-hover: #F2ECE2;          /* Soft warm hover */
+  
+  /* Sidebar Muted Mocha Taupe (Reference Key Element) */
+  --sidebar-bg: #76665A;             /* Warm mocha clay - cream text 5.3:1 (AA) */
+  --sidebar-text: #FDFBF8;           /* Cream white text */
+  --sidebar-text-muted: rgba(253, 251, 248, 0.88);   /* 4.55:1 on --sidebar-bg (was 3.1:1) */
+  --sidebar-active-text: #342B24;    /* Deep warm charcoal on active tab */
+
+  /* Borders (Warm Translucent) */
+  --border-light: rgba(140, 120, 100, 0.12);
+  --border-subtle: rgba(140, 120, 100, 0.08);
+  --border-strong: rgba(140, 120, 100, 0.22);
+
+  /* Typography Colors (Deep Warm Espresso Charcoal, not cold harsh black) */
+  --text-main: #342B24;              /* Deep espresso charcoal (WCAG AAA 12.2:1) */
+  --text-body: #4E423A;              /* Warm roasted coffee */
+  --text-muted: #6A5E54;              /* Warm muted stone (WCAG AA 5.4:1 on linen) */
+  --text-subtle: #766A60;             /* Warm sand, still AA (4.6:1 on linen) - was 2.4:1 */
+
+  /* Calm Tactile Multi-Layer Warm Shadows */
+  --shadow-tile: 
+    0 1px 2px rgba(110, 95, 80, 0.05),
+    0 4px 12px rgba(110, 95, 80, 0.05),
+    inset 0 1px 0 #FFFFFF;
+  --shadow-tile-hover: 
+    0 2px 5px rgba(110, 95, 80, 0.08),
+    0 8px 20px rgba(110, 95, 80, 0.08),
+    inset 0 1px 0 #FFFFFF;
+  --shadow-tile-active: 
+    0 1px 2px rgba(110, 95, 80, 0.08),
+    0 10px 28px rgba(110, 95, 80, 0.1),
+    inset 0 1px 0 #FFFFFF;
+  --shadow-tile-pressed: 
+    inset 0 2px 5px rgba(110, 95, 80, 0.12);
+
+  --shadow-card: 
+    0 1px 3px rgba(110, 95, 80, 0.04),
+    0 12px 32px rgba(110, 95, 80, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  --shadow-floating: 
+    0 10px 30px rgba(100, 80, 65, 0.14),
+    0 24px 60px rgba(100, 80, 65, 0.1),
+    inset 0 1px 0 #FFFFFF;
+
+  /* Brand & Accents (Warm Terracotta, Caramel Ochre, Earthy Sage, Mocha) */
+
+  --accent-terracotta: #C87A58;      /* Terracotta / Active Tasks / Pulang */
+  --accent-caramel: #C9944A;         /* Caramel / New Messages / Warnings */
+  --accent-sage: #3B7A57;            /* Calm Sage / Success / Masuk */
+  --accent-mocha: #8D7B6D;           /* Mocha accent token */
+
+  /* Action Buttons (Modern Tactile with Warm Clay/Caramel & Sage Emerald) */
+  --action-masuk-grad: linear-gradient(180deg, var(--accent-sage) 0%, var(--accent-sage-strong) 100%);
+  --action-masuk-shadow: 0 4px 14px rgba(59, 122, 87, 0.28), 0 2px 0 var(--accent-sage-deep), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  --action-pulang-grad: linear-gradient(180deg, var(--accent-terracotta-strong) 0%, var(--accent-terracotta-deep) 100%);   /* white text 4.9-6.5:1 (was 3.3:1) */
+  --action-pulang-shadow: 0 4px 14px rgba(200, 122, 88, 0.28), 0 2px 0 #8E4C2C, inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  /* Status Colors (Harmonized Warm Organic) */
+  --status-present: #3B7A57;
+  --status-present-bg: #EBF4EE;
+  --status-late-bg: #FAF2E4;
+  --status-leave-bg: #EEDFEA;
+  --status-absent: #C87A58;
+  --status-absent-bg: #F9ECE5;
+
+  /* Fonts */
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', var(--font-family);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Border Radii (single scale - never write a raw px radius) */
+  --radius-2xs: 4px;
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-control: 10px;            /* inputs, small buttons */
+  --radius-tile: 12px;               /* icon tiles, chips */
+  --radius-md: 14px;
+  --radius-card: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
+  --radius-full: 9999px;
+  --radius-round: 50%;
+
+  /* ------------------------------------------------------------------
+     Primitives & derived accents
+     ------------------------------------------------------------------ */
+  --color-white: #FFFFFF;
+  --text-on-brand: var(--color-white);   /* text on sage / terracotta / espresso fills */
+  --surface-warm: #FAF7F2;               /* warm hover / raised-neutral surface */
+  --surface-dark: #1C1714;               /* camera viewport */
+  --surface-dark-raised: #2D2520;
+  --text-on-dark-muted: #A69B91;
+
+  --accent-sage-strong: #2E6044;
+  --accent-sage-deep: #244E37;
+  --accent-sage-light: #448962;
+  --accent-sage-hover: #346B4D;
+  --accent-terracotta-strong: #A85D3B;
+
+  --action-masuk-grad-hover: linear-gradient(180deg, var(--accent-sage-light) 0%, var(--accent-sage-hover) 100%);
+  --action-dark-grad: linear-gradient(180deg, #52443A 0%, #3D322B 100%);        /* primary dark button */
+  --action-dark-grad-hover: linear-gradient(180deg, #5F5045 0%, #463A32 100%);
+  --action-dark-border: #302620;
+
+  /* ------------------------------------------------------------------
+     Semantic status set  (bg / text / border) - single source for badges,
+     matrix pills, KPI tiles. Add new states HERE, not in components.
+     ------------------------------------------------------------------ */
+  --status-present-text: var(--accent-sage-deep);
+  --status-present-border: #BBD8C6;
+  --status-late-text: #6D4E1F;
+  --status-late-border: #EBD3A0;
+  --status-absent-text: #8C473A;
+  --status-absent-border: #F2C4B3;
+  --status-absent-bg-hover: #F2D8CB;
+  --status-leave-text: #6C4266;
+  --status-leave-border: #DCCCF3;
+  --status-sick-bg: #F8E3DE;
+  --status-sick-text: #8C473A;
+  --status-sick-border: #F2C4B3;
+  --status-off-bg: #E8E5DF;
+  --status-off-border: #D8CDBE;
+  --status-info-bg: #EAF5FD;
+  --status-info-text: #375C73;
+  --status-info-border: #A9D7F5;
+
+  --status-late-bg-hover: #F5E6C8;
+  --status-off-text: #55504A;            /* 6.4:1 on --status-off-bg (was 4.2:1) */
+  --cell-sunday-bg: #FFF8F6;
+  --cell-today-bg: #F3F8F5;
+  --cell-hover-bg: #EFEBE4;
+  --cell-selected-bg: #E9F4EE;
+  --border-paper: #E3DFD6;
+  --accent-terracotta-deep: #8E4C2C;
+  --accent-terracotta-hover: #B46643;
+  --accent-terracotta-light: #D48866;
+  --danger-strong: #8A3629;
+  --danger-deep: #6F2B21;
+  --danger: #A14234;
+  --danger-bg: #F4EAE7;
+  --danger-border: #E5C6BF;
+
+  /* ------------------------------------------------------------------
+     Type scale (rem).  Use these - no raw font-size in components.
+     ------------------------------------------------------------------ */
+  --text-3xs: 0.68rem;
+  --text-2xs: 0.74rem;
+  --text-xs: 0.8rem;
+  --text-sm: 0.86rem;
+  --text-base: 0.92rem;
+  --text-md: 1.05rem;
+  --text-lg: 1.2rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2.3rem;
+
+  /* ------------------------------------------------------------------
+     Stacking scale (same numeric values the app already used)
+     ------------------------------------------------------------------ */
+  --z-cell: 6;
+  --z-cell-pinned: 7;
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-header: 40;
+  --z-drawer: 50;
+  --z-popover: 99;
+  --z-overlay: 100;
+  --z-modal: 1000;
+
+  /* ------------------------------------------------------------------
+     Motion + focus
+     ------------------------------------------------------------------ */
+  --transition-base: all 0.16s ease;
+  --focus-ring-color: #342B24;
+  --focus-ring-on-dark: #FDFBF8;
+
+  /* ------------------------------------------------------------------
+     ID Card Design Tokens (Official ISO 7810 ID-1 Physical Card)
+     ------------------------------------------------------------------ */
+  --card-red-header: #700C14;
+  --card-red-header-dark: #58080E;
+  --card-red-text: #6D1116;
+  --card-red-border: #6B1A1F;
+  --card-amber-gold: #E0A238;
+  --card-amber-dark: #C98A28;
+  --card-amber-light: #FFF9ED;
+  --card-body-bg: #FCFBF7;
+  --card-body-border: #DFD7CA;
+  --card-footer-text: #4A3B32;
+  --brand-900: #700C14;
+  --brand-800: #8B1018;
+  --card-badge-bg: #F4EFEB;
+  --card-badge-border: #DCD3CB;
+  --card-badge-text: #6D1116;
+  --font-serif: 'Cinzel', 'Playfair Display', 'Times New Roman', Georgia, serif;
+}

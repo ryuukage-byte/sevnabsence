@@ -7,10 +7,10 @@ Folder ini sudah bersih total dari file development (`node_modules`, `src`, `.ag
 
 ## 📂 Isi Folder Ini:
 - `index.html` : Halaman web utama
-- `assets/` : Bundled JavaScript, CSS (minified), dan seluruh asset tactile / skeuomorphic
+- `assets/` : Bundled JavaScript dan CSS (minified)
 - `manifest.json` : Konfigurasi Web App / PWA Kiosk
 - `koji_mascot.png` : Maskot Koji
-- `favicon.svg` & `icons.svg` : Icon aplikasi
+- `icons/` : Ikon PWA (192, 512) dan apple-touch-icon
 
 ---
 

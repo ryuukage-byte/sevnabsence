@@ -1,0 +1,26 @@
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+
+/* Visible keyboard focus for every interactive element (was: none, and 4x outline:none) */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* On the mocha sidebar the espresso ring is only 3.4:1 - switch to cream */
+:where(.admin-sidebar, .sidebar-lock-box) :where(a, button, [tabindex]):focus-visible {
+  outline-color: var(--focus-ring-on-dark);
+}
+
+/* Respect OS "reduce motion" (stamp, laser sweep, confetti-adjacent animations) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

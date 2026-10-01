@@ -153,7 +153,7 @@ export const AttendanceLog: React.FC = () => {
           <tbody>
             {filteredRecords.length === 0 ? (
               <tr>
-                <td colSpan={9} className="text-center py-8 text-muted">
+                <td colSpan={9} className="table-empty-cell">
                   Tidak ada data presensi yang cocok dengan filter pencarian.
                 </td>
               </tr>
@@ -173,7 +173,7 @@ export const AttendanceLog: React.FC = () => {
                   <td>
                     {rec.check_in_at ? (
                       <span
-                        className="font-mono text-emerald-600 font-semibold"
+                        className="font-mono text-success font-semibold"
                         style={{ fontVariantNumeric: 'tabular-nums' }}
                       >
                         {formatBranchTime(rec.check_in_at, org.timezone, true)}
@@ -255,7 +255,7 @@ export const AttendanceLog: React.FC = () => {
 
             <form onSubmit={handleSaveCorrection} className="modal-form">
               <div className="correction-warning-banner">
-                <AlertTriangle size={18} color="var(--accent-amber)" />
+                <AlertTriangle size={18} color="var(--accent-caramel)" />
                 <p>
                   Sesuai aturan kepatuhan, jam asli scan tidak akan dihapus. Perubahan akan
                   dicatat ke dalam tabel audit log beserta alasan koreksi.
@@ -346,7 +346,7 @@ export const AttendanceLog: React.FC = () => {
                     : '–'}
                 </div>
                 {selectedForReview.review_reason && (
-                  <div style={{ marginTop: 6, color: 'var(--accent-copper)' }}>
+                  <div style={{ marginTop: 6, color: 'var(--accent-terracotta)' }}>
                     <strong>Catatan Sistem:</strong> {selectedForReview.review_reason}
                   </div>
                 )}

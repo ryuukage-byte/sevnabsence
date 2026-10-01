@@ -90,13 +90,13 @@ export const ScheduleMatrix: React.FC = () => {
         </div>
 
         <div className="matrix-month-controls">
-          <button className="btn-cal-nav" onClick={prevMonth} title="Bulan Sebelumnya">
+          <button className="btn-cal-nav" onClick={prevMonth} title="Bulan Sebelumnya" aria-label="Bulan sebelumnya">
             <ChevronLeft size={18} />
           </button>
           <div className="current-month-banner">
             <span className="current-month-display">{monthLabel}</span>
           </div>
-          <button className="btn-cal-nav" onClick={nextMonth} title="Bulan Berikutnya">
+          <button className="btn-cal-nav" onClick={nextMonth} title="Bulan Berikutnya" aria-label="Bulan berikutnya">
             <ChevronRight size={18} />
           </button>
         </div>
@@ -112,7 +112,7 @@ export const ScheduleMatrix: React.FC = () => {
           <div key={s.id} className="legend-item">
             <span
               className="legend-badge"
-              style={{ backgroundColor: s.color_code, color: '#FFF' }}
+              style={{ backgroundColor: s.color_code, color: 'var(--text-on-brand)' }}
             >
               {s.code}
             </span>
@@ -209,7 +209,7 @@ export const ScheduleMatrix: React.FC = () => {
                           className="matrix-pill shift-pill"
                           style={{
                             backgroundColor: assignedShift.color_code,
-                            color: '#FFFFFF'
+                            color: 'var(--text-on-brand)'
                           }}
                         >
                           {assignedShift.code}
@@ -259,7 +259,7 @@ export const ScheduleMatrix: React.FC = () => {
                   >
                     <span
                       className="opt-badge"
-                      style={{ backgroundColor: shift.color_code, color: '#FFF' }}
+                      style={{ backgroundColor: shift.color_code, color: 'var(--text-on-brand)' }}
                     >
                       {shift.code}
                     </span>

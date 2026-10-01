@@ -247,7 +247,7 @@ export const ScannerKiosk: React.FC = () => {
               {/* Camera Error / Standby Overlay */}
               {cameraError && (
                 <div className="camera-error-overlay">
-                  <AlertCircle size={40} color="var(--accent-copper)" strokeWidth={2} />
+                  <AlertCircle size={40} color="var(--accent-terracotta)" strokeWidth={2} />
                   <h3>Kamera Belum Aktif</h3>
                   <p>{cameraError}</p>
                   {import.meta.env.DEV && (
@@ -335,7 +335,7 @@ export const ScannerKiosk: React.FC = () => {
             )}
           </div>
           <div className="kiosk-device-health">
-            <ShieldCheck size={14} strokeWidth={2} color="var(--accent-moss)" />
+            <ShieldCheck size={14} strokeWidth={2} color="var(--accent-sage)" />
             <span>Sistem Aman • JST UTC+9</span>
           </div>
         </div>

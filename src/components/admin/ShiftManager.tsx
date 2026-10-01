@@ -98,7 +98,7 @@ export const ShiftManager: React.FC = () => {
                 <div className="shift-card-top">
                   <div
                     className="shift-card-badge"
-                    style={{ backgroundColor: shift.color_code, color: '#FFFFFF' }}
+                    style={{ backgroundColor: shift.color_code, color: 'var(--text-on-brand)' }}
                   >
                     {shift.code}
                   </div>

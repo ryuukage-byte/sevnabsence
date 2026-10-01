@@ -60,7 +60,7 @@ export const SettingsView: React.FC = () => {
         {/* Organization Profile Card */}
         <div className="settings-card">
           <div className="card-header-line">
-            <Building2 size={20} style={{ color: 'var(--accent-moss)' }} />
+            <Building2 size={20} style={{ color: 'var(--accent-sage)' }} />
             <h3>Identitas Perusahaan & Cabang</h3>
           </div>
 
@@ -136,7 +136,7 @@ export const SettingsView: React.FC = () => {
         {/* Cloud & Operational Infrastructure Card */}
         <div className="settings-card">
           <div className="card-header-line">
-            <Database size={20} color="var(--accent-moss)" strokeWidth={2.2} />
+            <Database size={20} color="var(--accent-sage)" strokeWidth={2.2} />
             <h3>Status Layanan & Keamanan</h3>
           </div>
 
@@ -150,7 +150,7 @@ export const SettingsView: React.FC = () => {
             </div>
 
             <div className="status-desc-text">
-              <ShieldCheck size={16} style={{ color: 'var(--accent-moss)', flexShrink: 0 }} />
+              <ShieldCheck size={16} style={{ color: 'var(--accent-sage)', flexShrink: 0 }} />
               <span>{dbStatus}</span>
             </div>
 

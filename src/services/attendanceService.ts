@@ -60,56 +60,7 @@ const DEFAULT_SHIFTS: Shift[] = [
   }
 ];
 
-const DEFAULT_MEMBERS: Member[] = [
-  {
-    id: 'c0000000-0000-0000-0000-000000000001',
-    organization_id: DEFAULT_ORG.id,
-    member_number: 'EMP001',
-    full_name: 'Musa Al-Fatih',
-    email: 'musa@example.com',
-    phone: '081234567890',
-    department: 'Operasional',
-    position: 'Senior Staff',
-    is_active: true,
-    active_token: 'tok_musa_demo_98fbc12a'
-  },
-  {
-    id: 'c0000000-0000-0000-0000-000000000002',
-    organization_id: DEFAULT_ORG.id,
-    member_number: 'EMP002',
-    full_name: 'Ali bin Abi Thalib',
-    email: 'ali@example.com',
-    phone: '081234567891',
-    department: 'Pelayanan',
-    position: 'Staff',
-    is_active: true,
-    active_token: 'tok_ali_demo_77ec94b0'
-  },
-  {
-    id: 'c0000000-0000-0000-0000-000000000003',
-    organization_id: DEFAULT_ORG.id,
-    member_number: 'EMP003',
-    full_name: 'Fatimah Az-Zahra',
-    email: 'fatimah@example.com',
-    phone: '081234567892',
-    department: 'Administrasi',
-    position: 'Coordinator',
-    is_active: true,
-    active_token: 'tok_fatimah_demo_11de82f5'
-  },
-  {
-    id: 'c0000000-0000-0000-0000-000000000004',
-    organization_id: DEFAULT_ORG.id,
-    member_number: 'EMP004',
-    full_name: 'Umar bin Khattab',
-    email: 'umar@example.com',
-    phone: '081234567893',
-    department: 'Keamanan & Logistik',
-    position: 'Supervisor',
-    is_active: true,
-    active_token: 'tok_umar_demo_44ab31cc'
-  }
-];
+const DEFAULT_MEMBERS: Member[] = [];
 
 class AttendanceService {
   private org: Organization = DEFAULT_ORG;
@@ -126,71 +77,7 @@ class AttendanceService {
   }
 
   private initRecordsIfEmpty() {
-    if (this.records.length === 0) {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const todayStr = `${year}-${month}-${day}`;
-
-      this.records = [
-        {
-          id: 'rec_init_001',
-          organization_id: this.org.id,
-          member_id: this.members[0].id,
-          member_name: this.members[0].full_name,
-          department: this.members[0].department,
-          shift_name: this.shifts[0].name,
-          attendance_date: todayStr,
-          check_in_at: `${todayStr}T08:02:15+09:00`,
-          check_out_at: undefined,
-          check_in_source: 'KIOSK_TABLET',
-          check_out_source: '',
-          status: 'PRESENT',
-          late_minutes: 0,
-          early_arrival_minutes: 0,
-          work_duration_minutes: 0,
-          review_status: 'NORMAL'
-        },
-        {
-          id: 'rec_init_002',
-          organization_id: this.org.id,
-          member_id: this.members[1].id,
-          member_name: this.members[1].full_name,
-          department: this.members[1].department,
-          shift_name: this.shifts[1].name,
-          attendance_date: todayStr,
-          check_in_at: `${todayStr}T13:25:40+09:00`,
-          check_out_at: undefined,
-          check_in_source: 'KIOSK_TABLET',
-          check_out_source: '',
-          status: 'LATE',
-          late_minutes: 15,
-          early_arrival_minutes: 0,
-          work_duration_minutes: 0,
-          review_status: 'NORMAL'
-        },
-        {
-          id: 'rec_init_003',
-          organization_id: this.org.id,
-          member_id: this.members[2].id,
-          member_name: this.members[2].full_name,
-          department: this.members[2].department,
-          shift_name: this.shifts[0].name,
-          attendance_date: todayStr,
-          check_in_at: `${todayStr}T07:55:00+09:00`,
-          check_out_at: `${todayStr}T17:05:00+09:00`,
-          check_in_source: 'KIOSK_TABLET',
-          check_out_source: 'KIOSK_TABLET',
-          status: 'PRESENT',
-          late_minutes: 0,
-          early_arrival_minutes: 5,
-          work_duration_minutes: 550,
-          review_status: 'NORMAL'
-        }
-      ];
-      this.saveToStorage();
-    }
+    // Production ready: Start clean with no mock attendance records
   }
 
   private loadFromStorage() {
@@ -209,6 +96,21 @@ class AttendanceService {
 
       const storedOrg = localStorage.getItem('sevn_org');
       if (storedOrg) this.org = JSON.parse(storedOrg);
+
+      // Automatic cleanup: purge legacy demo mock members, records, and schedules
+      const hasDemoMembers = this.members.some(
+        (m) =>
+          m.active_token?.includes('demo') ||
+          m.member_number === '19951005007'
+      );
+      const hasDemoRecords = this.records.some((r) => r.id.startsWith('rec_init_'));
+
+      if (hasDemoMembers || hasDemoRecords) {
+        this.members = [];
+        this.records = [];
+        this.schedules = [];
+        this.saveToStorage();
+      }
     } catch {
       // ignore
     }
@@ -227,39 +129,7 @@ class AttendanceService {
   }
 
   private initSchedulesIfEmpty() {
-    if (this.schedules.length === 0) {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      const defaultSchedules: Schedule[] = [];
-      this.members.forEach((m, mIdx) => {
-        for (let d = 1; d <= daysInMonth; d++) {
-          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-          const dayOfWeek = new Date(year, month, d).getDay(); // 0 is Sunday
-          
-          let scheduleType: ScheduleType = 'SHIFT';
-          let shiftId: string | undefined = this.shifts[mIdx % this.shifts.length].id;
-
-          if (dayOfWeek === 0) {
-            scheduleType = 'OFF';
-            shiftId = undefined;
-          }
-
-          defaultSchedules.push({
-            id: `sch_${m.id}_${dateStr}`,
-            organization_id: this.org.id,
-            member_id: m.id,
-            shift_id: shiftId,
-            schedule_date: dateStr,
-            schedule_type: scheduleType
-          });
-        }
-      });
-      this.schedules = defaultSchedules;
-      this.saveToStorage();
-    }
+    // Production ready: Start clean with no mock schedules
   }
 
   // --- Scan Evaluation Engine ---

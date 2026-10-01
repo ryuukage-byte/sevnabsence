@@ -77,7 +77,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
           </div>
           <div className="kpi-hero-body">
             <div className="kpi-hero-number-wrapper">
-              <span className="kpi-hero-number" style={{ color: 'var(--accent-moss)' }}>
+              <span className="kpi-hero-number" style={{ color: 'var(--accent-sage)' }}>
                 {checkedIn}
               </span>
               <span className="kpi-hero-total">/ {totalScheduled} staf</span>
@@ -85,7 +85,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
             <div className="kpi-progress-track">
               <div
                 className="kpi-progress-bar"
-                style={{ width: `${Math.min(100, attendancePercent)}%`, backgroundColor: 'var(--accent-moss)' }}
+                style={{ width: `${Math.min(100, attendancePercent)}%`, backgroundColor: 'var(--accent-sage)' }}
               />
             </div>
           </div>
@@ -103,7 +103,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
           </div>
           <div className="kpi-hero-body">
             <div className="kpi-hero-number-wrapper">
-              <span className="kpi-hero-number" style={{ color: 'var(--accent-copper)' }}>
+              <span className="kpi-hero-number" style={{ color: 'var(--accent-terracotta)' }}>
                 {notYetArrived}
               </span>
               <span className="kpi-hero-total">staf tersisa</span>
@@ -113,7 +113,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
                 className="kpi-progress-bar"
                 style={{
                   width: `${totalScheduled > 0 ? (notYetArrived / totalScheduled) * 100 : 0}%`,
-                  backgroundColor: 'var(--accent-copper)'
+                  backgroundColor: 'var(--accent-terracotta)'
                 }}
               />
             </div>
@@ -128,7 +128,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
       {/* 4 Secondary Flat Metric Tiles */}
       <div className="kpi-secondary-grid">
         <div className="kpi-flat-tile" onClick={() => onNavigateTab('members')}>
-          <div className="kpi-tile-icon" style={{ background: '#ECE9E2', color: '#6A625A' }}>
+          <div className="kpi-tile-icon kpi-tile-icon--neutral">
             <Users size={18} strokeWidth={2.2} />
           </div>
           <div className="kpi-tile-info">
@@ -138,7 +138,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="kpi-flat-tile" onClick={() => onNavigateTab('attendance')}>
-          <div className="kpi-tile-icon" style={{ background: '#F6ECE6', color: 'var(--accent-copper)' }}>
+          <div className="kpi-tile-icon kpi-tile-icon--terracotta">
             <LogOut size={18} strokeWidth={2.2} />
           </div>
           <div className="kpi-tile-info">
@@ -148,7 +148,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="kpi-flat-tile" onClick={() => onNavigateTab('attendance')}>
-          <div className="kpi-tile-icon" style={{ background: '#F8F1E4', color: 'var(--accent-amber)' }}>
+          <div className="kpi-tile-icon kpi-tile-icon--caramel">
             <AlertTriangle size={18} strokeWidth={2.2} />
           </div>
           <div className="kpi-tile-info">
@@ -158,7 +158,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
 
         <div className="kpi-flat-tile" onClick={() => onNavigateTab('attendance')}>
-          <div className="kpi-tile-icon" style={{ background: '#F4EAE7', color: '#A14234' }}>
+          <div className="kpi-tile-icon kpi-tile-icon--danger">
             <FileQuestion size={18} strokeWidth={2.2} />
           </div>
           <div className="kpi-tile-info">

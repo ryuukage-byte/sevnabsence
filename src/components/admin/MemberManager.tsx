@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
-  Users,
   UserPlus,
   QrCode,
   RefreshCw,
@@ -8,22 +7,27 @@ import {
   Filter,
   CheckCircle,
   XCircle,
-  Download,
-  Printer,
-  ShieldAlert,
-  AlertTriangle
+  AlertTriangle,
+  Edit2,
+  Upload,
+  Trash2,
+  User
 } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 import { attendanceService } from '../../services/attendanceService';
 import type { Member } from '../../types/attendance';
+import { PekerjaIDCard } from './PekerjaIDCard';
 
 export const MemberManager: React.FC = () => {
   const [members, setMembers] = useState<Member[]>(attendanceService.getMembers());
   const [searchTerm, setSearchTerm] = useState('');
   const [deptFilter, setDeptFilter] = useState('ALL');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [selectedQRMember, setSelectedQRMember] = useState<Member | null>(null);
   const [confirmRevokeTarget, setConfirmRevokeTarget] = useState<Member | null>(null);
+
+  const addFileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
 
   const org = attendanceService.getOrganization();
 
@@ -35,7 +39,24 @@ export const MemberManager: React.FC = () => {
     phone: '',
     department: 'Operasional',
     position: 'Staff',
-    is_active: true
+    gender: 'MALE',
+    date_of_birth: '1995-10-05',
+    is_active: true,
+    avatar_url: ''
+  });
+
+  // Form State for Editing Member
+  const [editFormData, setEditFormData] = useState({
+    member_number: '',
+    full_name: '',
+    email: '',
+    phone: '',
+    department: 'Operasional',
+    position: 'Staff',
+    gender: 'MALE',
+    date_of_birth: '1995-10-05',
+    is_active: true,
+    avatar_url: ''
   });
 
   const departments = Array.from(new Set(members.map((m) => m.department)));
@@ -47,6 +68,50 @@ export const MemberManager: React.FC = () => {
     const matchesDept = deptFilter === 'ALL' || m.department === deptFilter;
     return matchesSearch && matchesDept;
   });
+
+  // Photo Source Helper
+  const getAvatarSrc = (avatarUrl?: string) => {
+    if (!avatarUrl) return '';
+    if (avatarUrl.startsWith('data:') || avatarUrl.startsWith('http')) return avatarUrl;
+    return `${import.meta.env.BASE_URL}${avatarUrl}`;
+  };
+
+  // Photo Upload Handler (Supports JPG/PNG/WEBP up to 2MB, stored as base64)
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>, isEdit: boolean) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Harap pilih file gambar resmi (JPG, PNG, atau WEBP).');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran file foto maksimal 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      if (isEdit) {
+        setEditFormData((prev) => ({ ...prev, avatar_url: dataUrl }));
+      } else {
+        setNewMember((prev) => ({ ...prev, avatar_url: dataUrl }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = (isEdit: boolean) => {
+    if (isEdit) {
+      setEditFormData((prev) => ({ ...prev, avatar_url: '' }));
+      if (editFileInputRef.current) editFileInputRef.current.value = '';
+    } else {
+      setNewMember((prev) => ({ ...prev, avatar_url: '' }));
+      if (addFileInputRef.current) addFileInputRef.current.value = '';
+    }
+  };
 
   const handleAddMember = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,8 +127,45 @@ export const MemberManager: React.FC = () => {
       phone: '',
       department: 'Operasional',
       position: 'Staff',
-      is_active: true
+      gender: 'MALE',
+      date_of_birth: '1995-10-05',
+      is_active: true,
+      avatar_url: ''
     });
+    if (addFileInputRef.current) addFileInputRef.current.value = '';
+  };
+
+  const handleOpenEdit = (member: Member) => {
+    setEditingMember(member);
+    setEditFormData({
+      member_number: member.member_number || '',
+      full_name: member.full_name || '',
+      email: member.email || '',
+      phone: member.phone || '',
+      department: member.department || 'Operasional',
+      position: member.position || 'Staff',
+      gender: member.gender || 'MALE',
+      date_of_birth: member.date_of_birth ? member.date_of_birth.replace(/\//g, '-') : '1995-10-05',
+      is_active: member.is_active ?? true,
+      avatar_url: member.avatar_url || ''
+    });
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingMember) return;
+    if (!editFormData.full_name || !editFormData.member_number) return;
+
+    attendanceService.updateMember(editingMember.id, editFormData);
+    const updated = [...attendanceService.getMembers()];
+    setMembers(updated);
+
+    // If card modal is currently showing this member, sync state
+    if (selectedQRMember && selectedQRMember.id === editingMember.id) {
+      setSelectedQRMember(updated.find((m) => m.id === editingMember.id) || null);
+    }
+
+    setEditingMember(null);
   };
 
   const handleToggleActive = (member: Member) => {
@@ -80,11 +182,17 @@ export const MemberManager: React.FC = () => {
     if (selectedQRMember && selectedQRMember.id === confirmRevokeTarget.id) {
       setSelectedQRMember(updated.find((m) => m.id === confirmRevokeTarget.id) || null);
     }
+    if (editingMember && editingMember.id === confirmRevokeTarget.id) {
+      const fresh = updated.find((m) => m.id === confirmRevokeTarget.id) || null;
+      setEditingMember(fresh);
+      if (fresh) {
+        setEditFormData((prev) => ({
+          ...prev,
+          active_token: fresh.active_token
+        }));
+      }
+    }
     setConfirmRevokeTarget(null);
-  };
-
-  const handlePrintBadge = () => {
-    window.print();
   };
 
   return (
@@ -93,7 +201,7 @@ export const MemberManager: React.FC = () => {
         <div>
           <h2 className="view-title">Manajemen Karyawan & Kartu QR</h2>
           <p className="view-subtitle">
-            Kelola profil staf, penerbitan kartu identitas berstandar ISO/IEC 7810 ID-1, dan pencabutan token.
+            Kelola profil staf, unggah foto resmi, penerbitan kartu identitas berstandar ISO/IEC 7810 ID-1, dan token keamanan.
           </p>
         </div>
         <button className="btn-primary" onClick={() => setShowAddModal(true)}>
@@ -133,75 +241,102 @@ export const MemberManager: React.FC = () => {
           <thead>
             <tr>
               <th style={{ width: '120px' }}>No. Karyawan</th>
-              <th style={{ minWidth: '180px' }}>Nama Lengkap</th>
-              <th style={{ width: '140px' }}>Departemen</th>
-              <th style={{ width: '130px' }}>Jabatan</th>
+              <th style={{ minWidth: '220px' }}>Nama Lengkap</th>
+              <th style={{ width: '130px' }}>Departemen</th>
+              <th style={{ width: '120px' }}>Jabatan</th>
               <th style={{ width: '110px' }}>Status</th>
               <th style={{ width: '160px' }}>Kartu QR Pass</th>
-              <th style={{ width: '130px', textAlign: 'center' }}>Keamanan</th>
+              <th style={{ width: '100px', textAlign: 'center' }}>Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {filteredMembers.map((member) => (
-              <tr key={member.id}>
-                <td className="font-mono font-semibold" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {member.member_number}
-                </td>
-                <td>
-                  <div className="member-cell">
-                    <span className="name-bold">{member.full_name}</span>
-                    <span className="email-sub">{member.email || '-'}</span>
-                  </div>
-                </td>
-                <td>{member.department}</td>
-                <td>{member.position}</td>
-                <td>
-                  <button
-                    className={`status-toggle-btn ${member.is_active ? 'active' : 'inactive'}`}
-                    onClick={() => handleToggleActive(member)}
-                    title="Klik untuk mengubah status aktif/non-aktif"
-                  >
-                    {member.is_active ? (
-                      <>
-                        <CheckCircle size={14} /> Aktif
-                      </>
-                    ) : (
-                      <>
-                        <XCircle size={14} /> Non-Aktif
-                      </>
-                    )}
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn-qr-view"
-                    onClick={() => setSelectedQRMember(member)}
-                    title="Buka pratinjau kartu ID dan cetak"
-                  >
-                    <QrCode size={15} />
-                    <span>Lihat & Cetak ID</span>
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn-revoke-qr"
-                    onClick={() => setConfirmRevokeTarget(member)}
-                    title="Cabut akses kartu lama jika hilang / rusak"
-                  >
-                    <RefreshCw size={13} />
-                    <span>Ganti Token</span>
-                  </button>
+            {filteredMembers.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: 'center', padding: '36px 16px', color: 'var(--text-muted)' }}>
+                  Belum ada data karyawan. Klik &quot;+ Tambah Karyawan&quot; untuk menambahkan staf baru.
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredMembers.map((member) => (
+                <tr key={member.id}>
+                  <td className="font-mono font-semibold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {member.member_number}
+                  </td>
+                  <td>
+                    <div className="member-cell-flex">
+                      <div className="member-avatar-thumb">
+                        {member.avatar_url ? (
+                          <img
+                            src={getAvatarSrc(member.avatar_url)}
+                            alt={member.full_name}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <User size={18} />
+                        )}
+                      </div>
+                      <div className="member-cell">
+                        <span className="name-bold">{member.full_name}</span>
+                        <span className="email-sub">{member.email || '-'}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{member.department}</td>
+                  <td>{member.position}</td>
+                  <td>
+                    <button
+                      className={`status-toggle-btn ${member.is_active ? 'active' : 'inactive'}`}
+                      onClick={() => handleToggleActive(member)}
+                      title="Klik untuk mengubah status aktif/non-aktif"
+                    >
+                      {member.is_active ? (
+                        <>
+                          <CheckCircle size={14} /> Aktif
+                        </>
+                      ) : (
+                        <>
+                          <XCircle size={14} /> Non-Aktif
+                        </>
+                      )}
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn-qr-view"
+                      onClick={() => setSelectedQRMember(member)}
+                      title="Cetak Kartu QR Pekerja"
+                    >
+                      <QrCode size={15} />
+                      <span>Cetak Kartu QR</span>
+                    </button>
+                  </td>
+                  <td>
+                    <div className="member-actions-group" style={{ justifyContent: 'center' }}>
+                      <button
+                        className="btn-edit-member"
+                        onClick={() => handleOpenEdit(member)}
+                        title="Ubah data profil, foto & token karyawan"
+                      >
+                        <Edit2 size={13} />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Add Member Modal */}
+      {/* -------------------------------------------------------------
+          ADD MEMBER MODAL (With Photo Upload)
+          ------------------------------------------------------------- */}
       {showAddModal && (
         <div className="modal-backdrop" onClick={() => setShowAddModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="modal-header">
               <h3>Tambah Karyawan Baru</h3>
               <button className="btn-close" onClick={() => setShowAddModal(false)}>
@@ -209,30 +344,75 @@ export const MemberManager: React.FC = () => {
               </button>
             </div>
             <form onSubmit={handleAddMember} className="modal-form">
-              <div className="form-group">
-                <label>Nomor Induk Karyawan (NIK) *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: EMP005"
-                  value={newMember.member_number}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, member_number: e.target.value })
-                  }
-                />
+              {/* Photo Uploader */}
+              <div className="photo-uploader-box">
+                <div className="photo-uploader-preview">
+                  {newMember.avatar_url ? (
+                    <img src={getAvatarSrc(newMember.avatar_url)} alt="Foto Karyawan" />
+                  ) : (
+                    <User size={30} />
+                  )}
+                </div>
+                <div className="photo-uploader-info">
+                  <span className="photo-uploader-label">Foto Resmi Karyawan</span>
+                  <span className="photo-uploader-hint">
+                    Format JPG, PNG, atau WEBP (maks. 2MB). Foto akan dicetak pada Kartu Identitas Pegawai (rasio 4:5).
+                  </span>
+                  <div className="photo-uploader-buttons">
+                    <input
+                      type="file"
+                      ref={addFileInputRef}
+                      accept="image/png, image/jpeg, image/webp"
+                      style={{ display: 'none' }}
+                      onChange={(e) => handlePhotoUpload(e, false)}
+                    />
+                    <button
+                      type="button"
+                      className="btn-upload-trigger"
+                      onClick={() => addFileInputRef.current?.click()}
+                    >
+                      <Upload size={13} />
+                      <span>{newMember.avatar_url ? 'Ganti Foto' : 'Unggah Foto'}</span>
+                    </button>
+                    {newMember.avatar_url && (
+                      <button
+                        type="button"
+                        className="btn-remove-photo"
+                        onClick={() => handleRemovePhoto(false)}
+                      >
+                        <Trash2 size={13} />
+                        <span>Hapus</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className="form-group">
-                <label>Nama Lengkap *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Nama lengkap staf"
-                  value={newMember.full_name}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, full_name: e.target.value })
-                  }
-                />
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Nomor Induk Karyawan (NIK) *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: EMP005"
+                    value={newMember.member_number}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, member_number: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Nama Lengkap *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nama lengkap staf"
+                    value={newMember.full_name}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, full_name: e.target.value })
+                    }
+                  />
+                </div>
               </div>
 
               <div className="form-row">
@@ -256,6 +436,31 @@ export const MemberManager: React.FC = () => {
                     value={newMember.position}
                     onChange={(e) =>
                       setNewMember({ ...newMember, position: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Jenis Kelamin</label>
+                  <select
+                    value={newMember.gender}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, gender: e.target.value })
+                    }
+                  >
+                    <option value="MALE">Laki-laki</option>
+                    <option value="FEMALE">Perempuan</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Tanggal Lahir</label>
+                  <input
+                    type="date"
+                    value={newMember.date_of_birth}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, date_of_birth: e.target.value })
                     }
                   />
                 </div>
@@ -303,102 +508,249 @@ export const MemberManager: React.FC = () => {
         </div>
       )}
 
-      {/* Standard Physical ID Card Modal (85.6 x 54 mm ratio) */}
-      {selectedQRMember && (
-        <div className="modal-backdrop" onClick={() => setSelectedQRMember(null)}>
-          <div
-            className="modal-card qr-card-modal printable-modal"
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '440px' }}
-          >
+      {/* -------------------------------------------------------------
+          EDIT MEMBER MODAL (With Photo Upload & All Master Data)
+          ------------------------------------------------------------- */}
+      {editingMember && (
+        <div className="modal-backdrop" onClick={() => setEditingMember(null)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="modal-header">
-              <h3>Kartu Identitas Karyawan (ID Pass)</h3>
-              <button className="btn-close" onClick={() => setSelectedQRMember(null)}>
+              <h3>Edit Data & Foto Karyawan</h3>
+              <button className="btn-close" onClick={() => setEditingMember(null)}>
                 &times;
               </button>
             </div>
-
-            {/* ISO 7810 ID-1 Physical Aspect Ratio Badge (85.6 x 54mm) */}
-            <div className="id-card-frame-wrapper">
-              <div className="printable-badge id-card-iso-standard" id="printable-id-card">
-                <div className="badge-header-top">
-                  <div className="badge-brand-chip">
-                    <img
-                      src="/koji_mascot.png"
-                      alt="Koji"
-                      style={{ width: 18, height: 18, objectFit: 'contain' }}
-                    />
-                    <span className="badge-company-name">{org.display_name}</span>
-                  </div>
-                  <span className="badge-type-pill">OFFICIAL PASS</span>
+            <form onSubmit={handleSaveEdit} className="modal-form">
+              {/* Photo Uploader */}
+              <div className="photo-uploader-box">
+                <div className="photo-uploader-preview">
+                  {editFormData.avatar_url ? (
+                    <img src={getAvatarSrc(editFormData.avatar_url)} alt="Foto Karyawan" />
+                  ) : (
+                    <User size={30} />
+                  )}
                 </div>
-
-                <div className="badge-body-grid">
-                  <div className="qr-container-box">
-                    {selectedQRMember.active_token && (
-                      <QRCodeSVG
-                        value={selectedQRMember.active_token}
-                        size={120}
-                        level="H"
-                        includeMargin={false}
-                      />
+                <div className="photo-uploader-info">
+                  <span className="photo-uploader-label">Foto Resmi Karyawan</span>
+                  <span className="photo-uploader-hint">
+                    Format JPG, PNG, atau WEBP (maks. 2MB). Foto akan dicetak pada Kartu Identitas Pegawai (rasio 4:5).
+                  </span>
+                  <div className="photo-uploader-buttons">
+                    <input
+                      type="file"
+                      ref={editFileInputRef}
+                      accept="image/png, image/jpeg, image/webp"
+                      style={{ display: 'none' }}
+                      onChange={(e) => handlePhotoUpload(e, true)}
+                    />
+                    <button
+                      type="button"
+                      className="btn-upload-trigger"
+                      onClick={() => editFileInputRef.current?.click()}
+                    >
+                      <Upload size={13} />
+                      <span>{editFormData.avatar_url ? 'Ganti Foto' : 'Unggah Foto'}</span>
+                    </button>
+                    {editFormData.avatar_url && (
+                      <button
+                        type="button"
+                        className="btn-remove-photo"
+                        onClick={() => handleRemovePhoto(true)}
+                      >
+                        <Trash2 size={13} />
+                        <span>Hapus</span>
+                      </button>
                     )}
                   </div>
-
-                  <div className="badge-profile-section">
-                    <h3 className="badge-profile-name">{selectedQRMember.full_name}</h3>
-                    <div className="badge-profile-number">{selectedQRMember.member_number}</div>
-                    <div className="badge-profile-dept">
-                      {selectedQRMember.department} • {selectedQRMember.position}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="badge-footer-bottom">
-                  <span className="badge-token-preview">
-                    SECURE TOKEN: {selectedQRMember.active_token?.substring(0, 14)}...
-                  </span>
-                  <span className="badge-branch-tag">{org.branch_name}</span>
                 </div>
               </div>
-            </div>
 
-            {/* Separate Actions: Primary Print vs Destructive Revoke */}
-            <div className="id-card-modal-actions">
-              <button type="button" className="btn-primary btn-print-hero" onClick={handlePrintBadge}>
-                <Printer size={16} />
-                <span>Cetak Kartu ID (Ukuran Standar)</span>
-              </button>
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Nomor Induk Karyawan (NIK) *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: EMP001"
+                    value={editFormData.member_number}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, member_number: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Nama Lengkap *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nama lengkap staf"
+                    value={editFormData.full_name}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, full_name: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
 
-              <div className="id-card-secondary-row">
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Departemen</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Operasional"
+                    value={editFormData.department}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, department: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Jabatan</label>
+                  <input
+                    type="text"
+                    placeholder="Staff / Koordinator"
+                    value={editFormData.position}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, position: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Jenis Kelamin</label>
+                  <select
+                    value={editFormData.gender}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, gender: e.target.value })
+                    }
+                  >
+                    <option value="MALE">Laki-laki</option>
+                    <option value="FEMALE">Perempuan</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Tanggal Lahir</label>
+                  <input
+                    type="date"
+                    value={editFormData.date_of_birth}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, date_of_birth: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>Email (Opsional)</label>
+                  <input
+                    type="email"
+                    placeholder="email@example.com"
+                    value={editFormData.email}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, email: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                  <label>No. HP / WhatsApp (Opsional)</label>
+                  <input
+                    type="text"
+                    placeholder="0812..."
+                    value={editFormData.phone}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, phone: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Status Kepegawaian</label>
+                <select
+                  value={editFormData.is_active ? 'ACTIVE' : 'INACTIVE'}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      is_active: e.target.value === 'ACTIVE'
+                    })
+                  }
+                >
+                  <option value="ACTIVE">Aktif (Dapat Presensi di Kiosk)</option>
+                  <option value="INACTIVE">Non-Aktif (Akses Presensi Diblokir)</option>
+                </select>
+              </div>
+
+              {/* Token Keamanan / Ganti Token QR */}
+              <div className="token-security-box">
+                <div className="token-security-info">
+                  <span className="token-security-title">Keamanan Kartu & Token QR</span>
+                  <span className="token-security-desc">
+                    Jika kartu fisik hilang atau perlu diganti, klik Ganti Token untuk membatalkan akses kartu lama dan menerbitkan kode baru.
+                  </span>
+                  <div className="token-current-display">
+                    <span className="token-label">Token Aktif:</span>
+                    <code className="token-code">
+                      {editingMember.active_token ? `${editingMember.active_token.slice(0, 10)}...` : 'Belum dibuat'}
+                    </code>
+                  </div>
+                </div>
                 <button
                   type="button"
-                  className="btn-revoke-subtle"
-                  onClick={() => setConfirmRevokeTarget(selectedQRMember)}
+                  className="btn-revoke-qr"
+                  onClick={() => setConfirmRevokeTarget(editingMember)}
+                  title="Cabut akses kartu lama dan terbitkan token baru"
                 >
-                  <ShieldAlert size={14} />
-                  <span>Cabut & Terbitkan Ulang Token</span>
+                  <RefreshCw size={13} />
+                  <span>Ganti Token</span>
                 </button>
+              </div>
 
+              <div className="modal-actions">
                 <button
                   type="button"
                   className="btn-secondary"
-                  onClick={() => setSelectedQRMember(null)}
+                  onClick={() => setEditingMember(null)}
                 >
-                  Tutup
+                  Batal
+                </button>
+                <button type="submit" className="btn-primary">
+                  Simpan Perubahan
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}
 
-      {/* Confirmation Dialog for Revoking Token */}
+      {/* -------------------------------------------------------------
+          STANDARD PEKERJA PHYSICAL ID CARD MODAL (99% Replica)
+          ------------------------------------------------------------- */}
+      {selectedQRMember && (
+        <PekerjaIDCard
+          member={selectedQRMember}
+          org={org}
+          onClose={() => setSelectedQRMember(null)}
+          onRequestRevoke={(m) => setConfirmRevokeTarget(m)}
+          onEditMember={(m) => handleOpenEdit(m)}
+        />
+      )}
+
+      {/* -------------------------------------------------------------
+          CONFIRMATION DIALOG FOR REVOKING TOKEN
+          ------------------------------------------------------------- */}
       {confirmRevokeTarget && (
-        <div className="modal-backdrop" onClick={() => setConfirmRevokeTarget(null)}>
+        <div
+          className="modal-backdrop"
+          style={{ zIndex: 'calc(var(--z-modal) + 20)' }}
+          onClick={() => setConfirmRevokeTarget(null)}
+        >
           <div className="modal-card modal-confirm-danger" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '420px' }}>
             <div className="modal-header">
-              <h3 style={{ color: 'var(--accent-copper)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h3 style={{ color: 'var(--accent-terracotta)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <AlertTriangle size={20} /> Cabut & Ganti Kartu QR?
               </h3>
               <button className="btn-close" onClick={() => setConfirmRevokeTarget(null)}>
@@ -409,7 +761,7 @@ export const MemberManager: React.FC = () => {
               <p>
                 Anda akan mencabut akses kartu QR milik <strong>{confirmRevokeTarget.full_name}</strong> ({confirmRevokeTarget.member_number}).
               </p>
-              <p style={{ marginTop: 8, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              <p style={{ marginTop: 8, fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
                 Kartu fisik atau digital lama akan <strong>seketika diblokir</strong> dan tidak lagi dapat digunakan di Kiosk. Sistem akan menghasilkan token acak baru.
               </p>
             </div>
