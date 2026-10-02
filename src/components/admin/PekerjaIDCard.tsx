@@ -134,7 +134,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
 
     // Footer rule
     ctx.fillStyle = CARD_PALETTE.cardBorder.color_code;
-    ctx.fillRect(28, H - 24, W - 56, 2);
+    ctx.fillRect(28, H - 20, W - 56, 2);
     ctx.restore();
 
     // Photo (128x160)
@@ -145,7 +145,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
       avatarImg.onload = () => resolve();
       avatarImg.onerror = () => resolve();
     });
-    const ax = 28, ay = 102, aw = 128, ah = 160;
+    const ax = 28, ay = 100, aw = 136, ah = 180;
     ctx.fillStyle = CARD_PALETTE.white.color_code;
     ctx.fillRect(ax, ay, aw, ah);
     if (avatarImg.complete && avatarImg.naturalWidth > 0) {
@@ -165,13 +165,13 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
     ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
     // Info column
-    const infoX = 176;
-    const infoW = 212;
+    const infoX = 184;
+    const infoW = 200;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillStyle = CARD_PALETTE.textMuted.color_code;
     ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText('NAMA PEGAWAI', infoX, 102);
+    ctx.fillText('NAMA PEGAWAI', infoX, 100);
 
     ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
     ctx.font = '800 26px "Plus Jakarta Sans", sans-serif';
@@ -188,13 +188,13 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
       }
     }
     if (cur) lines.push(cur);
-    lines.slice(0, 2).forEach((l, i) => ctx.fillText(l, infoX, 116 + i * 29));
+    lines.slice(0, 2).forEach((l, i) => ctx.fillText(l, infoX, 114 + i * 29));
 
     // Meta rows
     ctx.textBaseline = 'alphabetic';
     const metaRows: [string, string][] = [['JENIS KELAMIN:', gender], ['CABANG:', branchNameDisplay]];
     if (dateOfBirth) metaRows.splice(1, 0, ['TGL LAHIR:', dateOfBirth]);
-    let my = 200 - (metaRows.length - 2) * 14;
+    let my = 232 - (metaRows.length - 2) * 14;
     metaRows.forEach(([label, val]) => {
       ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
       ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
@@ -206,7 +206,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
     });
 
     // ID badge
-    const by = 232;
+    const by = 250;
     const bh = 30;
     ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
     const lblW = ctx.measureText('ID PEGAWAI').width + 18;
@@ -238,7 +238,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
       qrImg.src = url;
       await new Promise<void>((resolve) => {
         qrImg.onload = () => {
-          ctx.drawImage(qrImg, W - 28 - 104, 102, 104, 104);
+          ctx.drawImage(qrImg, W - 28 - 112, 100, 112, 112);
           DOMURL.revokeObjectURL(url);
           resolve();
         };
@@ -334,7 +334,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
                   {member.active_token && (
                     <QRCodeSVG
                       value={member.active_token}
-                      size={104}
+                      size={112}
                       level="H"
                       includeMargin={false}
                       fgColor={CARD_PALETTE.headerRed.color_code}
