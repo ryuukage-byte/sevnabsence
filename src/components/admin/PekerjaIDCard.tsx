@@ -74,6 +74,9 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
   const employeeName = formatProperCase(member.full_name || 'Nama Pegawai');
   const employeeId = member.member_number || 'EMP001';
   const gender = formatGenderIndonesian(member.gender);
+  const dateOfBirth = member.date_of_birth
+    ? member.date_of_birth.slice(0, 10).replace(/-/g, '/')
+    : '';
 
   const avatarUrl = member.avatar_url
     ? (member.avatar_url.startsWith('http') || member.avatar_url.startsWith('data:')
@@ -86,166 +89,145 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
     window.print();
   };
 
-  // High-Resolution PNG Export (1040x620 px at 300 DPI physical card ratio)
+  // High-Resolution PNG Export (1080x680 px = 2x of the 540x340 card, ISO ID-1 ratio)
   const handleDownloadPNG = async () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 1040;
-    canvas.height = 620;
+    canvas.width = 1080;
+    canvas.height = 680;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    ctx.scale(2, 2);
 
-    // Helper: Draw rounded rectangle
-    const drawRoundRect = (
-      x: number,
-      y: number,
-      w: number,
-      h: number,
-      r: number,
-      fillColor: string,
-      strokeColor?: string,
-      lineWidth = 1
-    ) => {
+    const W = 540;
+    const H = 340;
+
+    const roundRect = (x: number, y: number, w: number, h: number, r: number) => {
       ctx.beginPath();
       ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
       ctx.closePath();
-      if (fillColor) {
-        ctx.fillStyle = fillColor;
-        ctx.fill();
-      }
-      if (strokeColor) {
-        ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
-      }
     };
 
-    // 1. Draw Card Background
-    drawRoundRect(0, 0, 1020, 500, 24, CARD_PALETTE.cardBg.color_code, CARD_PALETTE.cardBorder.color_code, 2);
-
-    // 2. Draw Top Maroon Header Bar (Zone 1)
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(24, 0);
-    ctx.lineTo(1020 - 24, 0);
-    ctx.quadraticCurveTo(1020, 0, 1020, 24);
-    ctx.lineTo(1020, 115);
-    ctx.lineTo(0, 115);
-    ctx.lineTo(0, 24);
-    ctx.quadraticCurveTo(0, 0, 24, 0);
-    ctx.closePath();
-    ctx.fillStyle = CARD_PALETTE.headerRed.color_code;
+    // Card background, clipped to rounded corners
+    roundRect(0, 0, W, H, 18);
+    ctx.fillStyle = CARD_PALETTE.cardBg.color_code;
     ctx.fill();
+    ctx.save();
+    ctx.clip();
+
+    // Header
+    ctx.fillStyle = CARD_PALETTE.headerRed.color_code;
+    ctx.fillRect(0, 0, W, 82);
+    ctx.fillStyle = CARD_PALETTE.white.color_code;
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    ctx.font = '800 22px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText(headerTitle, 28, 41);
+    ctx.textAlign = 'right';
+    ctx.font = '700 19px "Cinzel", "Times New Roman", serif';
+    ctx.fillText(headerCompanyLine1, W - 28, 33);
+    ctx.font = '600 10px "Cinzel", "Times New Roman", serif';
+    ctx.fillText(headerCompanyLine2, W - 28, 52);
+
+    // Footer rule
+    ctx.fillStyle = CARD_PALETTE.cardBorder.color_code;
+    ctx.fillRect(28, H - 20, W - 56, 2);
     ctx.restore();
 
-    // 3. Header Texts
-    // Left: KARTU IDENTITAS PEGAWAI
-    ctx.fillStyle = CARD_PALETTE.white.color_code;
-    ctx.font = '800 34px "Plus Jakarta Sans", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(headerTitle, 40, 58);
-
-    // Right: ABC CARE / CABANG SHIMADA
-    ctx.textAlign = 'right';
-    ctx.font = '700 26px "Cinzel", "Times New Roman", serif';
-    ctx.fillText(headerCompanyLine1, 980, 46);
-    ctx.font = '600 15px "Cinzel", "Times New Roman", serif';
-    ctx.fillText(headerCompanyLine2, 980, 78);
-
-    // 4. Zone 2 - Column 1: Foto Pegawai (Exact 4:5 ratio)
-    const avatarX = 40;
-    const avatarY = 145;
-    const avatarW = 232;
-    const avatarH = 290;
-
+    // Photo (128x160)
     const avatarImg = new Image();
     avatarImg.crossOrigin = 'anonymous';
     avatarImg.src = avatarUrl;
-
     await new Promise<void>((resolve) => {
       avatarImg.onload = () => resolve();
       avatarImg.onerror = () => resolve();
     });
-
-    ctx.save();
-    drawRoundRect(
-      avatarX,
-      avatarY,
-      avatarW,
-      avatarH,
-      16,
-      CARD_PALETTE.white.color_code,
-      CARD_PALETTE.badgeBorder.color_code,
-      2
-    );
-    ctx.clip();
+    const ax = 28, ay = 100, aw = 136, ah = 180;
+    ctx.fillStyle = CARD_PALETTE.white.color_code;
+    ctx.fillRect(ax, ay, aw, ah);
     if (avatarImg.complete && avatarImg.naturalWidth > 0) {
-      ctx.drawImage(avatarImg, avatarX, avatarY, avatarW, avatarH);
+      // object-fit: cover, anchored to top
+      const scale = Math.max(aw / avatarImg.naturalWidth, ah / avatarImg.naturalHeight);
+      const dw = avatarImg.naturalWidth * scale;
+      const dh = avatarImg.naturalHeight * scale;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(ax, ay, aw, ah);
+      ctx.clip();
+      ctx.drawImage(avatarImg, ax + (aw - dw) / 2, ay, dw, dh);
+      ctx.restore();
     }
-    ctx.restore();
+    ctx.strokeStyle = CARD_PALETTE.badgeBorder.color_code;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-    // Re-stroke subtle border around avatar
-    drawRoundRect(avatarX, avatarY, avatarW, avatarH, 16, '', CARD_PALETTE.badgeBorder.color_code, 2);
-
-    // 5. Zone 2 - Column 2: Data Pegawai
-    const infoX = 304;
-
-    // Label: NAMA PEGAWAI
-    ctx.fillStyle = CARD_PALETTE.textMuted.color_code;
-    ctx.font = '700 16px "Plus Jakarta Sans", sans-serif';
+    // Info column
+    const infoX = 184;
+    const infoW = 200;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText('NAMA PEGAWAI', infoX, 155);
+    ctx.fillStyle = CARD_PALETTE.textMuted.color_code;
+    ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText('NAMA PEGAWAI', infoX, 100);
 
-    // Value: Nama Karyawan
     ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
-    ctx.font = '800 36px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText(employeeName, infoX, 180);
+    ctx.font = '800 26px "Plus Jakarta Sans", sans-serif';
+    const words = employeeName.toUpperCase().split(' ');
+    const lines: string[] = [];
+    let cur = '';
+    for (const w of words) {
+      const t = cur ? `${cur} ${w}` : w;
+      if (ctx.measureText(t).width > infoW && cur) {
+        lines.push(cur);
+        cur = w;
+      } else {
+        cur = t;
+      }
+    }
+    if (cur) lines.push(cur);
+    lines.slice(0, 2).forEach((l, i) => ctx.fillText(l, infoX, 114 + i * 29));
 
-    // Badge: ID PEGAWAI (Administrative Maroon Header & Warm Value)
-    const badgeY = 240;
-    drawRoundRect(infoX, badgeY, 126, 36, 6, CARD_PALETTE.headerRed.color_code, CARD_PALETTE.badgeBorder.color_code, 1);
-    ctx.fillStyle = CARD_PALETTE.white.color_code;
-    ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
+    // Meta rows
+    ctx.textBaseline = 'alphabetic';
+    const metaRows: [string, string][] = [['JENIS KELAMIN:', gender], ['CABANG:', branchNameDisplay]];
+    if (dateOfBirth) metaRows.splice(1, 0, ['TGL LAHIR:', dateOfBirth]);
+    let my = 232 - (metaRows.length - 2) * 14;
+    metaRows.forEach(([label, val]) => {
+      ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
+      ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(label, infoX, my);
+      const lw = ctx.measureText(label).width;
+      ctx.font = '700 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(val, infoX + lw + 6, my);
+      my += 14;
+    });
+
+    // ID badge
+    const by = 250;
+    const bh = 30;
+    ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
+    const lblW = ctx.measureText('ID PEGAWAI').width + 18;
+    ctx.font = '700 13px "JetBrains Mono", monospace';
+    const valW = ctx.measureText(employeeId).width + 24;
+    ctx.fillStyle = CARD_PALETTE.badgeBg.color_code;
+    ctx.fillRect(infoX + lblW, by, valW, bh);
+    ctx.fillStyle = CARD_PALETTE.headerRed.color_code;
+    ctx.fillRect(infoX, by, lblW, bh);
+    ctx.strokeStyle = CARD_PALETTE.badgeBorder.color_code;
+    ctx.strokeRect(infoX + 0.5, by + 0.5, lblW + valW - 1, bh - 1);
+    ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillText('ID PEGAWAI', infoX + 63, badgeY + 9);
-
-    drawRoundRect(infoX + 126, badgeY, 144, 36, 6, CARD_PALETTE.badgeBg.color_code, CARD_PALETTE.badgeBorder.color_code, 1);
+    ctx.fillStyle = CARD_PALETTE.white.color_code;
+    ctx.font = '700 9px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText('ID PEGAWAI', infoX + lblW / 2, by + bh / 2 + 1);
     ctx.fillStyle = CARD_PALETTE.footerText.color_code;
-    ctx.font = '700 20px "JetBrains Mono", monospace';
-    ctx.fillText(employeeId, infoX + 198, badgeY + 7);
+    ctx.font = '700 13px "JetBrains Mono", monospace';
+    ctx.fillText(employeeId, infoX + lblW + valW / 2, by + bh / 2 + 1);
 
-    // 2-Field Metadata: JENIS KELAMIN & CABANG
-    ctx.textAlign = 'left';
-    const metaY = 320;
-    const col2X = infoX + 220;
-
-    // JENIS KELAMIN
-    ctx.fillStyle = CARD_PALETTE.textMuted.color_code;
-    ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText('JENIS KELAMIN', infoX, metaY);
-    ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
-    ctx.font = '600 22px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText(gender, infoX, metaY + 24);
-
-    // CABANG
-    ctx.fillStyle = CARD_PALETTE.textMuted.color_code;
-    ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText('CABANG', col2X, metaY);
-    ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
-    ctx.font = '600 22px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText(branchNameDisplay, col2X, metaY + 24);
-
-    // 6. Zone 2 - Column 3: Verifikasi QR Code (Significantly Larger, Clean)
-    const qrColX = 890;
+    // QR (104x104, top-right)
     const svgElem = document.querySelector('#pekerja-card-qr svg') as SVGSVGElement | null;
     if (svgElem) {
       const svgData = new XMLSerializer().serializeToString(svgElem);
@@ -256,7 +238,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
       qrImg.src = url;
       await new Promise<void>((resolve) => {
         qrImg.onload = () => {
-          ctx.drawImage(qrImg, qrColX - 100, 190, 200, 200);
+          ctx.drawImage(qrImg, W - 28 - 112, 100, 112, 112);
           DOMURL.revokeObjectURL(url);
           resolve();
         };
@@ -264,10 +246,8 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
       });
     }
 
-    // Download PNG
-    const dataUrl = canvas.toDataURL('image/png');
     const a = document.createElement('a');
-    a.href = dataUrl;
+    a.href = canvas.toDataURL('image/png');
     a.download = `Kartu_Identitas_${employeeName.replace(/\s+/g, '_')}.png`;
     document.body.appendChild(a);
     a.click();
@@ -325,23 +305,26 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
                   <div className="pekerja-card-name-value">{employeeName}</div>
                 </div>
 
-                {/* ID Pegawai Badge (Refined Administrative Style) */}
+                <div className="pekerja-card-meta-grid">
+                  <div className="pekerja-card-meta-cell">
+                    <span className="pekerja-card-meta-label">JENIS KELAMIN:</span>
+                    <span className="pekerja-card-meta-val">{gender}</span>
+                  </div>
+                  {dateOfBirth && (
+                    <div className="pekerja-card-meta-cell">
+                      <span className="pekerja-card-meta-label">TGL LAHIR:</span>
+                      <span className="pekerja-card-meta-val">{dateOfBirth}</span>
+                    </div>
+                  )}
+                  <div className="pekerja-card-meta-cell">
+                    <span className="pekerja-card-meta-label">CABANG:</span>
+                    <span className="pekerja-card-meta-val">{branchNameDisplay}</span>
+                  </div>
+                </div>
+
                 <div className="pekerja-card-id-badge">
                   <span className="pekerja-card-id-lbl">ID PEGAWAI</span>
                   <span className="pekerja-card-id-val">{employeeId}</span>
-                </div>
-
-                {/* 2-Field Minimal Metadata Grid */}
-                <div className="pekerja-card-meta-grid">
-                  <div className="pekerja-card-meta-cell">
-                    <span className="pekerja-card-meta-label">JENIS KELAMIN</span>
-                    <span className="pekerja-card-meta-val">{gender}</span>
-                  </div>
-
-                  <div className="pekerja-card-meta-cell">
-                    <span className="pekerja-card-meta-label">CABANG</span>
-                    <span className="pekerja-card-meta-val">{branchNameDisplay}</span>
-                  </div>
                 </div>
               </div>
 
@@ -351,7 +334,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
                   {member.active_token && (
                     <QRCodeSVG
                       value={member.active_token}
-                      size={96}
+                      size={112}
                       level="H"
                       includeMargin={false}
                       fgColor={CARD_PALETTE.headerRed.color_code}
