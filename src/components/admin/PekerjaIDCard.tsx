@@ -45,6 +45,12 @@ function formatProperCase(name: string): string {
     .join(' ');
 }
 
+// Shrink long names so the longest word always fits the info column (196px)
+function nameFontSize(name: string): number {
+  const longest = Math.max(...name.split(' ').map((w) => w.length), 1);
+  return Math.max(15, Math.min(26, Math.floor(196 / (longest * 0.78))));
+}
+
 interface PekerjaIDCardProps {
   member: Member;
   org: Organization;
@@ -166,7 +172,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
 
     // Info column
     const infoX = 184;
-    const infoW = 200;
+    const infoW = 196;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillStyle = CARD_PALETTE.textMuted.color_code;
@@ -174,7 +180,8 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
     ctx.fillText('NAMA PEGAWAI', infoX, 100);
 
     ctx.fillStyle = CARD_PALETTE.textMaroon.color_code;
-    ctx.font = '800 26px "Plus Jakarta Sans", sans-serif';
+    const nameSize = nameFontSize(employeeName);
+    ctx.font = `800 ${nameSize}px "Plus Jakarta Sans", sans-serif`;
     const words = employeeName.toUpperCase().split(' ');
     const lines: string[] = [];
     let cur = '';
@@ -188,7 +195,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
       }
     }
     if (cur) lines.push(cur);
-    lines.slice(0, 2).forEach((l, i) => ctx.fillText(l, infoX, 114 + i * 29));
+    lines.slice(0, 3).forEach((l, i) => ctx.fillText(l, infoX, 114 + i * Math.round(nameSize * 1.1)));
 
     // Meta rows
     ctx.textBaseline = 'alphabetic';
@@ -302,7 +309,7 @@ export const PekerjaIDCard: React.FC<PekerjaIDCardProps> = ({
                 {/* Nama Pegawai */}
                 <div className="pekerja-card-name-block">
                   <span className="pekerja-card-field-label">NAMA PEGAWAI</span>
-                  <div className="pekerja-card-name-value">{employeeName}</div>
+                  <div className="pekerja-card-name-value" style={{ fontSize: nameFontSize(employeeName) }}>{employeeName}</div>
                 </div>
 
                 <div className="pekerja-card-meta-grid">

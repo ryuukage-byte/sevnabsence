@@ -25,6 +25,7 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  text-align: left;
   user-select: none;
   font-family: var(--font-family);
   color: var(--text-body);
@@ -148,7 +149,8 @@
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  word-break: break-word;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .pekerja-card-meta-grid {
