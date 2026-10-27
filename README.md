@@ -28,6 +28,15 @@ Lightweight, modern, and friendly QR-based tablet attendance kiosk and managemen
   - **Laporan & Ekspor CSV:** Perhitungan persentase kehadiran, total menit keterlambatan, dan ekspor data 1-klik ke format CSV standar RFC 4180.
   - **Pengaturan Organisasi:** Pengaturan nama perusahaan, nama cabang (*flexible business name*), zona waktu, dan status Supabase.
 
+- **Modul Shisetsu Kaigo (介護施設):**
+  - **3 portal:** `#kiosk` (scan QR), `#member` (portal staf, login nomor pegawai + PIN), `#admin`.
+  - **Profil Fasilitas:** pilih jenis shisetsu (Tokuyou aktif; Rōken, Group Home, Day Service, Kantor menyusul), lantai, ruangan, dan tugas per ruangan (jam mulai–selesai, hari, shift pelaksana, skill wajib, min. staf). Template awal: Tokuyou 2 lantai + shift 早番・日勤・遅番・夜勤.
+  - **Identitas Staf:** level (Lv1 Trainee – Lv5 Leader), kualifikasi (無資格 – 介護福祉士 / 看護師), status kerja (正社員, パート, 特定技能 …), skill, shift yang sudah bisa, lantai utama, boleh pindah lantai, maks shift malam, target libur, saldo cuti, PIN portal.
+  - **Pembuat Jadwal otomatis:** kebutuhan staf per lantai × shift (hari biasa / akhir pekan), rotasi 夜→明→公, maks hari kerja berturut-turut, larangan 遅→早, kuota libur bulanan, cek skill per tugas ruangan, menghormati 希望休 & cuti yang disetujui. Hasil bisa dipreview, disimpan, diedit di Matriks, lalu dipublikasikan.
+  - **Pengajuan:** 希望休 lewat klik kalender (maks per bulan, maks staf per tanggal, batas tanggal pengajuan) dan cuti (berbayar/sakit/khusus/tidak dibayar, cek saldo). Persetujuan admin langsung masuk jadwal + notifikasi.
+  - **Kotak Pesan dua arah:** staf kirim masukan/keluhan/laporan insiden; admin kirim peringatan/pemberitahuan ke satu staf atau broadcast, lengkap dengan status dibaca dan balasan per thread.
+  - Data demo: *Admin → Profil Fasilitas → Muat staf demo* (18 staf, nomor `2026001`–`2026018`, PIN = 4 digit terakhir).
+
 ---
 
 ## 🛠️ Tech Stack

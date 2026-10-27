@@ -9,7 +9,12 @@ import {
   Layers,
   Lock,
   Menu,
-  X
+  X,
+  Building,
+  UserCog,
+  Wand2,
+  CalendarHeart,
+  Inbox
 } from 'lucide-react';
 import { Navbar, type AppMode } from './components/common/Navbar';
 import { ScannerKiosk } from './components/kiosk/ScannerKiosk';
@@ -22,7 +27,16 @@ import { ReportExport } from './components/admin/ReportExport';
 import { SettingsView } from './components/admin/SettingsView';
 import { InitialAdminLogin } from './components/auth/InitialAdminLogin';
 import { AdminPasswordGate } from './components/auth/AdminPasswordGate';
+import { FacilityManager } from './components/admin/FacilityManager';
+import { StaffIdentity } from './components/admin/StaffIdentity';
+import { ScheduleBuilder } from './components/admin/ScheduleBuilder';
+import { RequestsManager } from './components/admin/RequestsManager';
+import { MessageCenter } from './components/common/MessageCenter';
+import { MemberPortal } from './components/member/MemberPortal';
 import { attendanceService } from './services/attendanceService';
+import { facilityService } from './services/facilityService';
+import { useFacility } from './hooks/useFacility';
+import { ADMIN_SENDER } from './types/facility';
 import { authService } from './services/authService';
 
 export function App() {
@@ -34,6 +48,11 @@ export function App() {
   const [adminTab, setAdminTab] = useState<string>('today');
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [org] = useState(attendanceService.getOrganization());
+  useFacility();
+  const pendingRequests =
+    facilityService.getOffRequests({ status: 'PENDING' }).length +
+    facilityService.getLeaveRequests({ status: 'PENDING' }).length;
+  const adminUnread = facilityService.unreadCount(ADMIN_SENDER);
 
   useEffect(() => {
     const handleHash = () => {
@@ -46,6 +65,8 @@ export function App() {
           const parts = hash.split('/');
           if (parts[1]) setAdminTab(parts[1]);
         }
+      } else if (hash.startsWith('member')) {
+        setMode('member');
       } else {
         setMode('kiosk');
       }
@@ -89,6 +110,14 @@ export function App() {
     window.location.hash = `admin/${tab}`;
   };
 
+  const navItem = (tab: string, icon: React.ReactNode, label: string, badge?: number) => (
+    <button className={`admin-nav-item ${adminTab === tab ? 'active' : ''}`} onClick={() => handleSelectAdminTab(tab)}>
+      {icon}
+      <span>{label}</span>
+      {!!badge && <span className="kg-count kg-count-nav">{badge}</span>}
+    </button>
+  );
+
   // Human title for current tab on mobile top bar
   const getTabTitle = (tab: string) => {
     switch (tab) {
@@ -106,13 +135,23 @@ export function App() {
         return 'Laporan & Ekspor';
       case 'settings':
         return 'Pengaturan';
+      case 'facility':
+        return 'Profil Fasilitas';
+      case 'staff':
+        return 'Identitas Staf';
+      case 'builder':
+        return 'Pembuat Jadwal';
+      case 'requests':
+        return 'Pengajuan';
+      case 'inbox':
+        return 'Kotak Pesan';
       default:
         return 'Admin';
     }
   };
 
-  // 1. Initial Launch / First-Time Device Activation Screen
-  if (!isInitialized) {
+  // 1. Initial Launch / First-Time Device Activation Screen (member portal runs on staff phones, no device setup)
+  if (!isInitialized && mode !== 'member') {
     return (
       <InitialAdminLogin
         onSuccess={() => {
@@ -138,6 +177,7 @@ export function App() {
       {/* Main Mode Content */}
       <main className="main-content">
         {mode === 'kiosk' && <ScannerKiosk />}
+        {mode === 'member' && <MemberPortal />}
 
         {mode === 'admin' && isAdminUnlocked && (
           <div className="admin-layout-wrapper">
@@ -186,67 +226,27 @@ export function App() {
                   </button>
                 </div>
 
-                <span className="sidebar-heading">Menu Utama</span>
+                <span className="sidebar-heading">Operasional</span>
+                {navItem('today', <Activity size={18} strokeWidth={2} />, 'Monitoring Hari Ini')}
+                {navItem('attendance', <Clock size={18} strokeWidth={2} />, 'Log & Audit Presensi')}
+                {navItem('requests', <CalendarHeart size={18} strokeWidth={2} />, 'Pengajuan Libur & Cuti', pendingRequests)}
+                {navItem('inbox', <Inbox size={18} strokeWidth={2} />, 'Kotak Pesan', adminUnread)}
 
-              <button
-                className={`admin-nav-item ${adminTab === 'today' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('today')}
-              >
-                <Activity size={18} strokeWidth={2} />
-                <span>Monitoring Hari Ini</span>
-              </button>
+                <span className="sidebar-heading" style={{ marginTop: 14 }}>
+                  Shisetsu & Jadwal
+                </span>
+                {navItem('facility', <Building size={18} strokeWidth={2} />, 'Profil Fasilitas')}
+                {navItem('staff', <UserCog size={18} strokeWidth={2} />, 'Identitas Staf')}
+                {navItem('builder', <Wand2 size={18} strokeWidth={2} />, 'Pembuat Jadwal')}
+                {navItem('schedule', <Calendar size={18} strokeWidth={2} />, 'Matriks Jadwal')}
+                {navItem('shifts', <Layers size={18} strokeWidth={2} />, 'Shift Kerja & Toleransi')}
 
-              <button
-                className={`admin-nav-item ${adminTab === 'members' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('members')}
-              >
-                <Users size={18} strokeWidth={2} />
-                <span>Data Karyawan & QR</span>
-              </button>
-
-              <button
-                className={`admin-nav-item ${adminTab === 'schedule' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('schedule')}
-              >
-                <Calendar size={18} strokeWidth={2} />
-                <span>Matriks Jadwal</span>
-              </button>
-
-              <button
-                className={`admin-nav-item ${adminTab === 'shifts' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('shifts')}
-              >
-                <Layers size={18} strokeWidth={2} />
-                <span>Shift Kerja & Toleransi</span>
-              </button>
-
-              <button
-                className={`admin-nav-item ${adminTab === 'attendance' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('attendance')}
-              >
-                <Clock size={18} strokeWidth={2} />
-                <span>Log & Audit Presensi</span>
-              </button>
-
-              <span className="sidebar-heading" style={{ marginTop: 14 }}>
-                Laporan & Sistem
-              </span>
-
-              <button
-                className={`admin-nav-item ${adminTab === 'reports' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('reports')}
-              >
-                <BarChart3 size={18} strokeWidth={2} />
-                <span>Laporan & Ekspor CSV</span>
-              </button>
-
-              <button
-                className={`admin-nav-item ${adminTab === 'settings' ? 'active' : ''}`}
-                onClick={() => handleSelectAdminTab('settings')}
-              >
-                <Settings size={18} strokeWidth={2} />
-                <span>Pengaturan Organisasi</span>
-              </button>
+                <span className="sidebar-heading" style={{ marginTop: 14 }}>
+                  Data & Sistem
+                </span>
+                {navItem('members', <Users size={18} strokeWidth={2} />, 'Data Karyawan & QR')}
+                {navItem('reports', <BarChart3 size={18} strokeWidth={2} />, 'Laporan & Ekspor CSV')}
+                {navItem('settings', <Settings size={18} strokeWidth={2} />, 'Pengaturan Organisasi')}
 
               {/* Single Unified Lock Button */}
               <div className="sidebar-lock-box">
@@ -268,6 +268,11 @@ export function App() {
               {adminTab === 'attendance' && <AttendanceLog />}
               {adminTab === 'reports' && <ReportExport />}
               {adminTab === 'settings' && <SettingsView />}
+              {adminTab === 'facility' && <FacilityManager />}
+              {adminTab === 'staff' && <StaffIdentity />}
+              {adminTab === 'builder' && <ScheduleBuilder onOpenMatrix={() => handleSelectAdminTab('schedule')} />}
+              {adminTab === 'requests' && <RequestsManager />}
+              {adminTab === 'inbox' && <MessageCenter viewer={ADMIN_SENDER} />}
             </section>
           </div>
         </div>

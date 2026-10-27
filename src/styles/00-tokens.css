@@ -139,6 +139,11 @@
   --status-info-border: #A9D7F5;
 
   --status-late-bg-hover: #F5E6C8;
+  --status-req-bg: #FCE7EE;              /* 希望休 requested day off */
+  --status-req-text: #8A2F52;
+  --status-req-border: #F1C2D3;
+  --status-ake-bg: #E6E1F0;              /* 明け after night shift */
+  --status-ake-text: #4A3C68;
   --status-off-text: #55504A;            /* 6.4:1 on --status-off-bg (was 4.2:1) */
   --cell-sunday-bg: #FFF8F6;
   --cell-today-bg: #F3F8F5;

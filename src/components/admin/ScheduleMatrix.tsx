@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Check, Filter } from 'lucide-react';
-import { attendanceService, formatBranchDate } from '../../services/attendanceService';
-import type { Schedule, ScheduleType, Shift, Member } from '../../types/attendance';
+import { Calendar, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { attendanceService } from '../../services/attendanceService';
+import { facilityService } from '../../services/facilityService';
+import { useFacility } from '../../hooks/useFacility';
+import { NON_SHIFT_TYPES, SchedulePill } from '../common/SchedulePill';
+import type { ScheduleType } from '../../types/attendance';
 
 export const ScheduleMatrix: React.FC = () => {
+  useFacility(); // re-render when approvals / generator / publish change schedules
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [floorChoice, setFloorChoice] = useState<string>('');
   const [selectedCell, setSelectedCell] = useState<{
     memberId: string;
     dateStr: string;
@@ -19,9 +24,14 @@ export const ScheduleMatrix: React.FC = () => {
 
   const members = attendanceService.getMembers();
   const shifts = attendanceService.getShifts();
-  const [schedules, setSchedules] = useState<Schedule[]>(
-    attendanceService.getSchedules(year, month)
-  );
+  // re-read on every render so approvals / generator writes show up immediately
+  const schedules = attendanceService.getSchedules(year, month);
+  const floors = facilityService.getFloors();
+  const published = facilityService.isPublished(year, month);
+  const floorShort = (id?: string) => {
+    const f = floors.find((x) => x.id === id);
+    return f ? `${f.level}F` : '';
+  };
 
   const daysInMonth = new Date(year, month, 0).getDate();
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
@@ -36,14 +46,12 @@ export const ScheduleMatrix: React.FC = () => {
   const prevMonth = () => {
     const newDate = new Date(year, month - 2, 1);
     setCurrentDate(newDate);
-    setSchedules(attendanceService.getSchedules(newDate.getFullYear(), newDate.getMonth() + 1));
     setSelectedCell(null);
   };
 
   const nextMonth = () => {
     const newDate = new Date(year, month, 1);
     setCurrentDate(newDate);
-    setSchedules(attendanceService.getSchedules(newDate.getFullYear(), newDate.getMonth() + 1));
     setSelectedCell(null);
   };
 
@@ -58,6 +66,7 @@ export const ScheduleMatrix: React.FC = () => {
       currentType: sch?.schedule_type || 'SHIFT',
       currentShiftId: sch?.shift_id || shifts[0]?.id
     });
+    setFloorChoice(sch?.floor_id || facilityService.getStaffProfile(memberId).home_floor_id || floors[0]?.id || '');
   };
 
   const handleApplyShift = (type: ScheduleType, shiftId?: string) => {
@@ -67,10 +76,10 @@ export const ScheduleMatrix: React.FC = () => {
       selectedCell.memberId,
       selectedCell.dateStr,
       type,
-      shiftId
+      shiftId,
+      floorChoice || undefined
     );
-
-    setSchedules([...attendanceService.getSchedules(year, month)]);
+    facilityService.touch();
     setSelectedCell(null);
   };
 
@@ -89,6 +98,19 @@ export const ScheduleMatrix: React.FC = () => {
           </p>
         </div>
 
+        <div className="kg-actions">
+          <span className={`status-pill status-pill--${published ? 'present' : 'off'}`}>
+            {published ? 'Terbit ke staf' : 'Draft'}
+          </span>
+          {published ? (
+            <button type="button" className="btn-secondary kg-btn-sm" onClick={() => facilityService.unpublishMonth(year, month)}>
+              Tarik publikasi
+            </button>
+          ) : (
+            <button type="button" className="btn-primary kg-btn-sm" onClick={() => facilityService.publishMonth(year, month)} disabled={!schedules.length}>
+              <Send size={14} /> Publikasikan
+            </button>
+          )}
         <div className="matrix-month-controls">
           <button className="btn-cal-nav" onClick={prevMonth} title="Bulan Sebelumnya" aria-label="Bulan sebelumnya">
             <ChevronLeft size={18} />
@@ -99,6 +121,7 @@ export const ScheduleMatrix: React.FC = () => {
           <button className="btn-cal-nav" onClick={nextMonth} title="Bulan Berikutnya" aria-label="Bulan berikutnya">
             <ChevronRight size={18} />
           </button>
+        </div>
         </div>
       </div>
 
@@ -119,18 +142,12 @@ export const ScheduleMatrix: React.FC = () => {
             <span className="legend-text">{s.name}</span>
           </div>
         ))}
-        <div className="legend-item">
-          <span className="legend-badge badge-off">OFF</span>
-          <span className="legend-text">Libur</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-badge badge-leave">CUTI</span>
-          <span className="legend-text">Cuti</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-badge badge-sick">SAKIT</span>
-          <span className="legend-text">Sakit</span>
-        </div>
+        {NON_SHIFT_TYPES.filter((t) => t.type !== 'HOLIDAY').map((t) => (
+          <div key={t.type} className="legend-item">
+            <span className={`legend-badge matrix-pill ${t.className}`}>{t.code}</span>
+            <span className="legend-text">{t.label}</span>
+          </div>
+        ))}
         <div className="legend-item" style={{ marginLeft: 'auto', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
           <span className="today-legend-indicator" /> Hari Ini
           <span className="sunday-legend-indicator" style={{ marginLeft: 10 }} /> Minggu
@@ -176,7 +193,9 @@ export const ScheduleMatrix: React.FC = () => {
                 <td className="sticky-col member-row-header">
                   <div className="member-matrix-cell">
                     <span className="member-name-text">{member.full_name}</span>
-                    <span className="member-dept-text">{member.department || 'Staff'}</span>
+                    <span className="member-dept-text">
+                      {floorShort(facilityService.getStaffProfile(member.id).home_floor_id) || member.department || 'Staff'}
+                    </span>
                   </div>
                 </td>
                 {daysArray.map((day) => {
@@ -191,7 +210,6 @@ export const ScheduleMatrix: React.FC = () => {
                   const sch = schedules.find(
                     (s) => s.member_id === member.id && s.schedule_date === dateStr
                   );
-                  const assignedShift = shifts.find((sh) => sh.id === sch?.shift_id);
                   const isSelected =
                     selectedCell?.memberId === member.id && selectedCell?.day === day;
 
@@ -204,33 +222,43 @@ export const ScheduleMatrix: React.FC = () => {
                       onClick={() => handleCellClick(member.id, day)}
                       title={`Klik untuk ubah jadwal ${member.full_name} (Tgl ${day})`}
                     >
-                      {sch?.schedule_type === 'SHIFT' && assignedShift && (
-                        <div
-                          className="matrix-pill shift-pill"
-                          style={{
-                            backgroundColor: assignedShift.color_code,
-                            color: 'var(--text-on-brand)'
-                          }}
-                        >
-                          {assignedShift.code}
-                        </div>
-                      )}
-                      {sch?.schedule_type === 'OFF' && (
-                        <div className="matrix-pill off-pill">OFF</div>
-                      )}
-                      {sch?.schedule_type === 'LEAVE' && (
-                        <div className="matrix-pill leave-pill">CUTI</div>
-                      )}
-                      {sch?.schedule_type === 'SICK' && (
-                        <div className="matrix-pill sick-pill">SAKIT</div>
-                      )}
-                      {!sch && <div className="matrix-pill empty-pill">·</div>}
+                      <SchedulePill
+                        sch={sch}
+                        shifts={shifts}
+                        suffix={
+                          sch?.schedule_type === 'SHIFT' &&
+                          sch.floor_id &&
+                          sch.floor_id !== facilityService.getStaffProfile(member.id).home_floor_id
+                            ? floorShort(sch.floor_id)
+                            : undefined
+                        }
+                      />
                     </td>
                   );
                 })}
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            {shifts.map((shift) => (
+              <tr key={shift.id} className="kg-cov-row">
+                <td className="sticky-col member-row-header">
+                  <span className="kg-cov-label">
+                    <span className="kg-shift-chip" style={{ backgroundColor: shift.color_code }}>{shift.code}</span> Jumlah
+                  </span>
+                </td>
+                {daysArray.map((day) => {
+                  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                  const n = schedules.filter((x) => x.schedule_date === dateStr && x.schedule_type === 'SHIFT' && x.shift_id === shift.id).length;
+                  return (
+                    <td key={day} className="kg-cov-count">
+                      {n || ''}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tfoot>
         </table>
       </div>
 
@@ -248,6 +276,18 @@ export const ScheduleMatrix: React.FC = () => {
             </div>
             <div className="matrix-popover-content">
               <p className="popover-instruction">Pilih penugasan shift atau status izin:</p>
+              {floors.length > 0 && (
+                <div className="form-group">
+                  <label>Lantai penempatan (untuk shift)</label>
+                  <select value={floorChoice} onChange={(e) => setFloorChoice(e.target.value)}>
+                    {floors.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="popover-options-grid">
                 {shifts.map((shift) => (
@@ -270,29 +310,12 @@ export const ScheduleMatrix: React.FC = () => {
                   </button>
                 ))}
 
-                <button
-                  className="popover-option-btn off-opt"
-                  onClick={() => handleApplyShift('OFF')}
-                >
-                  <span className="opt-badge badge-off">OFF</span>
-                  <span className="opt-label">Libur Rutin (Day Off)</span>
-                </button>
-
-                <button
-                  className="popover-option-btn leave-opt"
-                  onClick={() => handleApplyShift('LEAVE')}
-                >
-                  <span className="opt-badge badge-leave">CUTI</span>
-                  <span className="opt-label">Cuti Tahunan / Izin</span>
-                </button>
-
-                <button
-                  className="popover-option-btn sick-opt"
-                  onClick={() => handleApplyShift('SICK')}
-                >
-                  <span className="opt-badge badge-sick">SAKIT</span>
-                  <span className="opt-label">Izin Sakit</span>
-                </button>
+                {NON_SHIFT_TYPES.map((t) => (
+                  <button key={t.type} className="popover-option-btn off-opt" onClick={() => handleApplyShift(t.type)}>
+                    <span className={`opt-badge matrix-pill ${t.className}`}>{t.code}</span>
+                    <span className="opt-label">{t.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>

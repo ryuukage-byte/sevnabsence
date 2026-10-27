@@ -14,7 +14,8 @@ export type AttendanceStatus =
 
 export type ReviewStatus = 'NORMAL' | 'PENDING_REVIEW' | 'VERIFIED' | 'FLAGGED_INVALID';
 
-export type ScheduleType = 'SHIFT' | 'OFF' | 'LEAVE' | 'SICK' | 'HOLIDAY';
+// AKE = 明け (day after a night shift), REQ_OFF = 希望休 (approved requested day off)
+export type ScheduleType = 'SHIFT' | 'OFF' | 'LEAVE' | 'SICK' | 'HOLIDAY' | 'AKE' | 'REQ_OFF';
 
 export interface Organization {
   id: string;
@@ -70,6 +71,7 @@ export interface Schedule {
   shift_id?: string;
   schedule_date: string; // YYYY-MM-DD
   schedule_type: ScheduleType;
+  floor_id?: string;
   notes?: string;
 }
 

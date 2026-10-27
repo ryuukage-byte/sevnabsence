@@ -1,7 +1,7 @@
 import React from 'react';
-import { Scan, Shield, Unlock, Building2 } from 'lucide-react';
+import { Scan, Shield, Unlock, Building2, UserRound } from 'lucide-react';
 
-export type AppMode = 'kiosk' | 'admin';
+export type AppMode = 'kiosk' | 'member' | 'admin';
 
 interface NavbarProps {
   currentMode: AppMode;
@@ -49,6 +49,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Scan size={16} strokeWidth={2} />
           <span>Kiosk</span>
+        </button>
+
+        <button
+          className={`mode-nav-btn ${currentMode === 'member' ? 'active' : ''}`}
+          onClick={() => onSelectMode('member')}
+          title="Portal Staf / Member"
+        >
+          <UserRound size={16} strokeWidth={2} />
+          <span>Member</span>
         </button>
 
         <button
