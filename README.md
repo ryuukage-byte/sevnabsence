@@ -91,7 +91,7 @@ Skrip migrasi database lengkap tersedia di [supabase/migrations/20260930_init_ab
 
 Langkah instalasi di Supabase:
 1. Buka [Supabase Dashboard](https://supabase.com/dashboard).
-2. Pilih project Anda (`tgnqtexegvcpagphqurb`).
+2. Pilih project Anda (`esiwgshifchloadscuoh` / sevnabsence).
 3. Masuk ke menu **SQL Editor**.
 4. Salin seluruh isi berkas `supabase/migrations/20260930_init_absence.sql` dan klik **Run**.
 5. Skema tabel, indeks, data awal demo, dan fungsi stored procedure `record_attendance_scan()` akan langsung aktif.
