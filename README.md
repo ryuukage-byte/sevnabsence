@@ -75,6 +75,18 @@ Buka peramban di `http://localhost:5173`.
 
 ## 🗄️ Setup Database Supabase
 
+### Sinkron lintas perangkat (wajib untuk kiosk + HP staf + admin)
+
+1. Jalankan [supabase/migrations/20261028_app_records_sync.sql](./supabase/migrations/20261028_app_records_sync.sql) di **SQL Editor** project Supabase Anda.
+2. Isi `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` dan `VITE_ORG_ID` (lihat `.env.example`). Semua perangkat satu fasilitas memakai `VITE_ORG_ID` yang sama.
+3. Perangkat pertama yang tersambung ke cloud kosong akan mengunggah datanya; perangkat berikutnya mengunduh data cloud saat dibuka.
+
+Cara kerja: setiap data (staf, shift, jadwal, presensi, lantai/ruangan/tugas, identitas, pengajuan, pesan, pengaturan) disimpan satu baris di `app_records` dan juga di perangkat. Perubahan dikirim otomatis, perubahan dari perangkat lain masuk lewat Supabase Realtime (cadangan: cek tiap 15 detik / saat aplikasi dibuka lagi). Konflik diselesaikan per data, yang terakhir disimpan menang. Saat offline aplikasi tetap jalan dan mengirim perubahan setelah tersambung. Status sinkron terlihat di titik warna sebelah nama organisasi dan di *Pengaturan Organisasi*.
+
+> ⚠️ Keamanan: belum memakai Supabase Auth per pengguna, jadi siapa pun yang memegang anon key bisa membaca/menulis data organisasi (termasuk PIN member). Cocok untuk uji coba; sebelum produksi pindahkan login admin & member ke Supabase Auth dengan RLS per member.
+
+### Skema relasional (opsional)
+
 Skrip migrasi database lengkap tersedia di [supabase/migrations/20260930_init_absence.sql](./supabase/migrations/20260930_init_absence.sql).
 
 Langkah instalasi di Supabase:

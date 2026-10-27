@@ -144,6 +144,7 @@ class AttendanceService {
     } catch {
       // ignore
     }
+    window.dispatchEvent(new Event('sevn:local-change'));
   }
 
   private initSchedulesIfEmpty() {
@@ -152,19 +153,22 @@ class AttendanceService {
 
   // --- Scan Evaluation Engine ---
   async recordScan(tokenValue: string, actionType: AttendanceAction): Promise<ScanResult> {
-    // 1. Try Supabase RPC first if available
-    try {
-      const { data, error } = await supabase.rpc('record_attendance_scan', {
-        p_token_value: tokenValue,
-        p_action_type: actionType
-      });
+    // 1. Server-side RPC (record_attendance_scan) only when explicitly enabled: it validates against the
+    //    relational `members` table, while members are kept in the synced app_records store.
+    if (import.meta.env.VITE_USE_SCAN_RPC === 'true') {
+      try {
+        const { data, error } = await supabase.rpc('record_attendance_scan', {
+          p_token_value: tokenValue,
+          p_action_type: actionType
+        });
 
-      if (!error && data) {
-        this.isLiveSupabase = true;
-        return data as ScanResult;
+        if (!error && data) {
+          this.isLiveSupabase = true;
+          return data as ScanResult;
+        }
+      } catch {
+        // Fall through to strict local business rule engine
       }
-    } catch {
-      // Fall through to strict local business rule engine
     }
 
     // 2. Strict local business logic (mirrors PostgreSQL procedure)

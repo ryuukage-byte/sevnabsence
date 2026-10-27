@@ -1,40 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Building2, Save, Globe, Database, CheckCircle2, ShieldCheck, ChevronDown } from 'lucide-react';
 import { attendanceService } from '../../services/attendanceService';
-import { testSupabaseConnection } from '../../services/supabase';
+import { SUPABASE_PROJECT_REF } from '../../services/supabase';
+import { cloudSync } from '../../services/cloudSync';
+import { useCloudSync } from '../../hooks/useFacility';
 
 export const SettingsView: React.FC = () => {
   const [org, setOrg] = useState(attendanceService.getOrganization());
   const [isSaved, setIsSaved] = useState(false);
-  const [dbStatus, setDbStatus] = useState<string>('Memeriksa status layanan backend...');
-
-  useEffect(() => {
-    let isMounted = true;
-
-    // Timeout safety (3 seconds max)
-    const timeoutPromise = new Promise<{ connected: boolean; message: string }>((resolve) => {
-      setTimeout(() => {
-        resolve({
-          connected: false,
-          message: 'Penyimpanan Lokal Aktif (Data tersinkronisasi di cache perangkat offline)'
-        });
-      }, 3000);
-    });
-
-    Promise.race([testSupabaseConnection(), timeoutPromise])
-      .then((res) => {
-        if (isMounted) setDbStatus(res.message);
-      })
-      .catch(() => {
-        if (isMounted) {
-          setDbStatus('Penyimpanan Lokal Aktif (Fallback Offline Operasional)');
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const sync = useCloudSync();
+  const [retrying, setRetrying] = useState(false);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +18,6 @@ export const SettingsView: React.FC = () => {
     setTimeout(() => setIsSaved(false), 2500);
   };
 
-  const isProd = import.meta.env.PROD;
 
   return (
     <div className="settings-container">
@@ -142,17 +116,35 @@ export const SettingsView: React.FC = () => {
 
           <div className="supabase-status-box">
             <div className="status-indicator-row">
-              <span className="live-dot" />
-              <span className="status-label">Backend Engine:</span>
+              <span className={`sync-dot sync-dot--${sync.status}`} />
+              <span className="status-label">Sinkron cloud:</span>
               <code className="status-ref">
-                {isProd ? 'Supabase Managed Cloud (Production Node)' : 'Supabase (Project Ref: tgnq...qurb)'}
+                Supabase {SUPABASE_PROJECT_REF} · org "{sync.orgId}"
               </code>
             </div>
 
             <div className="status-desc-text">
               <ShieldCheck size={16} style={{ color: 'var(--accent-sage)', flexShrink: 0 }} />
-              <span>{dbStatus}</span>
+              <span>
+                {sync.message}
+                {sync.lastSyncAt && ` Terakhir sinkron ${sync.lastSyncAt.toLocaleTimeString('id-ID')}.`}
+              </span>
             </div>
+
+            {sync.status !== 'disabled' && sync.status !== 'online' && (
+              <button
+                type="button"
+                className="btn-secondary kg-btn-sm"
+                disabled={retrying}
+                onClick={async () => {
+                  setRetrying(true);
+                  await cloudSync.retry();
+                  setRetrying(false);
+                }}
+              >
+                {retrying ? 'Menghubungkan…' : 'Coba sambungkan lagi'}
+              </button>
+            )}
 
             {/* Advanced Developer Settings in Collapsible Details */}
             <details className="settings-advanced-details">
@@ -162,11 +154,12 @@ export const SettingsView: React.FC = () => {
               </summary>
               <div className="advanced-summary-body">
                 <p>
-                  Skrip migrasi database lengkap tersedia pada repositori di path{' '}
-                  <code>supabase/migrations/20260930_init_absence.sql</code>.
+                  Sinkron lintas perangkat memakai tabel <code>app_records</code> dari{' '}
+                  <code>supabase/migrations/20261028_app_records_sync.sql</code>. Atur project lewat{' '}
+                  <code>VITE_SUPABASE_URL</code>, <code>VITE_SUPABASE_ANON_KEY</code> dan <code>VITE_ORG_ID</code>.
                 </p>
                 <p style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Stored procedure <code>record_attendance_scan()</code> memvalidasi token kriptografis, zona waktu branch, dan status shift secara atomik di sisi server.
+                  Data disimpan juga di perangkat ini, jadi kiosk tetap bisa scan saat offline dan mengirim perubahan setelah online kembali.
                 </p>
               </div>
             </details>

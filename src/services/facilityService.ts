@@ -272,6 +272,12 @@ class FacilityService {
           this.emit();
         }
       });
+      // another device changed data (cloudSync wrote it into localStorage)
+      window.addEventListener('sevn:remote-change', () => {
+        this.load();
+        attendanceService.reload();
+        this.emit();
+      });
     }
   }
 
@@ -291,6 +297,7 @@ class FacilityService {
     } catch {
       // ignore quota errors
     }
+    window.dispatchEvent(new Event('sevn:local-change'));
     this.emit();
   }
 

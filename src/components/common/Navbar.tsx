@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCloudSync } from '../../hooks/useFacility';
 import { Scan, Shield, Unlock, Building2, UserRound } from 'lucide-react';
 
 export type AppMode = 'kiosk' | 'member' | 'admin';
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   orgName,
   isAdminUnlocked
 }) => {
+  const sync = useCloudSync();
   return (
     <header className="app-header">
       {/* Brand & Branch Info with Koji Mascot Tile */}
@@ -35,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="brand-subtitle">
               <Building2 size={12} strokeWidth={2} />
               {orgName}
+              <span className={`sync-dot sync-dot--${sync.status}`} title={sync.message} />
             </span>
           </div>
         </div>

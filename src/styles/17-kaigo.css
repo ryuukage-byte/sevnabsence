@@ -1101,3 +1101,26 @@
     grid-template-columns: 96px 1fr;
   }
 }
+
+/* cloud sync indicator */
+.sync-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-round);
+  background: var(--text-subtle);
+  flex-shrink: 0;
+}
+
+.sync-dot--online {
+  background: var(--status-present);
+  box-shadow: 0 0 0 3px var(--status-present-bg);
+}
+
+.sync-dot--connecting,
+.sync-dot--offline {
+  background: var(--accent-caramel);
+}
+
+.sync-dot--error {
+  background: var(--danger);
+}

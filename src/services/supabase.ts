@@ -3,6 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://tgnqtexegvcpagphqurb.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnbnF0ZXhlZ3ZjcGFncGhxdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NTQyOTMsImV4cCI6MjEwNjMzMDI5M30.fsP8ZvOk5cmuH5XcdDzZo_Vanl0dNim7q1FUZY0Bb0c';
 
+/** Cloud sync runs when a project is configured and not explicitly turned off (VITE_CLOUD_SYNC=false). */
+export const SUPABASE_CONFIGURED = !!supabaseUrl && !!supabaseAnonKey && import.meta.env.VITE_CLOUD_SYNC !== 'false';
+export const SUPABASE_PROJECT_REF = supabaseUrl.replace(/^https:\/\//, '').split('.')[0];
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function testSupabaseConnection(): Promise<{ connected: boolean; message: string }> {
