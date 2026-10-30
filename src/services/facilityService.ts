@@ -806,9 +806,11 @@ class FacilityService {
       ['Matsumoto Yui', 'Perawat', 'SEISHAIN', 'NURSE', 4, 'fl_2', ['sk_nurse', 'sk_med', 'sk_suction', 'sk_record'], 'dayonly', 0],
       ['Wulan Sari', 'Care Worker', 'TOKUTEI', 'JITSUMU', 3, 'fl_1', ['sk_jitsumu', 'sk_bath', 'sk_meal', 'sk_toilet', 'sk_transfer', 'sk_night'], 'all', 6]
     ];
+    // 7 contoh karyawan dari daftar seed (dua lantai, perawat, part-time, tokutei, supir)
+    const picked = [0, 1, 2, 3, 4, 7, 8].map((i) => seeds[i]);
     const existing = attendanceService.getMembers();
     const members: Omit<Member, 'organization_id'>[] = [];
-    seeds.forEach(([name, position, emp, qual, level, floor, skills, pattern, maxNight], i) => {
+    picked.forEach(([name, position, emp, qual, level, floor, skills, pattern, maxNight], i) => {
       const number = `2026${String(i + 1).padStart(3, '0')}`;
       if (existing.some((m) => m.member_number === number)) return;
       const id = `mem_kaigo_${String(i + 1).padStart(3, '0')}`;

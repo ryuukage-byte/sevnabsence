@@ -35,7 +35,7 @@ Lightweight, modern, and friendly QR-based tablet attendance kiosk and managemen
   - **Pembuat Jadwal otomatis:** kebutuhan staf per lantai × shift (hari biasa / akhir pekan), rotasi 夜→明→公, maks hari kerja berturut-turut, larangan 遅→早, kuota libur bulanan, cek skill per tugas ruangan, menghormati 希望休 & cuti yang disetujui. Hasil bisa dipreview, disimpan, diedit di Matriks, lalu dipublikasikan.
   - **Pengajuan:** 希望休 lewat klik kalender (maks per bulan, maks staf per tanggal, batas tanggal pengajuan) dan cuti (berbayar/sakit/khusus/tidak dibayar, cek saldo). Persetujuan admin langsung masuk jadwal + notifikasi.
   - **Kotak Pesan dua arah:** staf kirim masukan/keluhan/laporan insiden; admin kirim peringatan/pemberitahuan ke satu staf atau broadcast, lengkap dengan status dibaca dan balasan per thread.
-  - Data demo: *Admin → Profil Fasilitas → Muat staf demo* (18 staf, nomor `2026001`–`2026018`, PIN = 4 digit terakhir).
+  - Data demo: *Admin → Profil Fasilitas → Muat staf demo* (7 staf, nomor `2026001`–`2026007`, PIN = 4 digit terakhir).
 
 ---
 
