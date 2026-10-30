@@ -1124,3 +1124,16 @@
 .sync-dot--error {
   background: var(--danger);
 }
+
+.kg-empty-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 18px;
+}
+
+.kg-empty-cta p {
+  margin: 0;
+}

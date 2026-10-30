@@ -267,7 +267,21 @@ export const ScheduleBuilder: React.FC<Props> = ({ onOpenMatrix }) => {
             </button>
           ))}
       </div>
-      {!members.length && <p className="kg-muted">Belum ada staf aktif — muat staf demo di menu Profil Fasilitas.</p>}
+      {!members.length && (
+        <div className="kg-card kg-empty-cta">
+          <p className="kg-muted">Belum ada staf. Muat 7 karyawan contoh untuk mencoba pembuat jadwal.</p>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => {
+              const n = facilityService.seedDemoStaff();
+              setFlash(n ? `${n} karyawan contoh dimuat.` : 'Karyawan contoh sudah ada.');
+            }}
+          >
+            <Sparkles size={15} /> Muat 7 staf contoh
+          </button>
+        </div>
+      )}
       {flash && <div className="kg-flash">{flash}</div>}
 
       {result && (
