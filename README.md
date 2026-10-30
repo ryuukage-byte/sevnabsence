@@ -28,6 +28,15 @@ Lightweight, modern, and friendly QR-based tablet attendance kiosk and managemen
   - **Laporan & Ekspor CSV:** Perhitungan persentase kehadiran, total menit keterlambatan, dan ekspor data 1-klik ke format CSV standar RFC 4180.
   - **Pengaturan Organisasi:** Pengaturan nama perusahaan, nama cabang (*flexible business name*), zona waktu, dan status Supabase.
 
+- **Modul Shisetsu Kaigo (介護施設):**
+  - **3 portal:** `#kiosk` (scan QR), `#member` (portal staf, login nomor pegawai + PIN), `#admin`.
+  - **Profil Fasilitas:** pilih jenis shisetsu (Tokuyou aktif; Rōken, Group Home, Day Service, Kantor menyusul), lantai, ruangan, dan tugas per ruangan (jam mulai–selesai, hari, shift pelaksana, skill wajib, min. staf). Template awal: Tokuyou 2 lantai + shift 早番・日勤・遅番・夜勤.
+  - **Identitas Staf:** level (Lv1 Trainee – Lv5 Leader), kualifikasi (無資格 – 介護福祉士 / 看護師), status kerja (正社員, パート, 特定技能 …), skill, shift yang sudah bisa, lantai utama, boleh pindah lantai, maks shift malam, target libur, saldo cuti, PIN portal.
+  - **Pembuat Jadwal otomatis:** kebutuhan staf per lantai × shift (hari biasa / akhir pekan), rotasi 夜→明→公, maks hari kerja berturut-turut, larangan 遅→早, kuota libur bulanan, cek skill per tugas ruangan, menghormati 希望休 & cuti yang disetujui. Hasil bisa dipreview, disimpan, diedit di Matriks, lalu dipublikasikan.
+  - **Pengajuan:** 希望休 lewat klik kalender (maks per bulan, maks staf per tanggal, batas tanggal pengajuan) dan cuti (berbayar/sakit/khusus/tidak dibayar, cek saldo). Persetujuan admin langsung masuk jadwal + notifikasi.
+  - **Kotak Pesan dua arah:** staf kirim masukan/keluhan/laporan insiden; admin kirim peringatan/pemberitahuan ke satu staf atau broadcast, lengkap dengan status dibaca dan balasan per thread.
+  - Data demo: *Admin → Profil Fasilitas → Muat staf demo* (7 staf, nomor `2026001`–`2026007`, PIN = 4 digit terakhir).
+
 ---
 
 ## 🛠️ Tech Stack
@@ -66,11 +75,23 @@ Buka peramban di `http://localhost:5173`.
 
 ## 🗄️ Setup Database Supabase
 
+### Sinkron lintas perangkat (wajib untuk kiosk + HP staf + admin)
+
+1. Jalankan [supabase/migrations/20261028_app_records_sync.sql](./supabase/migrations/20261028_app_records_sync.sql) di **SQL Editor** project Supabase Anda.
+2. Isi `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` dan `VITE_ORG_ID` (lihat `.env.example`). Semua perangkat satu fasilitas memakai `VITE_ORG_ID` yang sama.
+3. Perangkat pertama yang tersambung ke cloud kosong akan mengunggah datanya; perangkat berikutnya mengunduh data cloud saat dibuka.
+
+Cara kerja: setiap data (staf, shift, jadwal, presensi, lantai/ruangan/tugas, identitas, pengajuan, pesan, pengaturan) disimpan satu baris di `app_records` dan juga di perangkat. Perubahan dikirim otomatis, perubahan dari perangkat lain masuk lewat Supabase Realtime (cadangan: cek tiap 15 detik / saat aplikasi dibuka lagi). Konflik diselesaikan per data, yang terakhir disimpan menang. Saat offline aplikasi tetap jalan dan mengirim perubahan setelah tersambung. Status sinkron terlihat di titik warna sebelah nama organisasi dan di *Pengaturan Organisasi*.
+
+> ⚠️ Keamanan: belum memakai Supabase Auth per pengguna, jadi siapa pun yang memegang anon key bisa membaca/menulis data organisasi (termasuk PIN member). Cocok untuk uji coba; sebelum produksi pindahkan login admin & member ke Supabase Auth dengan RLS per member.
+
+### Skema relasional (opsional)
+
 Skrip migrasi database lengkap tersedia di [supabase/migrations/20260930_init_absence.sql](./supabase/migrations/20260930_init_absence.sql).
 
 Langkah instalasi di Supabase:
 1. Buka [Supabase Dashboard](https://supabase.com/dashboard).
-2. Pilih project Anda (`tgnqtexegvcpagphqurb`).
+2. Pilih project Anda (`esiwgshifchloadscuoh` / sevnabsence).
 3. Masuk ke menu **SQL Editor**.
 4. Salin seluruh isi berkas `supabase/migrations/20260930_init_absence.sql` dan klik **Run**.
 5. Skema tabel, indeks, data awal demo, dan fungsi stored procedure `record_attendance_scan()` akan langsung aktif.

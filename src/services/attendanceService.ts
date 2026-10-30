@@ -21,42 +21,55 @@ const DEFAULT_ORG: Organization = {
   timezone: 'Asia/Tokyo'
 };
 
-const DEFAULT_SHIFTS: Shift[] = [
+// Standard kaigo (介護) rotation: 早番 / 日勤 / 遅番 / 夜勤 (2-shift night, ends next morning)
+export const DEFAULT_SHIFTS: Shift[] = [
   {
-    id: 'b0000000-0000-0000-0000-000000000001',
+    id: 'b0000000-0000-0000-0000-000000000011',
     organization_id: DEFAULT_ORG.id,
-    name: 'Shift Pagi (Shift A)',
-    code: 'A',
-    start_time: '08:00',
-    end_time: '17:00',
+    name: 'Hayaban 早番',
+    code: '早',
+    start_time: '07:00',
+    end_time: '16:00',
     early_tolerance_mins: 30,
-    late_tolerance_mins: 10,
+    late_tolerance_mins: 5,
     is_overtime_allowed: false,
     color_code: '#3B7A57'
   },
   {
-    id: 'b0000000-0000-0000-0000-000000000002',
+    id: 'b0000000-0000-0000-0000-000000000012',
     organization_id: DEFAULT_ORG.id,
-    name: 'Shift Siang (Shift B)',
-    code: 'B',
-    start_time: '13:00',
-    end_time: '22:00',
+    name: 'Nikkin 日勤',
+    code: '日',
+    start_time: '08:30',
+    end_time: '17:30',
     early_tolerance_mins: 30,
-    late_tolerance_mins: 10,
+    late_tolerance_mins: 5,
+    is_overtime_allowed: false,
+    color_code: '#4A7FA7'
+  },
+  {
+    id: 'b0000000-0000-0000-0000-000000000013',
+    organization_id: DEFAULT_ORG.id,
+    name: 'Osoban 遅番',
+    code: '遅',
+    start_time: '11:00',
+    end_time: '20:00',
+    early_tolerance_mins: 30,
+    late_tolerance_mins: 5,
     is_overtime_allowed: false,
     color_code: '#C9944A'
   },
   {
-    id: 'b0000000-0000-0000-0000-000000000003',
+    id: 'b0000000-0000-0000-0000-000000000014',
     organization_id: DEFAULT_ORG.id,
-    name: 'Shift Malam (Shift C)',
-    code: 'C',
-    start_time: '21:00',
-    end_time: '06:00',
+    name: 'Yakin 夜勤',
+    code: '夜',
+    start_time: '16:30',
+    end_time: '09:30',
     early_tolerance_mins: 30,
-    late_tolerance_mins: 10,
-    is_overtime_allowed: false,
-    color_code: '#8D7B6D'
+    late_tolerance_mins: 5,
+    is_overtime_allowed: true,
+    color_code: '#5B4B7A'
   }
 ];
 
@@ -74,6 +87,11 @@ class AttendanceService {
     this.loadFromStorage();
     this.initSchedulesIfEmpty();
     this.initRecordsIfEmpty();
+  }
+
+  /** Re-read persisted state (used when another tab - e.g. the member portal - writes). */
+  reload() {
+    this.loadFromStorage();
   }
 
   private initRecordsIfEmpty() {
@@ -126,6 +144,7 @@ class AttendanceService {
     } catch {
       // ignore
     }
+    window.dispatchEvent(new Event('sevn:local-change'));
   }
 
   private initSchedulesIfEmpty() {
@@ -134,19 +153,22 @@ class AttendanceService {
 
   // --- Scan Evaluation Engine ---
   async recordScan(tokenValue: string, actionType: AttendanceAction): Promise<ScanResult> {
-    // 1. Try Supabase RPC first if available
-    try {
-      const { data, error } = await supabase.rpc('record_attendance_scan', {
-        p_token_value: tokenValue,
-        p_action_type: actionType
-      });
+    // 1. Server-side RPC (record_attendance_scan) only when explicitly enabled: it validates against the
+    //    relational `members` table, while members are kept in the synced app_records store.
+    if (import.meta.env.VITE_USE_SCAN_RPC === 'true') {
+      try {
+        const { data, error } = await supabase.rpc('record_attendance_scan', {
+          p_token_value: tokenValue,
+          p_action_type: actionType
+        });
 
-      if (!error && data) {
-        this.isLiveSupabase = true;
-        return data as ScanResult;
+        if (!error && data) {
+          this.isLiveSupabase = true;
+          return data as ScanResult;
+        }
+      } catch {
+        // Fall through to strict local business rule engine
       }
-    } catch {
-      // Fall through to strict local business rule engine
     }
 
     // 2. Strict local business logic (mirrors PostgreSQL procedure)
@@ -178,7 +200,11 @@ class AttendanceService {
       (s) => s.member_id === member.id && s.schedule_date === todayStr
     );
 
-    if (schedule && ['OFF', 'LEAVE', 'SICK', 'HOLIDAY'].includes(schedule.schedule_type)) {
+    if (
+      actionType === 'MASUK' &&
+      schedule &&
+      ['OFF', 'LEAVE', 'SICK', 'HOLIDAY', 'AKE', 'REQ_OFF'].includes(schedule.schedule_type)
+    ) {
       return {
         success: false,
         code: 'SCHEDULE_REST_DAY',
@@ -285,9 +311,19 @@ class AttendanceService {
 
     // ACTION: PULANG
     if (actionType === 'PULANG') {
-      const existing = this.records.find(
+      let existing = this.records.find(
         (r) => r.member_id === member.id && r.attendance_date === todayStr
       );
+
+      // Night shift (夜勤) checks in yesterday and checks out this morning
+      if (!existing) {
+        const y = new Date(now);
+        y.setDate(y.getDate() - 1);
+        const yStr = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`;
+        existing = this.records.find(
+          (r) => r.member_id === member.id && r.attendance_date === yStr && !!r.check_in_at && !r.check_out_at
+        );
+      }
 
       if (!existing || !existing.check_in_at) {
         return {
@@ -356,6 +392,15 @@ class AttendanceService {
     return newMember;
   }
 
+  /** Bulk insert members with pre-built ids/tokens (facility demo seed). */
+  importMembers(members: Omit<Member, 'organization_id'>[]): void {
+    for (const m of members) {
+      if (this.members.some((x) => x.id === m.id)) continue;
+      this.members.push({ ...m, organization_id: this.org.id });
+    }
+    this.saveToStorage();
+  }
+
   updateMember(id: string, updates: Partial<Member>): Member | null {
     const idx = this.members.findIndex((m) => m.id === id);
     if (idx === -1) return null;
@@ -407,7 +452,8 @@ class AttendanceService {
     memberId: string,
     dateStr: string,
     scheduleType: ScheduleType,
-    shiftId?: string
+    shiftId?: string,
+    floorId?: string
   ): void {
     const existingIdx = this.schedules.findIndex(
       (s) => s.member_id === memberId && s.schedule_date === dateStr
@@ -415,16 +461,42 @@ class AttendanceService {
     if (existingIdx !== -1) {
       this.schedules[existingIdx].schedule_type = scheduleType;
       this.schedules[existingIdx].shift_id = scheduleType === 'SHIFT' ? shiftId : undefined;
+      this.schedules[existingIdx].floor_id =
+        scheduleType === 'SHIFT' ? floorId ?? this.schedules[existingIdx].floor_id : undefined;
     } else {
       this.schedules.push({
         id: `sch_${memberId}_${dateStr}`,
         organization_id: this.org.id,
         member_id: memberId,
         shift_id: scheduleType === 'SHIFT' ? shiftId : undefined,
+        floor_id: scheduleType === 'SHIFT' ? floorId : undefined,
         schedule_date: dateStr,
         schedule_type: scheduleType
       });
     }
+    this.saveToStorage();
+  }
+
+  /** Replace every schedule cell of a month (used by the automatic schedule builder). */
+  replaceMonthSchedules(year: number, month: number, cells: Omit<Schedule, 'id' | 'organization_id'>[]): void {
+    const monthPrefix = `${year}-${String(month).padStart(2, '0')}`;
+    this.schedules = this.schedules.filter((s) => !s.schedule_date.startsWith(monthPrefix));
+    for (const c of cells) {
+      this.schedules.push({
+        ...c,
+        id: `sch_${c.member_id}_${c.schedule_date}`,
+        organization_id: this.org.id
+      });
+    }
+    this.saveToStorage();
+  }
+
+  getMemberSchedule(memberId: string, dateStr: string): Schedule | undefined {
+    return this.schedules.find((s) => s.member_id === memberId && s.schedule_date === dateStr);
+  }
+
+  replaceShifts(shifts: Shift[]): void {
+    this.shifts = shifts.map((s) => ({ ...s, organization_id: this.org.id }));
     this.saveToStorage();
   }
 
